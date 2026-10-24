@@ -4,6 +4,10 @@ A staged RAG application for answers with verifiable document, page, and quote
 citations. **Current milestone: M1 — skeleton and PDF ingestion.** Search,
 answers, citation cards, and evaluation are not implemented yet.
 
+New to RAG? Start with the [beginner learning guide](docs/learning-guide.md).
+It explains the pipeline, maps concepts to our code, and includes an exercise
+you can follow in a browser without installing the application.
+
 ## Start locally
 
 Prerequisites: Git and Docker Compose v2. From a fresh checkout:
