@@ -1,0 +1,13 @@
+# CiteRAG engineering rules
+
+- Priorities: correctness, tests, clarity, then features. Implement only the current milestone. M1 is the approved implementation scope; stop for review before M2. M5 is stretch work, not approved.
+- After each milestone, run lint, type-checking, and all tests; fix failures; summarize changes and what the user should review. Run frontend checks once frontend code exists.
+- Never make external network calls in tests. Use `EmbeddingProvider` and `LLMProvider` interfaces with deterministic hash embeddings and scripted LLM responses. Real providers belong only in CLI/application entry points and explicit evaluations. PostgreSQL integration tests may connect to the local test database; all provider HTTP must be mocked.
+- Never hardcode secrets. Use environment variables and `.env.example`. Never log API keys or full document text at INFO. Do not commit PDFs, `.env`, credentials, or evaluation secrets.
+- Every public function has type hints and a short docstring. No dead code or unexplained magic numbers. Put chunk size, overlap, batch size, retrieval limits, timeouts, and retry settings in typed `Settings`.
+- Backend application coverage must be at least 85%. Test empty PDFs, scanned/no-text PDFs, duplicate ingestion, oversized queries (M2), empty retrieval (M2), provider failures/timeouts, and malformed LLM output (M3), plus chunk boundaries, overlap, and page tracking.
+- Provider calls use bounded exponential backoff for transient failures only. API errors must be clear and must not contain stack traces, credentials, or provider response bodies.
+- Keep README design decisions, trade-offs, measured results, and limitations honest. Never invent golden questions or gold answers. Never present fake-provider results as semantic retrieval measurements.
+- The user's budget preference updates the original OpenAI-only requirement: support a free-tier Gemini configuration behind provider interfaces and retain the original OpenAI option. Never silently fall back to a paid provider.
+- Use one branch/PR per milestone. Do not merge without approval. An empty repository may receive a minimal bootstrap commit on `main` to establish the PR base.
+- Keep this small: no orchestration framework, job queue, OCR, authentication, conversation memory, or model tool loop in M1–M4.
