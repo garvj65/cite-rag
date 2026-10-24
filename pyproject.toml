@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "citerag"
+version = "0.1.0"
+description = "Page-preserving PDF ingestion for a cited RAG application"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "alembic>=1.16,<2",
+  "fastapi>=0.115,<1",
+  "httpx>=0.28,<0.29",
+  "pgvector>=0.4,<1",
+  "psycopg[binary]>=3.2,<4",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.8,<3",
+  "pypdf>=6,<7",
+  "PyYAML>=6,<7",
+  "SQLAlchemy>=2.0,<2.2",
+  "uvicorn>=0.34,<1",
+]
+
+[dependency-groups]
+dev = [
+  "mypy>=1.15,<3",
+  "pytest>=8.3,<10",
+  "pytest-cov>=6,<8",
+  "pytest-socket>=0.7,<1",
+  "reportlab>=4.3,<6",
+  "ruff>=0.11,<1",
+  "types-PyYAML>=6,<7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/app", "scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["backend", "."]
+addopts = "--disable-socket --allow-unix-socket --allow-hosts=127.0.0.1,::1 --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=85"
+markers = ["integration: requires TEST_DATABASE_URL pointing to a disposable local pgvector database"]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["D100", "D104", "D105", "D107", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/tests/**" = ["D"]
+"backend/migrations/**" = ["D"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "backend"
+files = ["backend/app", "scripts"]
