@@ -146,6 +146,12 @@ GitHub Actions runs lint, formatting, strict application type-checking, tests
 against PostgreSQL 16/pgvector, a backend image build, and Compose validation.
 Frontend checks join CI when the frontend is implemented in M3.
 
+M1 verification: **83 tests passed with PostgreSQL 16/pgvector; 99.62% backend
+application coverage**. Lint, formatting, strict mypy, the backend Docker image
+build, and Compose validation passed. See [the validation record](docs/validation-m1.md)
+for the exact run and corpus extraction measurements. These are implementation
+checks, not answer-quality evaluation results.
+
 ## Evaluation status
 
 | Strategy | Recall@5 | MRR | Citation validity | Refusal accuracy | Latency p50/p95 |
