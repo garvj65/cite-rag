@@ -6,7 +6,7 @@ returns passages using vector, keyword, or hybrid retrieval. Answer generation,
 citation verification, the React UI, and evaluation arrive in M3–M4.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
-[M1 validation](docs/validation-m1.md)
+[M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md)
 
 ## Start locally
 
@@ -229,9 +229,11 @@ health, ingests an offline generated one-page PDF twice to test idempotency,
 and sends vector, keyword, and hybrid searches to the running HTTP API. These
 checks use explicit fake embeddings and make no authenticated model calls.
 
-M1's original verification: 83 passing tests and 99.62% application coverage.
-M2's measured check results are recorded after its CI run. The React/Vite UI and
-frontend checks are scheduled for M3.
+M2 verification: **143 tests passed, including all 15 PostgreSQL integration tests,
+with 99.74% backend application coverage**. Lint, formatting, strict mypy, the
+Docker build, and the complete Compose ingestion/search smoke check passed.
+See [the M2 validation record](docs/validation-m2.md) for the exact run and scope.
+The React/Vite UI and frontend checks are scheduled for M3.
 
 ## Evaluation status
 
