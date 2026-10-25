@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # All supported providers request this dimension so one migration serves both.
 EMBEDDING_DIMENSIONS = 1536
+RetrievalStrategy = Literal["vector", "keyword", "hybrid"]
 
 
 class Settings(BaseSettings):
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
         "postgresql+psycopg://citerag:local-development-only@localhost:5432/citerag"
     )
     enable_real_providers: bool = False
-    embedding_provider: Literal["gemini", "openai"] = "gemini"
+    embedding_provider: Literal["gemini", "openai", "fake"] = "gemini"
     gemini_api_key: SecretStr = SecretStr("")
     openai_api_key: SecretStr = SecretStr("")
     gemini_embedding_model: str = "gemini-embedding-2"
@@ -32,10 +33,18 @@ class Settings(BaseSettings):
     provider_max_backoff_seconds: float = Field(default=8, ge=0, le=60)
     max_pdf_bytes: int = Field(default=20 * 1024 * 1024, ge=1)
     max_pdf_pages: int = Field(default=500, ge=1)
+    search_strategy: RetrievalStrategy = "hybrid"
+    search_k: int = Field(default=5, ge=1)
+    search_max_k: int = Field(default=50, ge=1, le=100)
+    max_query_characters: int = Field(default=2000, ge=1, le=20000)
+    hybrid_candidate_k: int = Field(default=20, ge=1, le=1000)
+    rrf_constant: int = Field(default=60, ge=0, le=10000)
 
     @model_validator(mode="after")
     def validate_overlap(self) -> Self:
         """Require progress in the sliding chunk window."""
         if self.chunk_overlap_words >= self.chunk_size_words:
             raise ValueError("chunk_overlap_words must be smaller than chunk_size_words")
+        if self.search_k > self.search_max_k:
+            raise ValueError("search_k must not exceed search_max_k")
         return self

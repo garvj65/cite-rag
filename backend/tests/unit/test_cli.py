@@ -64,7 +64,7 @@ def test_cli_real_provider_contract_uses_mock_transport(
         )
 
     client = httpx.Client(transport=httpx.MockTransport(handle))
-    monkeypatch.setattr("app.ingest.httpx.Client", lambda: client)
+    monkeypatch.setattr("app.providers.factory.httpx.Client", lambda: client)
     assert main(["--path", str(pdf_path)]) == 0
     assert json.loads(capsys.readouterr().out)["docs"] == 1
 

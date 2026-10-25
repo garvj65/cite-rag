@@ -7,7 +7,7 @@ from typing import Annotated
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from app.errors import ProviderError, ProviderTimeoutError
+from app.errors import ProviderConfigurationError, ProviderError, ProviderTimeoutError
 from app.settings import EMBEDDING_DIMENSIONS, Settings
 
 
@@ -34,7 +34,9 @@ class HTTPEmbeddingProvider:
         self._client = client
         self._sleep = sleep
         if not settings.enable_real_providers:
-            raise ProviderError("real_providers_disabled")
+            raise ProviderConfigurationError("real_providers_disabled")
+        if settings.embedding_provider == "fake":
+            raise ProviderConfigurationError("fake_provider_requires_factory")
         if settings.embedding_provider == "gemini":
             self._base = "https://generativelanguage.googleapis.com/v1beta/openai"
             self._key = settings.gemini_api_key
@@ -44,7 +46,7 @@ class HTTPEmbeddingProvider:
             self._key = settings.openai_api_key
             self._model = settings.openai_embedding_model
         if not self._key.get_secret_value().strip():
-            raise ProviderError("missing_provider_api_key")
+            raise ProviderConfigurationError("missing_provider_api_key")
 
     @property
     def model_id(self) -> str:

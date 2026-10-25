@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "citerag"
-version = "0.1.0"
-description = "Page-preserving PDF ingestion for a cited RAG application"
+version = "0.2.0"
+description = "Page-preserving PDF ingestion and hybrid retrieval for a cited RAG application"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "alembic>=1.16,<2",

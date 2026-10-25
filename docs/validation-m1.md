@@ -53,3 +53,15 @@ compatibility. Those require the later milestones and user-authored golden data.
 Review physical page numbering, exact chunk offsets, duplicate/profile behavior,
 the proposed two-document corpus, and explicit provider/budget configuration.
 M2 retrieval, M3 answers/UI, and M4 evaluation have not been implemented.
+
+## M1 setup completion, 2026-10-25
+
+M1 setup was completed and PR #1 integrated into `main`. The
+[startup verification run](https://github.com/garvj65/cite-rag/actions/runs/40162467338)
+passed the existing 83 tests and also built and started the actual Compose stack,
+waited for database health and migrations, checked API health, ingested a generated
+one-page PDF with fake embeddings, and verified a duplicate ingestion was skipped.
+No authenticated provider call was required. This adds runtime startup evidence
+to the original build/configuration checks above.
+
+M2 is covered separately in [its validation record](validation-m2.md).

@@ -1,7 +1,15 @@
 """Small relational schema; completed document writes are transactionally visible."""
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import CheckConstraint, ForeignKey, ForeignKeyConstraint, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    Computed,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Index,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.settings import EMBEDDING_DIMENSIONS
@@ -49,6 +57,9 @@ class Chunk(Base):
     end_char: Mapped[int]
     text: Mapped[str]
     embedding: Mapped[list[float]] = mapped_column(Vector(EMBEDDING_DIMENSIONS))
+    search_vector: Mapped[str] = mapped_column(
+        TSVECTOR, Computed("to_tsvector('english'::regconfig, text)", persisted=True)
+    )
     __table_args__ = (
         ForeignKeyConstraint(
             ["doc_id", "page_number"], ["pages.doc_id", "pages.page_number"], ondelete="CASCADE"
@@ -58,4 +69,5 @@ class Chunk(Base):
         ),
         CheckConstraint("chunk_index >= 0", name="nonnegative_chunk_index"),
         CheckConstraint("start_char >= 0 AND end_char > start_char", name="valid_chunk_offsets"),
+        Index("ix_chunks_search_vector", "search_vector", postgresql_using="gin"),
     )
