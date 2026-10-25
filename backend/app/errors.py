@@ -13,6 +13,10 @@ class ProviderTimeoutError(ProviderError):
     """Represent an exhausted provider timeout."""
 
 
+class RequestDeadlineError(ProviderTimeoutError):
+    """Represent the API response deadline, independently of provider retry settings."""
+
+
 class ProviderConfigurationError(ProviderError):
     """Represent a disabled or unconfigured provider without disclosing secrets."""
 

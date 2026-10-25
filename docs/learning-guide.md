@@ -273,3 +273,24 @@ error, so it cannot earn credit for correctly refusing an unanswerable question.
 Passing these tests establishes metric arithmetic and software behavior. It does
 not establish that Gemini finds or understands the right passage. Your golden
 data and an explicit real-provider run supply that next piece of evidence.
+
+
+## 12. Release: understand the controls without installing anything
+
+Open [the screenshot](screenshots/citerag.png), then read
+[App.tsx](../frontend/src/App.tsx) and [the public configuration endpoint](../backend/app/api/config.py).
+The three strategy buttons choose an existing search algorithm; the passage
+control chooses how many chunks retrieval returns. More chunks can add useful
+context and irrelevant material. Neither control guarantees a better answer.
+
+A browser-only exercise: predict what the UI does if the server changes its
+query limit from 2,000 to 173. Read the component test with a nondefault bound,
+then the deployed browser test. The UI loads the new bound instead of keeping
+an old constant. If settings cannot load, it explains the error and waits for
+a retry. This is a small example of keeping one source of truth.
+
+For your first real RAG experiment, write a few questions/pages using
+[the corpus reference](corpus-reference.md), then follow
+[the browser evaluation handoff](evaluation-handoff.md). Inspect one retrieved
+page and its exact quote before looking at the aggregate score. Ask whether the
+quote actually supports the answer, as well as whether it exists in the source.

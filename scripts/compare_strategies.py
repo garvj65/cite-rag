@@ -60,6 +60,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--overlap", type=int)
     parser.add_argument("--k", type=int, default=EvaluationOptions().k)
     parser.add_argument("--seed", type=int, default=EvaluationOptions().seed)
+    parser.add_argument(
+        "--delay-seconds",
+        type=float,
+        default=0,
+        help="Pause between questions; excluded from latency",
+    )
     parser.add_argument("--golden", type=Path, default=Path("eval/golden.jsonl"))
     parser.add_argument("--output", type=Path, default=Path("eval/results"))
     parser.add_argument(
@@ -94,7 +100,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             for size in dict.fromkeys(args.chunk_sizes)
         ]
         options = [
-            EvaluationOptions(strategy=strategy, k=args.k, seed=args.seed)
+            EvaluationOptions(
+                strategy=strategy,
+                k=args.k,
+                seed=args.seed,
+                question_delay_seconds=args.delay_seconds,
+            )
             for strategy in dict.fromkeys(args.strategies)
         ]
         if args.k > base.search_max_k or not configurations:

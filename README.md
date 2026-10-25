@@ -1,10 +1,10 @@
 # CiteRAG
 
-A staged RAG application for answers with verifiable document, page, and quote
-citations. **M1–M3 are implemented:** PDF ingestion, three retrieval strategies,
-evidence-gated answers, programmatically verified quote citations, and a React
-interface. M4 provides the evaluation harness; the user-authored golden dataset
-and an authenticated quality benchmark are still pending.
+A RAG research workspace for answers with verifiable document, page, and quote
+citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
+verified quotes, a responsive React interface, and the M4 evaluation harness are
+implemented. **The user-authored golden dataset and real quality benchmark remain
+pending**; no semantic-quality numbers are fabricated.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
@@ -12,9 +12,10 @@ and an authenticated quality benchmark are still pending.
 · [M4 validation](docs/validation-m4.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
-[Free-tier deployment runbook](docs/deployment.md)
+[Free-tier deployment runbook](docs/deployment.md) ·
+[Browser evaluation handoff](docs/evaluation-handoff.md) · [Corpus reference](docs/corpus-reference.md)
 
-![CiteRAG question interface](docs/screenshots/citerag.png)
+![CiteRAG research workspace](docs/screenshots/citerag.png)
 
 ## Start locally
 
@@ -172,7 +173,7 @@ credentials are disabled after a corpus has already been indexed.
 | 422 | Invalid fields, empty/oversized query, unsupported strategy, or k outside configured limits |
 | 502 | A model provider failed, returned invalid vectors, or returned malformed/truncated answer JSON |
 | 503 | Database unavailable or a required model provider unconfigured |
-| 504 | A model provider exhausted its timeout retries |
+| 504 | Provider timeout or API response deadline exceeded |
 
 Errors use `{"error":{"code":"...","message":"..."}}` without raw provider
 bodies, rejected payloads, credentials, SQL, or stack traces. Vector/hybrid
@@ -182,8 +183,11 @@ requests do not silently fall back to keyword search on provider failure.
 
 Open <http://localhost:8080> to ask a question, read an answer, and expand citation
 cards containing the document, physical PDF page, and exact verified quote.
+Choose Hybrid, Vector, or Keyword retrieval and the number of passages to return.
+The dark research workspace adapts to mobile screens, with keyboard focus states
+and reduced-motion support. It displays actual returned source counts only.
 Loading, API failure, and evidence-refusal states are separate. Editing the
-question clears the previous answer. Quotes/answers render as text, and source
+question or retrieval options clears the previous answer. Quotes/answers render as text, and source
 links allow only HTTP(S). Provider credentials stay on the server.
 
 The UI calls `POST /ask` through the same-origin `/api` proxy. Direct API requests
@@ -239,8 +243,17 @@ Settings are typed in `backend/app/settings.py`; `.env.example` documents them.
 | `SEARCH_K` | 5 | Default result count |
 | `SEARCH_MAX_K` | 50 | Maximum request result count |
 | `MAX_QUERY_CHARACTERS` | 2000 | Maximum normalized query length |
+| `REQUEST_DEADLINE_SECONDS` | 90 | Maximum API service response wait |
+| `PROXY_TIMEOUT_SECONDS` | 100 | Rendered nginx timeout; at least API deadline + 5 |
 | `HYBRID_CANDIDATE_K` | 20 | Candidate depth per source, increased to k when necessary |
 | `RRF_CONSTANT` | 60 | Denominator offset for one-based fusion ranks |
+
+`GET /config` exposes only public query/retrieval limits and defaults. The UI
+loads them before enabling submission, including nondefault Unicode query bounds.
+The API enforces its own limits. Deadline/proxy settings fail validation when
+incompatible; recreate the frontend after proxy changes. In-flight synchronous
+work may finish after a timed-out response; its worker retains cleanup ownership.
+See the [configuration review](docs/configuration-review.md) for exact boundaries.
 
 Provider timeouts, bounded exponential-backoff retries, and PDF size/page limits
 are configurable too. Permanent provider errors and invalid responses fail
@@ -320,6 +333,10 @@ that evidence for the answer, and saves Markdown/JSON/JSONL results. It includes
 seeded strategy/chunk-size comparisons and hand-computed metric tests. Read
 [the evaluation guide](eval/README.md) for field definitions and exact denominators.
 
+Use [the browser-only handoff](docs/evaluation-handoff.md) to run this through
+GitHub Actions without a local build. The explicit manual workflow uses the
+`GEMINI_API_KEY` repository secret; normal CI never calls model providers.
+
 `eval/golden.jsonl` is intentionally empty. Populate it with your own questions,
 answerability labels, and gold document/pages before running:
 
@@ -362,6 +379,7 @@ retrieval or answer-quality measurements.
   remain deduplicated. In-flight embeddings are not cached.
 - The Compose password is a labeled development example. A [free-tier VM runbook](docs/deployment.md)
   supports a private demo; no live or public production deployment is claimed.
-- The UI query limit and proxy timeout need coordinated changes when settings
-  are overridden. They are [non-blocking with current defaults](docs/configuration-review.md).
-  A more expressive UI/UX redesign is deferred at the user's request.
+- Shared UI limits, API response deadlines, and the requested UI redesign are
+  implemented. A deadline does not cancel already-running remote work.
+- M5 conversation memory/tool calling remains conditional on a completed real M4
+  benchmark and is outside this release. No public deployment is claimed.

@@ -92,11 +92,14 @@ jobs:
           config = Path(".env")
           text = config.read_text().replace("EMBEDDING_PROVIDER=gemini", "EMBEDDING_PROVIDER=fake")
           text = text.replace("LLM_PROVIDER=gemini", "LLM_PROVIDER=fake")
+          text += "\nMAX_QUERY_CHARACTERS=173\nSEARCH_STRATEGY=keyword\nSEARCH_K=3\nREQUEST_DEADLINE_SECONDS=5\nPROXY_TIMEOUT_SECONDS=12\n"
           config.write_text(text + "\nFAKE_LLM_RESPONSE='" + json.dumps(scripted) + "'\n")
           PY
           docker compose up --build --wait frontend
           docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-first.json
           docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-second.json
+          docker compose exec -T frontend nginx -t
+          docker compose exec -T frontend grep -q "proxy_read_timeout 12s;" /etc/nginx/conf.d/default.conf
           uv run python - <<'PY'
           import json
           from pathlib import Path
@@ -109,6 +112,9 @@ jobs:
               response = client.get("http://127.0.0.1:8000/health")
               response.raise_for_status()
               assert response.json() == {"status": "ok"}
+              config = client.get("http://127.0.0.1:8080/api/config")
+              config.raise_for_status()
+              assert config.json() == {"max_query_characters": 173, "search_strategy": "keyword", "search_k": 3, "search_max_k": 50}
               for strategy in ("vector", "keyword", "hybrid"):
                   response = client.post("http://127.0.0.1:8000/search", json={
                       "query": "smoke fixture", "strategy": strategy, "k": 1,
@@ -156,6 +162,8 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: frontend
       - name: Browser answer refusal and mobile error checks
+        env:
+          E2E_LIVE_CONFIG: "1"
         run: npm run test:e2e
         working-directory: frontend
       - name: Stop Compose

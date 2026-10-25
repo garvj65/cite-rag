@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from unittest.mock import Mock
 
 import pytest
@@ -20,7 +21,7 @@ def test_answer_errors_are_not_document_refusals(settings, error, status, code):
     service = Mock(spec=AnswerService)
     service.ask.side_effect = error
     app = create_app(settings)
-    app.dependency_overrides[get_answer_service] = lambda: service
+    app.dependency_overrides[get_answer_service] = lambda: lambda: nullcontext(service)
     with TestClient(app) as client:
         response = client.post("/ask", json={"query": "question"})
     assert response.status_code == status and response.json()["error"]["code"] == code

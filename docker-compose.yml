@@ -45,6 +45,8 @@ services:
       migrate:
         condition: service_completed_successfully
   frontend:
+    environment:
+      PROXY_TIMEOUT_SECONDS: ${PROXY_TIMEOUT_SECONDS:-100}
     build:
       context: .
       dockerfile: frontend/Dockerfile

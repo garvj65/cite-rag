@@ -67,9 +67,12 @@ Vector and hybrid requests fail explicitly on provider errors; there is no hidde
 switch to keyword retrieval or another model. Fake mode must be explicitly
 selected through `EMBEDDING_PROVIDER=fake` (or `--fake` for the ingestion CLI).
 
-Database engines belong to the application lifespan. HTTP embedding clients are
-created lazily and closed after each request. Synchronous search handlers run
-through FastAPI's thread-pool handling. Errors do not include request bodies,
+Database engines belong to the application lifespan. HTTP provider clients are
+created lazily in worker-owned context managers. Async API handlers run the
+synchronous service operation in a worker with an API response deadline. The
+worker retains its clients until its operation finishes, including after a
+timed-out caller receives 504. Remaining provider timeouts/backoff respect the
+API budget; CLI/evaluation calls keep their configured retry budgets. Errors do not include request bodies,
 provider responses, credentials, or SQL statements.
 
 ## Evidence-gated answers in M3
@@ -100,7 +103,10 @@ Quote verification proves provenance, not semantic entailment of every claim.
 Prompt isolation and scripted attack fixtures do not prove real-model immunity
 to prompt injection. Real faithfulness/adversarial evaluation remains M4 work.
 
-The React interface sends same-origin `/api/ask` requests. nginx proxies them to
+The React research workspace loads backend-owned limits/defaults from
+`/api/config`, then sends the chosen strategy/k with same-origin `/api/ask` requests.
+Configuration failure blocks submission; editing inputs clears stale results.
+The API owns query validation. The UI counts Unicode code points to match it. nginx proxies them to
 FastAPI and refreshes Docker DNS after backend recreation. Model credentials
 stay on the server. The UI checks the response contract, renders text without
 HTML interpretation, validates source-link protocols, and distinguishes evidence
@@ -124,7 +130,8 @@ Recall deduplicates gold pages among the first k chunks; MRR uses the first
 matching chunk rank. Citation validity uses raw proposed/valid counts before
 refusal filtering/deduplication. Failures remain rows, contribute zero where
 appropriate, and cannot become correct refusals. Undefined denominators are N/A.
-Latency includes retries, validation, and failed attempts. No LLM judge is used.
+Latency includes retries, validation, and failed attempts, excluding optional
+intentional pauses between questions. No LLM judge is used.
 
 Reports save safe settings, corpus IDs, gold-file digest, index profile, seed,
 revision/dirty state, and raw per-question records. Credentials/database URLs are
@@ -132,4 +139,6 @@ excluded. The comparison script checks the same document IDs across chunk profil
 and uses explicit opt-in for ingestion. Experiments require a quiescent database.
 
 The harness is implemented; real semantic evaluation remains pending user-authored
-gold data and configured providers. A future UI redesign is outside M4 scope.
+gold data and configured providers. A manually dispatched GitHub workflow supports
+the real run using an Actions secret and disposable database; normal CI uses fakes.
+See the [browser evaluation handoff](evaluation-handoff.md).

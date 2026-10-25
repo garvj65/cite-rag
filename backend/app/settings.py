@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # All supported providers request this dimension so one migration serves both.
 EMBEDDING_DIMENSIONS = 1536
+PROXY_RESPONSE_MARGIN_SECONDS = 5
 RetrievalStrategy = Literal["vector", "keyword", "hybrid"]
 
 
@@ -46,6 +47,8 @@ class Settings(BaseSettings):
     provider_max_attempts: int = Field(default=3, ge=1, le=5)
     provider_backoff_seconds: float = Field(default=1, ge=0, le=30)
     provider_max_backoff_seconds: float = Field(default=8, ge=0, le=60)
+    request_deadline_seconds: float = Field(default=90, gt=0, le=1800)
+    proxy_timeout_seconds: int = Field(default=100, ge=1, le=3600)
     max_pdf_bytes: int = Field(default=20 * 1024 * 1024, ge=1)
     max_pdf_pages: int = Field(default=500, ge=1)
     search_strategy: RetrievalStrategy = "hybrid"
@@ -62,4 +65,9 @@ class Settings(BaseSettings):
             raise ValueError("chunk_overlap_words must be smaller than chunk_size_words")
         if self.search_k > self.search_max_k:
             raise ValueError("search_k must not exceed search_max_k")
+        if (
+            self.request_deadline_seconds + PROXY_RESPONSE_MARGIN_SECONDS
+            > self.proxy_timeout_seconds
+        ):
+            raise ValueError("proxy timeout must exceed the API deadline by at least five seconds")
         return self

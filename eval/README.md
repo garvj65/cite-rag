@@ -5,6 +5,10 @@ The harness is implemented. **The user writes the golden questions and answers.*
 quality scores have been invented. Empty data fails validation. Test/CI questions
 are separate synthetic fixtures, never starter NIST golden questions.
 
+For a browser-only run, follow [the evaluation handoff](../docs/evaluation-handoff.md).
+The [corpus reference](../docs/corpus-reference.md) gives verified document hashes
+and physical page counts without requiring local ingestion.
+
 ## Author the golden file
 
 Write one JSON object per line in `eval/golden.jsonl`. Aim for the planned
@@ -44,7 +48,10 @@ uv run python -m eval.run --strategy hybrid --k 5 --seed 42
 ```
 
 `python -m eval.run ...` also works in an activated project environment.
-`--golden PATH` and `--output DIRECTORY` override the paths. Compose supports:
+`--golden PATH` and `--output DIRECTORY` override the paths.
+`--delay-seconds 15` optionally pauses between questions to pace calls. The
+default is zero; intentional waiting is excluded from measured latency. Pacing
+does not guarantee provider quota availability or change the seed's limitations. Compose supports:
 
 ```bash
 docker compose exec backend python -m eval.run --strategy hybrid --k 5
@@ -108,7 +115,7 @@ idempotent. Overlap must be smaller than every chunk size and is never changed
 silently. Bounds are checked before ingestion; document IDs must match across
 profiles before evaluation.
 
-`--strategies vector keyword hybrid`, `--seed`, `--golden`, `--output`, and explicit
+`--strategies vector keyword hybrid`, `--seed`, `--delay-seconds`, `--golden`, `--output`, and explicit
 `--fake` are available. Every run uses the same golden digest, overlap, k, and
 seeded order. Individual records and a combined Markdown table are saved together.
 Latency comparisons remain sensitive to caching/network effects; this is a small

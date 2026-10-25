@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "citerag"
-version = "0.4.0"
+version = "0.4.1"
 description = "Evidence-gated RAG answers with verified document page and quote citations"
 requires-python = ">=3.12,<3.13"
 dependencies = [
