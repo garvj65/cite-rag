@@ -1,0 +1,9 @@
+# Proposed starter corpus: AI risk management, two related NIST publications.
+# Physical PDF pages: 48 + 64 = 112. PDFs are downloaded locally, never committed.
+documents:
+  - title: NIST AI Risk Management Framework 1.0
+    url: https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf
+    source: National Institute of Standards and Technology (NIST AI 100-1, January 2023)
+  - title: NIST Generative AI Risk Management Profile
+    url: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf
+    source: National Institute of Standards and Technology (NIST AI 600-1, July 2024)

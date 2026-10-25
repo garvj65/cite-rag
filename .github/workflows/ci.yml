@@ -1,0 +1,73 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.1-pg16
+        env:
+          POSTGRES_USER: citerag
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: citerag_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U citerag -d citerag_test"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://citerag:ci-only-password@127.0.0.1:55432/citerag_test
+      ENABLE_REAL_PROVIDERS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.4"
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest
+      - name: Build backend Docker image
+        run: docker build -f backend/Dockerfile -t citerag-backend:ci .
+      - name: Validate Compose configuration
+        run: cp .env.example .env && docker compose config --quiet
+      - name: Start Compose and smoke-test ingestion
+        run: |
+          uv run python - <<'PY'
+          from reportlab.pdfgen.canvas import Canvas
+          canvas = Canvas("corpus/ci-smoke.pdf", invariant=True)
+          canvas.drawString(60, 700, "CiteRAG smoke fixture validates reproducible PDF ingestion.")
+          canvas.showPage()
+          canvas.save()
+          PY
+          docker compose up --build --wait backend
+          docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-first.json
+          docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-second.json
+          uv run python - <<'PY'
+          import json
+          from pathlib import Path
+          import httpx
+          first = json.loads(Path("/tmp/citerag-first.json").read_text())
+          second = json.loads(Path("/tmp/citerag-second.json").read_text())
+          assert (first["docs"], first["pages"], first["chunks"]) == (1, 1, 1)
+          assert second["docs"] == 0 and second["skipped"] == 1
+          with httpx.Client(trust_env=False) as client:
+              response = client.get("http://127.0.0.1:8000/health")
+              response.raise_for_status()
+              assert response.json() == {"status": "ok"}
+          print("Compose startup, migrations, health, ingestion, and duplicate smoke checks passed.")
+          PY
+      - name: Stop Compose
+        if: always()
+        run: |
+          if [ -f .env ]; then
+            docker compose down --volumes
+          fi
