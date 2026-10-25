@@ -1,4 +1,3 @@
-import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -12,41 +11,11 @@ from app.ingestion.extract import ExtractedPage
 from app.ingestion.manifest import CorpusDocument
 from app.ingestion.service import IngestionService
 from app.providers.fakes import HashEmbeddingProvider
-from sqlalchemy import create_engine, func, inspect, select, text
-from sqlalchemy.engine import make_url
+from sqlalchemy import func, inspect, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 pytestmark = pytest.mark.integration
-
-
-@pytest.fixture(scope="module")
-def engine():
-    url = os.getenv("TEST_DATABASE_URL")
-    if not url:
-        pytest.skip("TEST_DATABASE_URL is required for PostgreSQL integration tests")
-    parsed = make_url(url)
-    if parsed.host not in ("127.0.0.1", "localhost", "::1") or not (
-        parsed.database and parsed.database.endswith("_test")
-    ):
-        pytest.fail("TEST_DATABASE_URL must name a local disposable database ending in _test")
-    previous = os.environ.get("DATABASE_URL")
-    os.environ["DATABASE_URL"] = url
-    config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
-    command.upgrade(config, "head")
-    db = create_engine(url)
-    yield db
-    db.dispose()
-    if previous is None:
-        os.environ.pop("DATABASE_URL", None)
-    else:
-        os.environ["DATABASE_URL"] = previous
-
-
-@pytest.fixture(autouse=True)
-def clean_database(engine):
-    with engine.begin() as connection:
-        connection.execute(text("TRUNCATE chunks, pages, documents RESTART IDENTITY CASCADE"))
 
 
 def test_real_pgvector_ingestion_idempotency_and_profile_isolation(engine, settings, pdf_path):

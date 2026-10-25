@@ -8,7 +8,6 @@ from contextlib import ExitStack
 from dataclasses import asdict
 from pathlib import Path
 
-import httpx
 import yaml
 from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,9 +16,7 @@ from app.db.repository import PostgresIngestionRepository, create_db_engine
 from app.errors import ProviderError
 from app.ingestion.manifest import load_manifest
 from app.ingestion.service import IngestionResult, IngestionService
-from app.providers.fakes import HashEmbeddingProvider
-from app.providers.http import HTTPEmbeddingProvider
-from app.providers.interfaces import EmbeddingProvider
+from app.providers.factory import create_embedding_provider
 from app.settings import Settings
 
 
@@ -64,14 +61,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     engine = create_db_engine(settings)
     try:
         with ExitStack() as stack:
-            provider: EmbeddingProvider
-            if args.fake:
-                provider = HashEmbeddingProvider()
-            else:
-                if not settings.enable_real_providers:
-                    raise ProviderError("real_providers_disabled")
-                client = stack.enter_context(httpx.Client())
-                provider = HTTPEmbeddingProvider(settings, client)
+            provider_settings = (
+                settings.model_copy(update={"embedding_provider": "fake"})
+                if args.fake
+                else settings
+            )
+            provider = create_embedding_provider(provider_settings, stack)
             service = IngestionService(settings, provider, PostgresIngestionRepository(engine))
             print(f"Index profile: {service.profile}", file=sys.stderr)
             for index, path in enumerate(files, start=1):

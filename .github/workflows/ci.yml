@@ -39,10 +39,13 @@ jobs:
         run: docker build -f backend/Dockerfile -t citerag-backend:ci .
       - name: Validate Compose configuration
         run: cp .env.example .env && docker compose config --quiet
-      - name: Start Compose and smoke-test ingestion
+      - name: Start Compose and smoke-test ingestion and retrieval
         run: |
           uv run python - <<'PY'
           from reportlab.pdfgen.canvas import Canvas
+          from pathlib import Path
+          config = Path(".env")
+          config.write_text(config.read_text().replace("EMBEDDING_PROVIDER=gemini", "EMBEDDING_PROVIDER=fake"))
           canvas = Canvas("corpus/ci-smoke.pdf", invariant=True)
           canvas.drawString(60, 700, "CiteRAG smoke fixture validates reproducible PDF ingestion.")
           canvas.showPage()
@@ -63,7 +66,17 @@ jobs:
               response = client.get("http://127.0.0.1:8000/health")
               response.raise_for_status()
               assert response.json() == {"status": "ok"}
-          print("Compose startup, migrations, health, ingestion, and duplicate smoke checks passed.")
+              for strategy in ("vector", "keyword", "hybrid"):
+                  response = client.post("http://127.0.0.1:8000/search", json={
+                      "query": "smoke fixture", "strategy": strategy, "k": 1,
+                  })
+                  response.raise_for_status()
+                  result = response.json()
+                  assert result["strategy"] == strategy and len(result["results"]) == 1
+                  hit = result["results"][0]
+                  assert hit["page"] == 1 and hit["doc_id"] == first["files"][0]["doc_id"]
+                  assert "smoke fixture" in hit["text"]
+          print("Compose startup, migrations, health, ingestion, duplicates, and all search strategies passed.")
           PY
       - name: Stop Compose
         if: always()

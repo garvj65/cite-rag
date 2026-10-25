@@ -13,6 +13,7 @@ from app.errors import IngestionError, ProviderError
 from app.ingestion.chunk import chunk_pages
 from app.ingestion.extract import extract_pages
 from app.ingestion.manifest import CorpusDocument
+from app.providers.factory import configured_model_id
 from app.providers.interfaces import EmbeddingProvider
 from app.settings import EMBEDDING_DIMENSIONS, Settings
 
@@ -30,14 +31,14 @@ class IngestionResult:
     empty_pages: int = 0
 
 
-def indexing_profile(settings: Settings, provider: EmbeddingProvider) -> str:
+def indexing_profile(settings: Settings, provider: EmbeddingProvider | None = None) -> str:
     """Fingerprint all current extraction, chunking, and embedding semantics."""
     config = {
         "pipeline": "pypdf-whitespace-page-words-v1",
         "chunk_size_words": settings.chunk_size_words,
         "chunk_overlap_words": settings.chunk_overlap_words,
-        "model": provider.model_id,
-        "dimensions": provider.dimensions,
+        "model": provider.model_id if provider else configured_model_id(settings),
+        "dimensions": provider.dimensions if provider else EMBEDDING_DIMENSIONS,
     }
     return hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest()
 

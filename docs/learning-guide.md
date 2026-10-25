@@ -4,8 +4,9 @@ Start here if RAG is new to you. Your current laptop does not need to run the
 whole application for you to follow the data, read the code, and predict what
 the tests should do. Browser-hosted compute is an option for later hands-on work.
 
-Current state: **M1 ingestion is implemented in the `milestone/m1-ingestion`
-branch and PR #1. Retrieval, answers, the frontend, and evaluation are planned.**
+Current state: **M1 ingestion is integrated, and M2 implements `/search` with
+vector, keyword, and hybrid retrieval. Answers, the frontend, and evaluation
+are planned for M3–M4.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -93,7 +94,7 @@ authenticated provider calls or model-quality evaluation have been performed.
 | Milestone | Plain-language goal | Main concept |
 |---|---|---|
 | M1, implemented | Prepare a searchable collection with preserved sources | Ingestion and provenance |
-| M2, next | Return relevant passages for a question | Keyword search, vector similarity, hybrid ranking |
+| M2, implemented | Return relevant passages for a question | Keyword search, vector similarity, hybrid ranking |
 | M3 | Write an answer and verify its quoted sources | Structured output, citation validation, refusal |
 | M4 | Measure whether the application behaves well | Golden data, retrieval metrics, refusal tests, latency |
 
@@ -164,13 +165,13 @@ Keep the page number unchanged. This small prediction is useful even without a t
 ## 7. Use your browser while local setup is unavailable
 
 For reading and editing, open the
-[milestone branch](https://github.com/garvj65/cite-rag/tree/milestone/m1-ingestion)
+[repository](https://github.com/garvj65/cite-rag)
 and press the `.` key. GitHub opens a free browser editor with file navigation.
 That editor has no terminal or execution environment.
 
 For running code remotely, **GitHub Codespaces** provides a cloud machine with a
-browser editor and terminal. Start from the milestone branch, which currently
-contains the implementation. A default Codespace may need runtime/dependency
+browser editor and terminal. Use the implementation branch while a PR is under
+review, or `main` after integration. A default Codespace may need runtime/dependency
 setup; this repository does not yet contain a tested Codespaces configuration.
 
 Personal accounts have limited included monthly compute and storage. Check your
@@ -203,3 +204,32 @@ For each build milestone we will use the same teaching pattern: explain the
 problem, trace a small example, read the relevant implementation, inspect a test,
 and try one small prediction or change. We will introduce new tools when the
 milestone needs them.
+
+## 9. M2: understand retrieval after the build
+
+Start with the working request in the README, then trace these files:
+
+1. [search.py](../backend/app/api/search.py) receives and validates HTTP input.
+2. [service.py](../backend/app/retrieval/service.py) applies configured limits
+   and chooses a strategy.
+3. [strategies.py](../backend/app/retrieval/strategies.py) implements vector,
+   keyword, and hybrid search behind the same interface.
+4. [repository.py](../backend/app/retrieval/repository.py) asks PostgreSQL for
+   ranked chunks, filtering by the index profile.
+5. [test_retrieval.py](../backend/tests/unit/test_retrieval.py) checks the RRF
+   arithmetic with hand-computed examples. Integration tests exercise the real
+   PostgreSQL queries with deterministic fake embeddings.
+
+RRF rewards a passage that appears near the top of both lists. For example, with
+constant 60, a passage ranked second in vector search and first in keyword search
+scores `1/62 + 1/61`. A passage appearing only first in vector search scores
+`1/61`. The raw keyword and vector scores do not need a common numeric scale.
+
+A small reading exercise: find the test for keyword search's provider-call count.
+Explain why the expected count is zero. Then read the empty-profile test and
+explain why vector search also makes zero provider calls in that case.
+
+For M2-specific resources, read PostgreSQL's
+[text-search explanation](https://www.postgresql.org/docs/16/textsearch-controls.html)
+and pgvector's [querying and distance examples](https://github.com/pgvector/pgvector#querying).
+The priority remains finishing each working milestone; these readings can follow it.

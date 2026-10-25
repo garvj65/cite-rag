@@ -11,3 +11,11 @@ class ProviderError(Exception):
 
 class ProviderTimeoutError(ProviderError):
     """Represent an exhausted provider timeout."""
+
+
+class ProviderConfigurationError(ProviderError):
+    """Represent a disabled or unconfigured provider without disclosing secrets."""
+
+
+class SearchInputError(ValueError):
+    """Represent a query or result limit outside the configured search bounds."""
