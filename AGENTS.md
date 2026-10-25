@@ -1,6 +1,7 @@
 # CiteRAG engineering rules
 
 - Priorities: correctness, tests, clarity, then features. M1–M4 implementation is integrated. On 2026-10-25 the user asked to finish the remaining project: implement the previously requested UI/UX redesign, fix shared query limits and request/proxy deadlines, and finish delivery/evaluation handoff. M5 remains conditional on completed real M4 evaluation and is outside this release scope.
+- Release implementation `5b6bb78` passed full CI: 294 backend/evaluation tests including 24 PostgreSQL tests, 99.74% app coverage, 38 frontend tests, and 5 browser tests. See `docs/validation-release.md`. PR #5 remains subject to the existing merge-approval rule.
 - The user authors golden questions and answers; never invent them. A clarification offered changing authorship but received no answer, so retain that requirement. No Gemini key is configured in this workspace; never fabricate a real benchmark or ask for keys in chat. Prepare an explicit browser-run evaluation workflow using a repository secret and user-authored golden data.
 - Redesign the UI as a polished research workspace while preserving supported/refused/error states and exact citation verification. Expose existing strategy and top-k controls; do not add conversation memory, uploads, invented corpus counts, or simulated answer content.
 - After each milestone, run lint, type-checking, and all tests; fix failures; summarize changes and what the user should review. Run frontend checks once frontend code exists.

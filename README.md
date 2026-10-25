@@ -10,6 +10,7 @@ pending**; no semantic-quality numbers are fabricated.
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
 [M3 validation](docs/validation-m3.md)
 · [M4 validation](docs/validation-m4.md)
+· [Release validation](docs/validation-release.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
 [Free-tier deployment runbook](docs/deployment.md) ·
@@ -325,6 +326,13 @@ tests, lint/type checks, Docker builds, full Compose smoke checks, a six-run
 chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
 See [the M4 validation record](docs/validation-m4.md). These are software checks;
 the real user-golden semantic benchmark is still pending.
+
+Release verification: **294 backend/evaluation tests**, including **24 PostgreSQL
+integration tests**, **99.74% backend app coverage**, **38 frontend tests**, and
+**5 browser tests** passed. Full CI also verifies nondefault client limits and
+rendered nginx timeouts through the actual Compose stack. See
+[the release validation record](docs/validation-release.md) for immutable revision,
+CI links, coverage denominators, secret-scan scope, and remaining requirements.
 
 ## Evaluation status
 
