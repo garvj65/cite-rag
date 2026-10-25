@@ -34,7 +34,16 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy
-      - run: uv run pytest
+      - name: Validate golden schema when user data exists
+        run: |
+          if [ -s eval/golden.jsonl ]; then
+            uv run python -m eval.validate
+          else
+            echo "User golden data is empty; real quality evaluation remains pending."
+          fi
+      - run: uv run pytest --cov=eval
+      - run: uv run coverage report --include='backend/app/*' --fail-under=85 --precision=2
+      - run: uv run coverage report --include='eval/*' --fail-under=85 --precision=2
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -66,6 +75,16 @@ jobs:
           canvas.showPage()
           canvas.save()
           doc_id = hashlib.sha256(Path("corpus/ci-smoke.pdf").read_bytes()).hexdigest()
+          # Disposable CI labels only; never populate the user's eval/golden.jsonl.
+          smoke_gold = [
+              {"id": "offline-positive", "question": "smoke fixture", "answerable": True,
+               "gold_pages": [{"doc_id": doc_id, "page": 1}]},
+              {"id": "offline-negative", "question": "unavailablewordinfixture", "answerable": False,
+               "gold_pages": []},
+          ]
+          Path("corpus/ci-smoke-golden.jsonl").write_text(
+              "".join(json.dumps(row) + "\n" for row in smoke_gold)
+          )
           scripted = {"answer": "The fixture validates reproducible PDF ingestion.",
                       "citations": [{"doc_id": doc_id, "page": 1,
                                      "quote": "validates reproducible PDF ingestion."}],
@@ -117,6 +136,21 @@ jobs:
               page.raise_for_status()
               assert "CiteRAG" in page.text and "content-security-policy" in page.headers
           print("Compose ingestion, search, verified answers, refusals, and frontend proxy passed.")
+          PY
+          docker compose exec -T backend python -m eval.validate --path corpus/ci-smoke-golden.jsonl --check-index
+          docker compose exec -T backend python -m eval.run --golden corpus/ci-smoke-golden.jsonl --strategy keyword --k 1
+          docker compose exec -T backend python - <<'PY'
+          from pathlib import Path
+          import json
+          path = next(Path("eval/results").glob("*.json"))
+          result = json.loads(path.read_text())
+          summary = result["summary"]
+          assert result["metadata"]["mechanics_only"] is True
+          assert summary["errors"] == 0 and summary["questions"] == 2
+          for metric in ("recall_at_k", "mrr", "citation_validity", "refusal_accuracy"):
+              assert summary[metric] == 1.0
+          assert path.with_suffix(".md").exists() and path.with_suffix(".jsonl").exists()
+          print("Packaged evaluation CLI, raw records, and Markdown reporting passed on CI fixtures.")
           PY
       - name: Install test browser
         run: npx playwright install --with-deps chromium

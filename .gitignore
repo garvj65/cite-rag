@@ -19,3 +19,6 @@ frontend/test-results/
 frontend/playwright-report/
 frontend/.vitest/
 eval/results/*.json
+eval/results/*.jsonl
+eval/results/.citerag-*
+backups/

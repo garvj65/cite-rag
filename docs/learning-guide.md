@@ -6,7 +6,7 @@ the tests should do. Browser-hosted compute is an option for later hands-on work
 
 Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
 evidence gates, verified quote citations, refusals, and the React interface.
-User-authored golden-data evaluation is planned for M4.**
+M4's evaluation harness is implemented; your golden data and real quality run are pending.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -96,7 +96,7 @@ authenticated provider calls or model-quality evaluation have been performed.
 | M1, implemented | Prepare a searchable collection with preserved sources | Ingestion and provenance |
 | M2, implemented | Return relevant passages for a question | Keyword search, vector similarity, hybrid ranking |
 | M3, implemented | Write an answer and verify its quoted sources | Structured output, citation validation, refusal |
-| M4 | Measure whether the application behaves well | Golden data, retrieval metrics, refusal tests, latency |
+| M4, harness implemented | Measure behavior once you supply golden labels | Retrieval metrics, citation provenance, refusal accuracy, latency |
 
 In M2, keyword search uses PostgreSQL's text-search processing. Vector search
 compares a question's embedding with stored passage embeddings. Hybrid search
@@ -251,3 +251,25 @@ and the UI must receive a consistent response before it displays answer text.
 For a small exercise, read `test_one_invalid_citation_suppresses_whole_answer`.
 Explain why the verified counter is 1 while the returned citation list is empty.
 This distinction will matter when M4 measures citation validity before filtering.
+
+## 11. M4: understand the measurements
+
+Start with [the evaluation guide](../eval/README.md), then read
+[the hand-computed metric tests](../backend/tests/unit/test_eval_metrics_schema.py)
+and [the evaluation engine](../eval/engine.py). Golden data is an answer key you
+write by reading the PDFs; the application does not write its own answer key.
+
+If a question has two gold pages and search finds one, recall is `1/2`. If the
+first gold page appears at chunk rank three, reciprocal rank is `1/3`. Averaging
+those per-question values gives recall@k and MRR@k. Multiple chunks from the same
+page do not make recall exceed 100%.
+
+For a browser-friendly exercise, read the test with one valid and one invented
+citation. Predict the returned answer state and the citation-validity metric.
+The answer is withheld, while the metric remains `1/2`, because both proposals
+count before filtering. Now inspect the provider-timeout test: an outage is an
+error, so it cannot earn credit for correctly refusing an unanswerable question.
+
+Passing these tests establishes metric arithmetic and software behavior. It does
+not establish that Gemini finds or understands the right passage. Your golden
+data and an explicit real-provider run supply that next piece of evidence.

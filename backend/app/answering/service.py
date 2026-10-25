@@ -10,6 +10,7 @@ from app.answering.models import AskResponse, CitationVerification, ModelAnswer,
 from app.answering.prompt import build_context, system_prompt
 from app.errors import ModelOutputError
 from app.providers.interfaces import LLMProvider
+from app.retrieval.models import SearchResponse
 from app.retrieval.service import SearchService
 from app.settings import RetrievalStrategy, Settings
 
@@ -66,6 +67,10 @@ class AnswerService:
         k: int | None = None,
     ) -> AskResponse:
         """Return no answer text unless model support and every citation pass validation."""
+        return self.answer_from_retrieval(query, self._search.search(query, strategy, k))
+
+    def answer_from_retrieval(self, query: str, retrieval: SearchResponse) -> AskResponse:
+        """Answer from an already measured retrieval without repeating provider calls."""
         response = AskResponse(
             answer=REFUSAL_MESSAGE,
             citations=[],
@@ -74,7 +79,6 @@ class AnswerService:
             mode="no_model",
             verification=CitationVerification(),
         )
-        retrieval = self._search.search(query, strategy, k)
         if not retrieval.results:
             return response
         thresholds = {
