@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.ask import router as ask_router
+from app.api.config import router as config_router
 from app.api.search import router
 from app.db.repository import create_db_engine
 from app.errors import (
@@ -17,6 +18,7 @@ from app.errors import (
     ProviderConfigurationError,
     ProviderError,
     ProviderTimeoutError,
+    RequestDeadlineError,
     SearchInputError,
 )
 from app.settings import Settings
@@ -43,7 +45,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             engine.dispose()
 
-    application = FastAPI(title="CiteRAG", version="0.4.0", lifespan=lifespan)
+    application = FastAPI(title="CiteRAG", version="0.4.1", lifespan=lifespan)
 
     @application.exception_handler(SearchInputError)
     def input_error(_request: Request, exc: SearchInputError) -> JSONResponse:
@@ -125,6 +127,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     application.include_router(router)
     application.include_router(ask_router)
+    application.include_router(config_router)
+
+    @application.exception_handler(RequestDeadlineError)
+    def deadline_error(_request: Request, _exc: RequestDeadlineError) -> JSONResponse:
+        """Keep the API deadline distinct from provider timeouts and document refusals."""
+        return JSONResponse(
+            status_code=504,
+            content={
+                "error": {
+                    "code": "request_timeout",
+                    "message": "The request exceeded its response deadline. Try again.",
+                }
+            },
+        )
 
     @application.exception_handler(ModelOutputError)
     def model_output_error(_request: Request, _exc: ModelOutputError) -> JSONResponse:

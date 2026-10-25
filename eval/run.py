@@ -21,6 +21,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--strategy", choices=("vector", "keyword", "hybrid"), default="hybrid")
     parser.add_argument("--k", type=int, default=EvaluationOptions().k)
     parser.add_argument("--seed", type=int, default=EvaluationOptions().seed)
+    parser.add_argument(
+        "--delay-seconds",
+        type=float,
+        default=0,
+        help="Pause between questions; excluded from latency",
+    )
     parser.add_argument("--golden", type=Path, default=Path("eval/golden.jsonl"))
     parser.add_argument("--output", type=Path, default=Path("eval/results"))
     parser.add_argument(
@@ -38,7 +44,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 }
             )
         questions, digest = load_golden(args.golden, settings.max_query_characters)
-        options = EvaluationOptions(strategy=args.strategy, k=args.k, seed=args.seed)
+        options = EvaluationOptions(
+            strategy=args.strategy,
+            k=args.k,
+            seed=args.seed,
+            question_delay_seconds=args.delay_seconds,
+        )
         result = run_evaluation(settings, questions, digest, options)
         path = write_report(result, args.output)
     except (GoldenDataError, ValidationError):

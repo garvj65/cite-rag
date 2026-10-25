@@ -6,7 +6,8 @@ from collections.abc import Callable, Mapping
 import httpx
 from pydantic import SecretStr
 
-from app.errors import ProviderError, ProviderTimeoutError
+from app.deadlines import remaining_timeout
+from app.errors import ProviderError, ProviderTimeoutError, RequestDeadlineError
 from app.settings import Settings
 
 
@@ -26,7 +27,7 @@ def post_provider_json(
                 url,
                 headers={"Authorization": f"Bearer {api_key.get_secret_value()}"},
                 json=dict(payload),
-                timeout=settings.provider_timeout_seconds,
+                timeout=remaining_timeout(settings.provider_timeout_seconds),
             )
         except httpx.TimeoutException:
             last_error = ProviderTimeoutError("provider_timeout")
@@ -39,10 +40,11 @@ def post_provider_json(
                 raise ProviderError("provider_request_rejected")
             last_error = ProviderError("provider_temporarily_unavailable")
         if attempt + 1 < settings.provider_max_attempts:
-            sleep(
-                min(
-                    settings.provider_backoff_seconds * 2**attempt,
-                    settings.provider_max_backoff_seconds,
-                )
+            delay = min(
+                settings.provider_backoff_seconds * 2**attempt,
+                settings.provider_max_backoff_seconds,
             )
+            if remaining_timeout(delay) < delay:
+                raise RequestDeadlineError("request_deadline_exceeded")
+            sleep(delay)
     raise last_error

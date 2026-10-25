@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from unittest.mock import Mock
 
 import pytest
@@ -32,7 +33,7 @@ def api(settings):
     factory = Mock(return_value=HashEmbeddingProvider())
     service = SearchService(config, repository, factory)
     app = create_app(config)
-    app.dependency_overrides[get_search_service] = lambda: service
+    app.dependency_overrides[get_search_service] = lambda: lambda: nullcontext(service)
     with TestClient(app) as client:
         yield client, repository, factory
 

@@ -70,5 +70,8 @@ if a free-tier host is reclaimed.
 The app has no authentication or application rate limiting. This runbook is a
 private demo through SSH. Public hosting with real provider credentials needs an
 explicit access/quota policy and HTTPS termination. No public production service
-has been deployed. Review [configuration coupling](configuration-review.md)
-before changing query limits or provider/proxy timeouts.
+has been deployed. The [configuration review](configuration-review.md) documents shared client limits
+and response deadlines. Recreate both frontend and backend after changing
+`PROXY_TIMEOUT_SECONDS`; settings require at least five seconds beyond
+`REQUEST_DEADLINE_SECONDS`. The deadline limits response waiting, not already
+in-flight remote work. A public deployment is outside this private-demo runbook.

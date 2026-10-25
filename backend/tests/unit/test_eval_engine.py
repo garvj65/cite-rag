@@ -153,6 +153,37 @@ def test_empty_question_set_cannot_produce_an_evaluation():
         evaluate_questions([], Mock(), Mock(), EvaluationOptions(), {})
 
 
+def test_pacing_occurs_between_questions_and_is_excluded_from_latency():
+    elapsed = 0.0
+    pauses = []
+
+    def clock():
+        nonlocal elapsed
+        elapsed += 0.001
+        return elapsed
+
+    def pause(seconds):
+        nonlocal elapsed
+        pauses.append(seconds)
+        elapsed += seconds
+
+    search, answers = Mock(), Mock()
+    search.search.return_value = retrieval(empty=True)
+    answers.answer_from_retrieval.return_value = None
+    result = evaluate_questions(
+        [question(), question(False)],
+        search,
+        answers,
+        EvaluationOptions(question_delay_seconds=15),
+        {},
+        clock,
+        pause,
+    )
+    assert pauses == [15]
+    assert [row.latency_ms for row in result.rows] == pytest.approx([2, 2])
+    assert [row.retrieval_latency_ms for row in result.rows] == pytest.approx([1, 1])
+
+
 def test_reports_label_mechanics_and_write_raw_records(settings, tmp_path):
     result, _, _ = evaluate(settings)
     path = write_report(result, tmp_path)

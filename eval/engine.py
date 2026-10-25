@@ -40,6 +40,7 @@ def evaluate_questions(
     options: EvaluationOptions,
     metadata: dict[str, object],
     clock: Callable[[], float] = time.perf_counter,
+    pause: Callable[[float], None] = time.sleep,
 ) -> EvaluationResult:
     """Use a seeded order, retain failures, and never mistake an outage for a refusal."""
     if not questions:
@@ -47,7 +48,9 @@ def evaluate_questions(
     ordered = list(questions)
     random.Random(options.seed).shuffle(ordered)
     rows: list[EvaluationRow] = []
-    for question in ordered:
+    for position, question in enumerate(ordered):
+        if position and options.question_delay_seconds:
+            pause(options.question_delay_seconds)
         started = clock()
         retrieved_at = started
         retrieval: SearchResponse | None = None

@@ -13,6 +13,7 @@ class EvaluationOptions(BaseModel):
     strategy: RetrievalStrategy = "hybrid"
     k: int = Field(default=5, ge=1)
     seed: int = 42
+    question_delay_seconds: float = Field(default=0, ge=0, le=300)
 
 
 class RetrievedPage(BaseModel):
