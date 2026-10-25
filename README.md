@@ -6,7 +6,8 @@ evidence-gated answers, programmatically verified quote citations, and a React
 interface. Golden-data evaluation remains M4 work.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
-[M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md)
+[M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
+[M3 validation](docs/validation-m3.md)
 
 ![CiteRAG question interface](docs/screenshots/citerag.png)
 
@@ -283,18 +284,21 @@ changes; never point them at useful data. Without that variable the database
 tests are explicitly skipped. CI always supplies the database service.
 
 CI enforces at least 85% backend application coverage and runs lint, formatting,
-strict application/script typing, tests against PostgreSQL, the Docker build,
-and Compose configuration validation. It also starts the actual stack, checks
-health, ingests an offline generated one-page PDF twice to test idempotency,
-and sends vector, keyword, and hybrid searches to the running HTTP API. These
-checks use explicit fake embeddings and make no authenticated model calls.
+strict application/script typing, and tests against PostgreSQL. Frontend checks
+include ESLint, strict TypeScript, Vitest/React Testing Library, a production
+build, and Playwright browser tests. CI builds both Docker images and starts the
+actual Compose stack: it ingests an offline PDF twice, exercises all three search
+strategies, and checks verified answers/refusals through the frontend API proxy.
+These checks use explicit fake providers and make no authenticated model calls.
 
-M2 verification: **143 tests passed, including all 15 PostgreSQL integration tests,
-with 99.74% backend application coverage**. Lint, formatting, strict mypy, the
-Docker build, and the complete Compose ingestion/search smoke check passed.
-See [the M2 validation record](docs/validation-m2.md) for the exact run and scope.
-M3 extends those checks with answer-generation contracts, adversarial fixtures,
-React component tests, browser tests, and frontend Docker/proxy checks.
+M3 verification: **207 backend tests passed, including all 19 PostgreSQL integration
+tests, with 99.71% backend application coverage**. All **22 frontend tests** and
+**3 browser tests** passed, along with lint, formatting, typing, production builds,
+and the complete Compose ingestion/search/answer smoke check.
+See [the M3 validation record](docs/validation-m3.md) for the exact commit, CI run,
+behaviors checked, and measurement boundaries. Frontend checks can also run with
+`npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` from
+`frontend/`; its README documents the browser-test setup.
 
 ## Evaluation status
 
