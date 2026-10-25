@@ -1,6 +1,6 @@
 # CiteRAG engineering rules
 
-- Priorities: correctness, tests, clarity, then features. The user approved finishing M1 setup and implementing M2 on 2026-10-25. Complete those milestones, with checks after each. M3–M5 are outside the current implementation scope.
+- Priorities: correctness, tests, clarity, then features. M1 and M2 are integrated. The user approved M3 on 2026-10-25: implement cited answers, quote verification, refusal behavior, and the React UI, then run all checks. M4–M5 are outside the current implementation scope.
 - After each milestone, run lint, type-checking, and all tests; fix failures; summarize changes and what the user should review. Run frontend checks once frontend code exists.
 - Never make external network calls in tests. Use `EmbeddingProvider` and `LLMProvider` interfaces with deterministic hash embeddings and scripted LLM responses. Real providers belong only in CLI/application entry points and explicit evaluations. PostgreSQL integration tests may connect to the local test database; all provider HTTP must be mocked.
 - Never hardcode secrets. Use environment variables and `.env.example`. Never log API keys or full document text at INFO. Do not commit PDFs, `.env`, credentials, or evaluation secrets.

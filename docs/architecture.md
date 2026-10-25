@@ -1,4 +1,4 @@
-# M1–M2 architecture
+# M1–M3 architecture
 
 The CLI coordinates manifest metadata, page extraction, word-window chunking,
 an embedding provider, and a PostgreSQL repository.
@@ -72,5 +72,39 @@ created lazily and closed after each request. Synchronous search handlers run
 through FastAPI's thread-pool handling. Errors do not include request bodies,
 provider responses, credentials, or SQL statements.
 
-M3 adds answer generation and citation validation. M4 adds user-authored golden
-data and measured retrieval/answer evaluation. Those paths are not implemented yet.
+## Evidence-gated answers in M3
+
+`POST /ask` reuses search's query/strategy/k validation. It filters retrieved
+passages using independent strategy-specific thresholds. Empty/weak retrieval
+returns a fixed refusal before creating a chat provider. Thresholds are provisional
+defaults; they are not calibrated probabilities and need M4 validation.
+
+Whole eligible passages are numbered and serialized as JSON data, within a
+character budget including JSON escaping and the question. The system policy is
+separate and versioned in `answering/prompts/system.txt`. Instructions embedded in
+documents remain data. Only the exact included chunks can validate citations.
+
+The LLM returns strict `{answer, citations:[{doc_id,page,quote}], supported}` JSON.
+Pydantic rejects coercions/extra fields; parsing also rejects duplicate JSON keys
+and configured output-size violations. Provider truncation or malformed output
+is an HTTP error, distinct from an evidence refusal.
+
+Each quote must match within one included chunk on the stated document and page,
+after whitespace normalization only. Titles, URLs, and chunk IDs come from stored
+metadata. If any citation fails, all answer text and citations are withheld.
+`supported=false` and missing citations also produce a refusal. Proposed/valid
+counts are preserved before filtering/deduplication so later evaluation cannot
+inflate citation validity by measuring only released citations.
+
+Quote verification proves provenance, not semantic entailment of every claim.
+Prompt isolation and scripted attack fixtures do not prove real-model immunity
+to prompt injection. Real faithfulness/adversarial evaluation remains M4 work.
+
+The React interface sends same-origin `/api/ask` requests. nginx proxies them to
+FastAPI and refreshes Docker DNS after backend recreation. Model credentials
+stay on the server. The UI checks the response contract, renders text without
+HTML interpretation, validates source-link protocols, and distinguishes evidence
+refusals from request/provider errors. Explicit fake generation is labeled as a
+scripted demo; it is never selected as an automatic provider fallback.
+
+M4 adds user-authored golden data and measured retrieval/answer evaluation.

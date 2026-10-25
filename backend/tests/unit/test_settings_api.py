@@ -8,7 +8,7 @@ from pydantic import ValidationError
 def test_health_without_any_services():
     with TestClient(create_app()) as client:
         assert client.get("/health").json() == {"status": "ok"}
-        assert client.post("/ask", json={"query": "not implemented"}).status_code == 404
+        assert client.post("/ask", json={"query": ""}).status_code == 422
 
 
 @pytest.mark.parametrize(

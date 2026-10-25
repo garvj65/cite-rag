@@ -15,4 +15,7 @@ corpus/**/*.pdf
 corpus/**/*.part
 node_modules/
 frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+frontend/.vitest/
 eval/results/*.json

@@ -19,3 +19,7 @@ class ProviderConfigurationError(ProviderError):
 
 class SearchInputError(ValueError):
     """Represent a query or result limit outside the configured search bounds."""
+
+
+class ModelOutputError(ProviderError):
+    """Represent malformed, oversized, or truncated model output without its content."""

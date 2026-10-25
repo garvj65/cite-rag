@@ -4,9 +4,9 @@ Start here if RAG is new to you. Your current laptop does not need to run the
 whole application for you to follow the data, read the code, and predict what
 the tests should do. Browser-hosted compute is an option for later hands-on work.
 
-Current state: **M1 ingestion is integrated, and M2 implements `/search` with
-vector, keyword, and hybrid retrieval. Answers, the frontend, and evaluation
-are planned for M3–M4.**
+Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
+evidence gates, verified quote citations, refusals, and the React interface.
+User-authored golden-data evaluation is planned for M4.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -89,27 +89,27 @@ It lets us test batching, storage, failures, and ranking mechanics without an
 external API. It does not simulate the semantic quality of Gemini. No
 authenticated provider calls or model-quality evaluation have been performed.
 
-## 4. What the next milestones add
+## 4. What each milestone does
 
 | Milestone | Plain-language goal | Main concept |
 |---|---|---|
 | M1, implemented | Prepare a searchable collection with preserved sources | Ingestion and provenance |
 | M2, implemented | Return relevant passages for a question | Keyword search, vector similarity, hybrid ranking |
-| M3 | Write an answer and verify its quoted sources | Structured output, citation validation, refusal |
+| M3, implemented | Write an answer and verify its quoted sources | Structured output, citation validation, refusal |
 | M4 | Measure whether the application behaves well | Golden data, retrieval metrics, refusal tests, latency |
 
 In M2, keyword search uses PostgreSQL's text-search processing. Vector search
 compares a question's embedding with stored passage embeddings. Hybrid search
 combines rankings from both. **Top-k** simply means the number of results returned.
 
-In M3, a citation contains a document, page, and quoted passage. We will check that
+In M3, a citation contains a document, page, and quoted passage. The server checks that
 each quote appears in a retrieved chunk on the stated page, after whitespace
 normalization. A matching quote establishes where the words came from. It does
 not by itself establish that every sentence in the answer follows from those words.
 
 Refusal means the system cannot support an answer from the selected documents.
 It is different from an API outage or an invalid model response, which must be
-reported as an error. These are planned M3 behaviors, not existing M1 features.
+reported as an error. M3 implements these separate response paths.
 
 In M4, the user writes the questions and gold document/page labels. The evaluation
 runner compares actual outputs with that reference data. We will not invent gold
@@ -233,3 +233,21 @@ For M2-specific resources, read PostgreSQL's
 [text-search explanation](https://www.postgresql.org/docs/16/textsearch-controls.html)
 and pgvector's [querying and distance examples](https://github.com/pgvector/pgvector#querying).
 The priority remains finishing each working milestone; these readings can follow it.
+
+## 10. M3: follow one answer after the build
+
+Read [AnswerService](../backend/app/answering/service.py) first. It retrieves
+passages, applies a score gate, creates a bounded JSON context, calls the selected
+LLM, parses strict output, and verifies citations before releasing an answer.
+[citations.py](../backend/app/answering/citations.py) performs the exact
+document/page/quote check; the [system policy](../backend/app/answering/prompts/system.txt)
+explains how the model must treat document text as untrusted data.
+
+Then follow [App.tsx](../frontend/src/App.tsx) into the
+[citation card](../frontend/src/components/CitationCard.tsx). A successful model
+response alone is insufficient: the backend must verify every proposed quote,
+and the UI must receive a consistent response before it displays answer text.
+
+For a small exercise, read `test_one_invalid_citation_suppresses_whole_answer`.
+Explain why the verified counter is 1 while the returned citation list is empty.
+This distinction will matter when M4 measures citation validity before filtering.
