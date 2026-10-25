@@ -3,11 +3,15 @@
 A staged RAG application for answers with verifiable document, page, and quote
 citations. **M1–M3 are implemented:** PDF ingestion, three retrieval strategies,
 evidence-gated answers, programmatically verified quote citations, and a React
-interface. Golden-data evaluation remains M4 work.
+interface. M4 provides the evaluation harness; the user-authored golden dataset
+and an authenticated quality benchmark are still pending.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
 [M3 validation](docs/validation-m3.md)
+
+[Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
+[Free-tier deployment runbook](docs/deployment.md)
 
 ![CiteRAG question interface](docs/screenshots/citerag.png)
 
@@ -302,11 +306,30 @@ behaviors checked, and measurement boundaries. Frontend checks can also run with
 
 ## Evaluation status
 
+The M4 harness validates user-authored JSONL, measures each retrieval once, reuses
+that evidence for the answer, and saves Markdown/JSON/JSONL results. It includes
+seeded strategy/chunk-size comparisons and hand-computed metric tests. Read
+[the evaluation guide](eval/README.md) for field definitions and exact denominators.
+
+`eval/golden.jsonl` is intentionally empty. Populate it with your own questions,
+answerability labels, and gold document/pages before running:
+
+```bash
+uv run python -m eval.validate --check-index
+uv run python -m eval.run --strategy hybrid --k 5 --seed 42
+uv run python scripts/compare_strategies.py --chunk-sizes 200 400 800 --overlap 80 --k 5
+```
+
+Comparison profiles must already be indexed; explicit `--ingest --corpus corpus/`
+embeds missing configurations. Fake/mixed runs are labeled mechanics only.
+An empty golden file produces an input error, not a benchmark result. No LLM
+faithfulness judge is used, and reference answers are not automatically scored.
+
 | Strategy | Recall@5 | MRR | Citation validity | Refusal accuracy | Latency p50/p95 |
 |---|---|---|---|---|---|
-| Vector | Pending M4 | Pending | Pending | Pending | Pending |
-| Keyword | Pending M4 | Pending | Pending | Pending | Pending |
-| Hybrid | Pending M4 | Pending | Pending | Pending | Pending |
+| Vector | Awaiting golden run | Pending | Pending | Pending | Pending |
+| Keyword | Awaiting golden run | Pending | Pending | Pending | Pending |
+| Hybrid | Awaiting golden run | Pending | Pending | Pending | Pending |
 
 No questions, gold answers, or retrieval-quality numbers have been invented.
 The user writes the golden data in M4; model-quality evaluation needs an explicit
@@ -315,8 +338,9 @@ retrieval or answer-quality measurements.
 
 ## Limitations and next milestone
 
-- M1–M3 return retrieved passages and evidence-gated cited answers through the
-  API and UI. The evaluation harness is M4 work.
+- M1–M3 return passages and evidence-gated cited answers through the API/UI.
+  M4's harness is implemented; user-authored golden data and real quality results
+  remain required before the project's full definition of done can be met.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column
   layouts, equations, or images. Page boundaries can divide useful context.
 - English full-text search is appropriate for this corpus; other languages need
@@ -327,5 +351,8 @@ retrieval or answer-quality measurements.
   semantics need a deliberate migration/reindex procedure.
 - Concurrent ingestions can consume duplicate embedding quota while database rows
   remain deduplicated. In-flight embeddings are not cached.
-- The Compose password is a labeled local-development example. Deployment
-  instructions and a public-demo operating model arrive in M4. No production deployment is claimed.
+- The Compose password is a labeled development example. A [free-tier VM runbook](docs/deployment.md)
+  supports a private demo; no live or public production deployment is claimed.
+- The UI query limit and proxy timeout need coordinated changes when settings
+  are overridden. They are [non-blocking with current defaults](docs/configuration-review.md).
+  A more expressive UI/UX redesign is deferred at the user's request.

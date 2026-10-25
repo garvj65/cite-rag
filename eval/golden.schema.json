@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "GoldPage": {
+      "additionalProperties": false,
+      "description": "Identify one physical PDF page by its original document SHA-256.",
+      "properties": {
+        "doc_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "page": {
+          "exclusiveMinimum": 0,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "doc_id",
+        "page"
+      ],
+      "title": "GoldPage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Describe answerability and all gold pages, with an optional human reference answer.",
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "question": {
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "answerable": {
+      "title": "Answerable",
+      "type": "boolean"
+    },
+    "gold_pages": {
+      "items": {
+        "$ref": "#/$defs/GoldPage"
+      },
+      "title": "Gold Pages",
+      "type": "array"
+    },
+    "reference_answer": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reference Answer"
+    }
+  },
+  "required": [
+    "id",
+    "question",
+    "answerable",
+    "gold_pages"
+  ],
+  "title": "GoldenQuestion",
+  "type": "object"
+}

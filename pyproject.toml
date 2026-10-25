@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "citerag"
-version = "0.3.0"
+version = "0.4.0"
 description = "Evidence-gated RAG answers with verified document page and quote citations"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -33,7 +33,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["backend/app", "scripts"]
+packages = ["backend/app", "scripts", "eval"]
 
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
@@ -61,4 +61,4 @@ ignore = ["D100", "D104", "D105", "D107", "D203", "D213"]
 python_version = "3.12"
 strict = true
 mypy_path = "backend"
-files = ["backend/app", "scripts"]
+files = ["backend/app", "scripts", "eval"]

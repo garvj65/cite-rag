@@ -1,4 +1,4 @@
-# M1–M3 architecture
+# M1–M4 architecture
 
 The CLI coordinates manifest metadata, page extraction, word-window chunking,
 an embedding provider, and a PostgreSQL repository.
@@ -107,4 +107,29 @@ HTML interpretation, validates source-link protocols, and distinguishes evidence
 refusals from request/provider errors. Explicit fake generation is labeled as a
 scripted demo; it is never selected as an automatic provider fallback.
 
-M4 adds user-authored golden data and measured retrieval/answer evaluation.
+## Evaluation in M4
+
+The user authors JSONL labels; `eval.validate` checks the field schema, unique
+identities/questions, answerability/page consistency, and query bounds. Optional
+database validation checks that every gold page exists in the active index.
+Empty data cannot produce a benchmark report.
+
+`eval.run` wires the same `SearchService` and `AnswerService` used by the API.
+Each question retrieves once. `answer_from_retrieval` generates from exactly that
+measured result, avoiding a second embedding/search call. Provider clients are
+lazy, shared within one sequential evaluation, and closed afterward; scripted
+providers reset per question. A seeded shuffle fixes order, not live model output.
+
+Recall deduplicates gold pages among the first k chunks; MRR uses the first
+matching chunk rank. Citation validity uses raw proposed/valid counts before
+refusal filtering/deduplication. Failures remain rows, contribute zero where
+appropriate, and cannot become correct refusals. Undefined denominators are N/A.
+Latency includes retries, validation, and failed attempts. No LLM judge is used.
+
+Reports save safe settings, corpus IDs, gold-file digest, index profile, seed,
+revision/dirty state, and raw per-question records. Credentials/database URLs are
+excluded. The comparison script checks the same document IDs across chunk profiles
+and uses explicit opt-in for ingestion. Experiments require a quiescent database.
+
+The harness is implemented; real semantic evaluation remains pending user-authored
+gold data and configured providers. A future UI redesign is outside M4 scope.

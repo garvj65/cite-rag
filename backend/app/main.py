@@ -43,7 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             engine.dispose()
 
-    application = FastAPI(title="CiteRAG", version="0.3.0", lifespan=lifespan)
+    application = FastAPI(title="CiteRAG", version="0.4.0", lifespan=lifespan)
 
     @application.exception_handler(SearchInputError)
     def input_error(_request: Request, exc: SearchInputError) -> JSONResponse:
