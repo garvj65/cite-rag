@@ -42,8 +42,8 @@ jobs:
             echo "User golden data is empty; real quality evaluation remains pending."
           fi
       - run: uv run pytest --cov=eval
-      - run: uv run coverage report --include='backend/app/*' --fail-under=85
-      - run: uv run coverage report --include='eval/*' --fail-under=85
+      - run: uv run coverage report --include='backend/app/*' --fail-under=85 --precision=2
+      - run: uv run coverage report --include='eval/*' --fail-under=85 --precision=2
       - uses: actions/setup-node@v4
         with:
           node-version: "24"

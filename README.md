@@ -9,6 +9,7 @@ and an authenticated quality benchmark are still pending.
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
 [M3 validation](docs/validation-m3.md)
+· [M4 validation](docs/validation-m4.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
 [Free-tier deployment runbook](docs/deployment.md)
@@ -304,6 +305,14 @@ behaviors checked, and measurement boundaries. Frontend checks can also run with
 `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` from
 `frontend/`; its README documents the browser-test setup.
 
+M4 verification: **284 backend/evaluation tests passed, including all 24 PostgreSQL
+integration tests, with 99.53% combined app/evaluation coverage**. App and evaluation
+coverage also pass separate 85% gates. The same **22 frontend** and **3 browser**
+tests, lint/type checks, Docker builds, full Compose smoke checks, a six-run
+chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
+See [the M4 validation record](docs/validation-m4.md). These are software checks;
+the real user-golden semantic benchmark is still pending.
+
 ## Evaluation status
 
 The M4 harness validates user-authored JSONL, measures each retrieval once, reuses
@@ -331,7 +340,7 @@ faithfulness judge is used, and reference answers are not automatically scored.
 | Keyword | Awaiting golden run | Pending | Pending | Pending | Pending |
 | Hybrid | Awaiting golden run | Pending | Pending | Pending | Pending |
 
-No questions, gold answers, or retrieval-quality numbers have been invented.
+No user golden questions, gold answers, or retrieval-quality numbers have been invented.
 The user writes the golden data in M4; model-quality evaluation needs an explicit
 real-provider run. Mechanical ranking tests and code coverage are not semantic
 retrieval or answer-quality measurements.

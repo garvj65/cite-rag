@@ -113,3 +113,8 @@ profiles before evaluation.
 seeded order. Individual records and a combined Markdown table are saved together.
 Latency comparisons remain sensitive to caching/network effects; this is a small
 sequential baseline, not a controlled load test.
+
+Malformed model output is an error and has no countable citation list. Interpret
+citation validity alongside error counts; a high validity ratio alone cannot
+establish reliable answer generation. Latency measures the RAG service path,
+excluding index preflight, report serialization, and browser-to-API transport.
