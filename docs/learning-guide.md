@@ -89,7 +89,7 @@ It lets us test batching, storage, failures, and ranking mechanics without an
 external API. It does not simulate the semantic quality of Gemini. No
 authenticated provider calls or model-quality evaluation have been performed.
 
-## 4. What the next milestones add
+## 4. What each milestone does
 
 | Milestone | Plain-language goal | Main concept |
 |---|---|---|
@@ -102,14 +102,14 @@ In M2, keyword search uses PostgreSQL's text-search processing. Vector search
 compares a question's embedding with stored passage embeddings. Hybrid search
 combines rankings from both. **Top-k** simply means the number of results returned.
 
-In M3, a citation contains a document, page, and quoted passage. We will check that
+In M3, a citation contains a document, page, and quoted passage. The server checks that
 each quote appears in a retrieved chunk on the stated page, after whitespace
 normalization. A matching quote establishes where the words came from. It does
 not by itself establish that every sentence in the answer follows from those words.
 
 Refusal means the system cannot support an answer from the selected documents.
 It is different from an API outage or an invalid model response, which must be
-reported as an error. These are planned M3 behaviors, not existing M1 features.
+reported as an error. M3 implements these separate response paths.
 
 In M4, the user writes the questions and gold document/page labels. The evaluation
 runner compares actual outputs with that reference data. We will not invent gold

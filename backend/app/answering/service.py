@@ -32,6 +32,8 @@ def parse_model_answer(raw: str, settings: Settings) -> ModelAnswer:
     try:
         payload: object = json.loads(raw, object_pairs_hook=_unique_object)
         answer = ModelAnswer.model_validate(payload)
+        # Reject decoded lone surrogates before the HTTP response encodes answer text.
+        answer.answer.encode("utf-8")
         if (
             len(answer.answer) > settings.answer_max_characters
             or len(answer.citations) > settings.answer_max_citations
@@ -39,7 +41,7 @@ def parse_model_answer(raw: str, settings: Settings) -> ModelAnswer:
             or (answer.supported and not answer.answer.strip())
         ):
             raise ValueError("model output outside configured limits")
-    except (ValueError, ValidationError):
+    except (ValueError, ValidationError, RecursionError):
         raise ModelOutputError("invalid_model_output") from None
     return answer
 

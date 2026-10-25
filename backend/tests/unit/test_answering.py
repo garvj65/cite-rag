@@ -198,6 +198,8 @@ def test_injected_passage_stays_in_json_data_and_fabricated_citations_fail(setti
     "raw",
     [
         "not json",
+        "[" * 5000 + "0" + "]" * 5000,
+        model_json(answer=chr(0xD800)),
         "```json\n{}\n```",
         "[]",
         "{}",
