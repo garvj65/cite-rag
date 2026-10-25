@@ -9,9 +9,11 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.api.ask import router as ask_router
 from app.api.search import router
 from app.db.repository import create_db_engine
 from app.errors import (
+    ModelOutputError,
     ProviderConfigurationError,
     ProviderError,
     ProviderTimeoutError,
@@ -41,7 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             engine.dispose()
 
-    application = FastAPI(title="CiteRAG", version="0.2.0", lifespan=lifespan)
+    application = FastAPI(title="CiteRAG", version="0.3.0", lifespan=lifespan)
 
     @application.exception_handler(SearchInputError)
     def input_error(_request: Request, exc: SearchInputError) -> JSONResponse:
@@ -77,7 +79,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             content={
                 "error": {
                     "code": "provider_not_configured",
-                    "message": "Embedding provider is not configured.",
+                    "message": "Required model provider is not configured.",
                 }
             },
         )
@@ -90,7 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             content={
                 "error": {
                     "code": "provider_timeout",
-                    "message": "Embedding provider timed out. Try again later.",
+                    "message": "Model provider timed out. Try again later.",
                 }
             },
         )
@@ -103,7 +105,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             content={
                 "error": {
                     "code": "provider_failure",
-                    "message": "Embedding provider failed. Try again later.",
+                    "message": "Model provider failed. Try again later.",
                 }
             },
         )
@@ -122,6 +124,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
 
     application.include_router(router)
+    application.include_router(ask_router)
+
+    @application.exception_handler(ModelOutputError)
+    def model_output_error(_request: Request, _exc: ModelOutputError) -> JSONResponse:
+        """Distinguish malformed output from evidence-based document refusals."""
+        return JSONResponse(
+            status_code=502,
+            content={
+                "error": {
+                    "code": "invalid_model_output",
+                    "message": "The answer model returned invalid data.",
+                }
+            },
+        )
 
     @application.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:

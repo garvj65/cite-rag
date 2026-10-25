@@ -7,7 +7,8 @@ from typing import Annotated
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from app.errors import ProviderConfigurationError, ProviderError, ProviderTimeoutError
+from app.errors import ProviderConfigurationError, ProviderError
+from app.providers.transport import post_provider_json
 from app.settings import EMBEDDING_DIMENSIONS, Settings
 
 
@@ -62,37 +63,15 @@ class HTTPEmbeddingProvider:
         """Embed a batch; retry connection errors, timeouts, rate limits, and 5xx."""
         if not texts:
             return []
-        last_error: ProviderError = ProviderError("provider_unavailable")
-        for attempt in range(self._settings.provider_max_attempts):
-            try:
-                response = self._client.post(
-                    f"{self._base}/embeddings",
-                    headers={"Authorization": f"Bearer {self._key.get_secret_value()}"},
-                    json={
-                        "model": self._model,
-                        "input": list(texts),
-                        "dimensions": self.dimensions,
-                    },
-                    timeout=self._settings.provider_timeout_seconds,
-                )
-            except httpx.TimeoutException:
-                last_error = ProviderTimeoutError("provider_timeout")
-            except httpx.TransportError:
-                last_error = ProviderError("provider_unavailable")
-            else:
-                if response.is_success:
-                    return self._parse(response, len(texts))
-                if response.status_code not in (408, 429) and response.status_code < 500:
-                    raise ProviderError("provider_request_rejected")
-                last_error = ProviderError("provider_temporarily_unavailable")
-            if attempt + 1 < self._settings.provider_max_attempts:
-                self._sleep(
-                    min(
-                        self._settings.provider_backoff_seconds * 2**attempt,
-                        self._settings.provider_max_backoff_seconds,
-                    )
-                )
-        raise last_error
+        response = post_provider_json(
+            self._client,
+            f"{self._base}/embeddings",
+            self._key,
+            {"model": self._model, "input": list(texts), "dimensions": self.dimensions},
+            self._settings,
+            self._sleep,
+        )
+        return self._parse(response, len(texts))
 
     def _parse(self, response: httpx.Response, count: int) -> list[list[float]]:
         try:

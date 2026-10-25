@@ -1,0 +1,77 @@
+:root { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #202c28; background: #f7f6f2; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, textarea { font: inherit; }
+a { color: inherit; }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #7caa91; outline-offset: 4px; }
+.app-shell { max-width: 1296px; margin: 0 auto; padding: 0 64px; }
+.site-header { display: flex; align-items: center; justify-content: space-between; height: 112px; border-bottom: 1px solid #dedfd8; }
+.wordmark { display: flex; gap: 2px; align-items: center; font-size: 23px; font-weight: 700; letter-spacing: -1px; text-decoration: none; }
+.wordmark > span:last-child { font-weight: 400; }
+.brand-mark { position: relative; display: grid; place-items: center; background: #244e3c; color: #fff; width: 31px; height: 32px; border-radius: 7px; font-family: Georgia, serif; font-size: 29px; margin-right: 10px; line-height: 1; }
+.brand-mark > span { position: absolute; right: 3px; top: 1px; font-family: sans-serif; font-size: 12px; }
+.header-note, .small-label, .eyebrow { font-size: 10px; font-weight: 650; letter-spacing: 1.7px; }
+.header-note { display: flex; align-items: center; gap: 8px; color: #596b60; }
+.status-dot { display: block; width: 6px; height: 6px; border-radius: 50%; background: #718d70; }
+main { display: grid; grid-template-columns: 0.9fr 1.25fr; gap: 72px; padding: 78px 0 90px; min-height: calc(100vh - 191px); align-items: start; }
+.intro { padding-top: 4px; }
+.eyebrow { color: #66806c; margin: 0 0 24px; line-height: 1.7; }
+h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(44px, 4.45vw, 64px); font-weight: 400; line-height: 1.1; letter-spacing: -2.8px; }
+h1 span { color: #426a50; font-style: italic; }
+.intro-copy { font-size: 15px; line-height: 1.9; color: #69726b; margin: 26px 0 36px; }
+.principles { display: grid; gap: 17px; color: #637067; font-size: 12px; padding-top: 23px; border-top: 1px solid #dedfd8; max-width: 274px; }
+.principles b { color: #879383; font-size: 10px; font-weight: 500; margin-right: 15px; letter-spacing: 1px; }
+.workspace { min-width: 0; }
+.question-panel { background: #fff; border: 1px solid #daddd3; border-radius: 14px; padding: 24px; box-shadow: 0 8px 32px #25382205; }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.panel-heading label { font-size: 14px; font-weight: 600; letter-spacing: -0.2px; }
+.small-label { font-size: 8px; letter-spacing: 1.2px; color: #899181; white-space: nowrap; }
+textarea { display: block; width: 100%; resize: vertical; min-height: 127px; max-height: 340px; border: 0; border-bottom: 1px solid #e7e9e1; border-radius: 0; padding: 23px 0 16px; color: #24392d; font-size: 14px; line-height: 1.7; background: transparent; }
+textarea:focus { outline: none; border-bottom-color: #63856c; box-shadow: 0 1px 0 #63856c; }
+textarea::placeholder { color: #92978d; }
+textarea:disabled { opacity: 0.7; }
+.question-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 20px; }
+.question-help { font-size: 10px; color: #7c8579; }
+button { display: flex; gap: 21px; align-items: center; justify-content: center; background: #28563f; border: 1px solid #28563f; color: #fff; padding: 12px 16px; border-radius: 7px; font-size: 12px; font-weight: 550; cursor: pointer; transition: background 120ms; }
+button:hover:enabled { background: #183c2a; }
+button:disabled { background: #e8ece5; border-color: #e8ece5; color: #7f8c7e; cursor: default; }
+button > span { font-size: 16px; line-height: 1; }
+.result-area { margin-top: 28px; min-height: 230px; }
+.empty-state { text-align: center; padding: 20px 12px 28px; color: #879082; }
+.quote-mark { display: block; font: 63px/0.9 Georgia, serif; color: #b1bba5; height: 53px; }
+.empty-state h2 { color: #697562; font-family: Georgia, serif; font-size: 20px; font-weight: 400; letter-spacing: -0.35px; margin: 0 0 12px; }
+.empty-state p { font-size: 11px; line-height: 1.9; margin: 0; }
+.loading-state { display: flex; align-items: center; gap: 10px; justify-content: center; padding: 42px 12px; font-size: 12px; color: #61735f; }
+.spinner { width: 15px; height: 15px; border: 2px solid #d7e1d3; border-top-color: #426a50; border-radius: 50%; animation: turn 850ms linear infinite; }
+@keyframes turn { to { transform: rotate(360deg); } }
+.error-state { padding: 22px; background: #fbefeb; border: 1px solid #ead7ce; border-radius: 11px; color: #88533e; font-size: 13px; }
+.error-state p { line-height: 1.7; margin: 9px 0 0; }
+.answer-panel { background: #fff; border: 1px solid #dadfd4; border-radius: 13px; padding: 25px; overflow-wrap: anywhere; }
+.answer-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.answer-topline .eyebrow { margin: 0; font-size: 9px; }
+.demo-label { color: #936f36; background: #fbf4df; padding: 4px 7px; border-radius: 4px; font-size: 9px; }
+.answer-panel h2 { font-family: Georgia, serif; font-size: 24px; line-height: 1.35; font-weight: 400; letter-spacing: -0.5px; margin: 0 0 17px; }
+.answer-text { font-size: 14px; line-height: 1.9; color: #59695d; white-space: pre-wrap; margin: 0; }
+.refusal-panel { background: #f0f1e9; }
+.sources-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 26px; margin-top: 25px; border-top: 1px solid #e5e8df; }
+.sources-heading h3 { font-size: 12px; font-weight: 600; margin: 0; }
+.sources-heading > span { font-size: 9px; color: #7c8977; }
+.citation-card { border: 1px solid #e1e5d9; border-radius: 8px; margin-top: 11px; background: #fcfdf9; }
+.citation-card summary { display: flex; align-items: center; gap: 11px; list-style: none; cursor: pointer; padding: 14px 12px; }
+.citation-card summary::-webkit-details-marker { display: none; }
+.citation-number { color: #6d846a; font-size: 10px; background: #e9efe1; border-radius: 4px; padding: 6px; flex-shrink: 0; }
+.citation-title { font-size: 11px; font-weight: 550; flex: 1; line-height: 1.5; }
+.citation-title > span { display: block; color: #87947f; font-size: 9px; font-weight: 400; margin-top: 3px; }
+.expand-icon { color: #77866d; font-size: 17px; font-weight: 400; }
+details[open] .expand-icon { transform: rotate(45deg); }
+.citation-body { padding: 0 15px 15px; }
+blockquote { margin: 0 0 15px; padding: 10px 0 10px 13px; border-left: 2px solid #a8bd9b; color: #4c6450; font-size: 12px; line-height: 1.9; white-space: pre-wrap; }
+.citation-source { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; justify-content: space-between; color: #82917b; font-size: 9px; line-height: 1.7; }
+.citation-source a { color: #456a4a; font-size: 10px; text-underline-offset: 3px; white-space: nowrap; }
+.verification-note { color: #899281; font-size: 9px; line-height: 1.8; margin: 14px 0 0; }
+footer { border-top: 1px solid #dedfd8; height: 79px; display: flex; justify-content: space-between; align-items: center; color: #889080; font-size: 10px; letter-spacing: 0.1px; }
+@media (min-width: 1500px) { main { gap: 90px; } }
+@media (max-width: 950px) { .app-shell { padding: 0 35px; } main { gap: 35px; grid-template-columns: 0.82fr 1.2fr; } .header-note { font-size: 8px; } .small-label { display: none; } h1 { font-size: 49px; } }
+@media (max-width: 720px) { .app-shell { padding: 0 23px; } .site-header { height: 85px; } .wordmark { font-size: 21px; } .header-note { max-width: 125px; font-size: 7px; letter-spacing: 1.2px; line-height: 1.8; } main { display: block; padding: 43px 0 55px; min-height: calc(100vh - 164px); } .intro .eyebrow { margin-bottom: 18px; font-size: 9px; } h1 { font-size: 52px; line-height: 1.05; } .intro-copy { font-size: 13px; margin: 20px 0 27px; } .desktop-break { display: none; } .principles { display: none; } .question-panel { padding: 19px; border-radius: 11px; } .panel-heading label { font-size: 13px; } textarea { min-height: 124px; font-size: 14px; } .question-actions { gap: 8px; } .question-help { font-size: 9px; } button { gap: 10px; padding: 11px 12px; font-size: 11px; } .empty-state { padding-left: 0; padding-right: 0; } .empty-state h2 { font-size: 19px; } .empty-state p { font-size: 10px; } .answer-panel { padding: 20px; } footer { font-size: 9px; gap: 14px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

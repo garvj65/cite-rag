@@ -35,23 +35,47 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy
       - run: uv run pytest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+      - run: npm run typecheck
+        working-directory: frontend
+      - run: npm test
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
       - name: Build backend Docker image
         run: docker build -f backend/Dockerfile -t citerag-backend:ci .
       - name: Validate Compose configuration
         run: cp .env.example .env && docker compose config --quiet
-      - name: Start Compose and smoke-test ingestion and retrieval
+      - name: Start Compose and smoke-test ingestion retrieval and cited answers
         run: |
           uv run python - <<'PY'
           from reportlab.pdfgen.canvas import Canvas
           from pathlib import Path
-          config = Path(".env")
-          config.write_text(config.read_text().replace("EMBEDDING_PROVIDER=gemini", "EMBEDDING_PROVIDER=fake"))
+          import hashlib
+          import json
           canvas = Canvas("corpus/ci-smoke.pdf", invariant=True)
           canvas.drawString(60, 700, "CiteRAG smoke fixture validates reproducible PDF ingestion.")
           canvas.showPage()
           canvas.save()
+          doc_id = hashlib.sha256(Path("corpus/ci-smoke.pdf").read_bytes()).hexdigest()
+          scripted = {"answer": "The fixture validates reproducible PDF ingestion.",
+                      "citations": [{"doc_id": doc_id, "page": 1,
+                                     "quote": "validates reproducible PDF ingestion."}],
+                      "supported": True}
+          config = Path(".env")
+          text = config.read_text().replace("EMBEDDING_PROVIDER=gemini", "EMBEDDING_PROVIDER=fake")
+          text = text.replace("LLM_PROVIDER=gemini", "LLM_PROVIDER=fake")
+          config.write_text(text + "\nFAKE_LLM_RESPONSE='" + json.dumps(scripted) + "'\n")
           PY
-          docker compose up --build --wait backend
+          docker compose up --build --wait frontend
           docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-first.json
           docker compose exec -T backend python -m app.ingest --path corpus/ci-smoke.pdf --fake > /tmp/citerag-second.json
           uv run python - <<'PY'
@@ -76,8 +100,30 @@ jobs:
                   hit = result["results"][0]
                   assert hit["page"] == 1 and hit["doc_id"] == first["files"][0]["doc_id"]
                   assert "smoke fixture" in hit["text"]
-          print("Compose startup, migrations, health, ingestion, duplicates, and all search strategies passed.")
+                  response = client.post("http://127.0.0.1:8080/api/ask", json={
+                      "query": "smoke fixture", "strategy": strategy, "k": 1,
+                  })
+                  response.raise_for_status()
+                  answer = response.json()
+                  assert answer["supported"] and answer["mode"] == "scripted"
+                  assert answer["verification"] == {"proposed": 1, "valid": 1}
+                  assert answer["citations"][0]["doc_id"] == first["files"][0]["doc_id"]
+              response = client.post("http://127.0.0.1:8080/api/ask", json={
+                  "query": "unavailablewordinfixture", "strategy": "keyword",
+              })
+              response.raise_for_status()
+              assert not response.json()["supported"] and response.json()["citations"] == []
+              page = client.get("http://127.0.0.1:8080/")
+              page.raise_for_status()
+              assert "CiteRAG" in page.text and "content-security-policy" in page.headers
+          print("Compose ingestion, search, verified answers, refusals, and frontend proxy passed.")
           PY
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Browser answer refusal and mobile error checks
+        run: npm run test:e2e
+        working-directory: frontend
       - name: Stop Compose
         if: always()
         run: |
