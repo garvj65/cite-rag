@@ -16,7 +16,7 @@ Prerequisites: Git and Docker Compose v2. From a fresh checkout:
 git clone https://github.com/garvj65/cite-rag.git
 cd cite-rag
 cp .env.example .env
-docker compose up --build -d
+docker compose up --build --wait backend
 ```
 
 While M1 is under review, first check out the milestone PR branch. Compose starts
@@ -50,6 +50,16 @@ With Python 3.12 and `uv` installed, from the repository root:
 uv sync --frozen
 uv run python scripts/download_corpus.py
 ```
+
+For a Docker-only download, after Compose is running, use:
+
+```bash
+docker compose run --rm --user root --volume ./corpus:/app/corpus backend python scripts/download_corpus.py
+```
+
+This one-off download uses a writable corpus mount. The API container keeps its
+normal non-root user and read-only corpus mount. On Linux, downloaded files may
+be owned by root when using this command; they remain readable for ingestion.
 
 The downloader validates YAML, bounds file size, checks the PDF signature, and
 replaces files atomically. A cached file with a PDF header is reused; this does
@@ -148,6 +158,8 @@ enforces at least 85% backend application coverage.
 
 GitHub Actions runs lint, formatting, strict application type-checking, tests
 against PostgreSQL 16/pgvector, a backend image build, and Compose validation.
+It also starts the actual Compose stack, checks `/health`, ingests a generated
+one-page fixture with `--fake`, and verifies that a second run skips the duplicate.
 Frontend checks join CI when the frontend is implemented in M3.
 
 M1 verification: **83 tests passed with PostgreSQL 16/pgvector; 99.62% backend
