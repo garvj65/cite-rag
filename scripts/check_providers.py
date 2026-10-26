@@ -47,11 +47,22 @@ SAFE_REASONS = {
 def response_diagnostic(response: httpx.Response) -> dict[str, object]:
     """Copy numeric HTTP status and known error codes, excluding headers/body messages."""
     result: dict[str, object] = {"http_status": response.status_code}
-    if response.is_success:
-        return result
     try:
         payload = response.json()
     except ValueError:
+        return result
+    if response.is_success:
+        if isinstance(payload, dict):
+            rows = payload.get("embeddings", payload.get("data"))
+            if isinstance(rows, list):
+                result["embedding_rows"] = len(rows)
+                result["embedding_dimensions"] = [
+                    len(vector) if isinstance(vector, list) else 0
+                    for row in rows
+                    for vector in [
+                        row.get("values", row.get("embedding")) if isinstance(row, dict) else None
+                    ]
+                ]
         return result
     error = payload.get("error") if isinstance(payload, dict) else None
     if not isinstance(error, dict):

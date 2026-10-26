@@ -1,8 +1,8 @@
 # Evaluate CiteRAG
 
 The harness is implemented. At the user's explicit request on 2026-10-26,
-`golden.jsonl` now contains an **assistant-authored pilot: four answerable questions
-and one unanswerable question**. Read [the answer key and evidence review](golden-review.md).
+`golden.jsonl` now contains an **assistant-authored baseline: 25 answerable questions
+and 5 unanswerable questions**. Read [the answer key and evidence review](golden-review.md).
 Source/hash/page/chunk checks passed; independent human review and a real-provider
 run remain pending. No quality scores have been invented. Test/CI questions remain
 separate synthetic fixtures. Empty datasets still fail validation.
@@ -13,8 +13,9 @@ and physical page counts without requiring local ingestion.
 
 ## Author the golden file
 
-Review the pilot, then add one JSON object per line in `eval/golden.jsonl`.
-Aim for the planned 25 answerable and 5 unanswerable questions; a smaller first dataset is valid.
+Review the baseline, then add one JSON object per line in `eval/golden.jsonl`.
+The current set contains the planned 25 answerable and 5 unanswerable questions.
+Keep the same reviewed dataset across strategy comparisons.
 
 | Field | Required | Meaning |
 |---|---|---|
@@ -30,7 +31,7 @@ contents pages. Use the viewer's page number, not a printed page label.
 The validator rejects extra fields, duplicate JSON keys/IDs/questions/pages,
 wrong types, oversized questions, and inconsistent labels. The contract is
 [golden.schema.json](golden.schema.json); export it with `--schema`.
-The committed pilot provides filled records, with assistant authorship and source
+The committed baseline provides filled records, with assistant authorship and source
 evidence documented separately so the strict schema stays unchanged.
 
 ```bash

@@ -55,9 +55,9 @@ def test_checks_use_mock_http_and_report_only_safe_metadata(settings, failure):
             return httpx.Response(
                 404, json={"error": {"status": "NOT_FOUND", "message": "private-key"}}
             )
-        if request.url.path.endswith("/embeddings"):
+        if request.url.path.endswith(":batchEmbedContents"):
             return httpx.Response(
-                200, json={"data": [{"index": 0, "embedding": [1.0] * EMBEDDING_DIMENSIONS}]}
+                200, json={"embeddings": [{"values": [1.0] * EMBEDDING_DIMENSIONS}]}
             )
         return httpx.Response(
             200,
@@ -96,3 +96,14 @@ def test_cli_exit_status_and_safe_json(settings, monkeypatch, capsys):
     )
     assert check_providers.main(["--allow-real-calls"]) == 1
     assert json.loads(capsys.readouterr().out)["checks"][0]["ok"] is False
+
+
+def test_success_diagnostics_report_shapes_without_embedding_values():
+    response = httpx.Response(
+        200, json={"embeddings": [{"values": [0.1, 0.2]}], "private": "never print"}
+    )
+    assert check_providers.response_diagnostic(response) == {
+        "http_status": 200,
+        "embedding_rows": 1,
+        "embedding_dimensions": [2],
+    }

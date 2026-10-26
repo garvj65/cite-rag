@@ -1,4 +1,4 @@
-"""Small, explicitly configured adapters for OpenAI-compatible embedding APIs."""
+"""Native Gemini batch embeddings and the explicitly selected OpenAI adapter."""
 
 import time
 from collections.abc import Callable, Sequence
@@ -22,6 +22,15 @@ class _EmbeddingResponse(BaseModel):
     data: list[_EmbeddingItem]
 
 
+class _GeminiEmbeddingItem(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    values: list[Annotated[float, Field(strict=True)]]
+
+
+class _GeminiEmbeddingResponse(BaseModel):
+    embeddings: list[_GeminiEmbeddingItem]
+
+
 class HTTPEmbeddingProvider:
     """Call one selected provider with validated output and bounded retries."""
 
@@ -39,7 +48,7 @@ class HTTPEmbeddingProvider:
         if settings.embedding_provider == "fake":
             raise ProviderConfigurationError("fake_provider_requires_factory")
         if settings.embedding_provider == "gemini":
-            self._base = "https://generativelanguage.googleapis.com/v1beta/openai"
+            self._base = "https://generativelanguage.googleapis.com/v1beta"
             self._key = settings.gemini_api_key
             self._model = settings.gemini_embedding_model
         else:
@@ -63,6 +72,35 @@ class HTTPEmbeddingProvider:
         """Embed a batch; retry connection errors, timeouts, rate limits, and 5xx."""
         if not texts:
             return []
+        if self._settings.embedding_provider == "gemini":
+            response = post_provider_json(
+                self._client,
+                f"{self._base}/models/{self._model}:batchEmbedContents",
+                self._key,
+                {
+                    "requests": [
+                        {
+                            "model": f"models/{self._model}",
+                            "content": {"parts": [{"text": text}]},
+                            "outputDimensionality": self.dimensions,
+                        }
+                        for text in texts
+                    ]
+                },
+                self._settings,
+                self._sleep,
+                api_key_header=True,
+            )
+            try:
+                parsed = _GeminiEmbeddingResponse.model_validate_json(response.content)
+            except ValidationError:
+                raise ProviderError("invalid_embedding_response") from None
+            vectors = [item.values for item in parsed.embeddings]
+            if len(vectors) != len(texts) or any(
+                len(vector) != self.dimensions or not any(vector) for vector in vectors
+            ):
+                raise ProviderError("invalid_embedding_response")
+            return vectors
         response = post_provider_json(
             self._client,
             f"{self._base}/embeddings",

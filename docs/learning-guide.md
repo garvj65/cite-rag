@@ -6,7 +6,7 @@ the tests should do. Browser-hosted compute is an option for later hands-on work
 
 Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
 evidence gates, verified quote citations, refusals, and the React interface.
-M4's harness and a five-question assistant-authored golden pilot are implemented;
+M4's harness and a 30-question assistant-authored golden baseline are implemented;
 independent review and a real quality run are pending.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
@@ -113,8 +113,8 @@ It is different from an API outage or an invalid model response, which must be
 reported as an error. M3 implements these separate response paths.
 
 In M4, the evaluation runner compares actual outputs with source-grounded questions
-and gold document/page labels. At your request, an assistant-authored five-question
-pilot now includes an answer key and evidence notes. Your independent review and
+and gold document/page labels. At your request, an assistant-authored 30-question
+baseline now includes an answer key and evidence notes. Your independent review and
 a real run remain pending; fake-provider performance is never real retrieval quality.
 
 ## 5. Read the existing code in this order
@@ -259,7 +259,7 @@ This distinction will matter when M4 measures citation validity before filtering
 Start with [the evaluation guide](../eval/README.md), then read
 [the hand-computed metric tests](../backend/tests/unit/test_eval_metrics_schema.py)
 and [the evaluation engine](../eval/engine.py). Golden data is an answer key
-established from the PDFs before evaluating system outputs. The assistant drafted the current pilot at your request; it remains
+established from the PDFs before evaluating system outputs. The assistant drafted the current baseline at your request; it remains
 separate from application-generated answers and awaits your independent review.
 
 If a question has two gold pages and search finds one, recall is `1/2`. If the

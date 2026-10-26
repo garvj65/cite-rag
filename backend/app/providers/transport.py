@@ -18,6 +18,8 @@ def post_provider_json(
     payload: Mapping[str, object],
     settings: Settings,
     sleep: Callable[[float], None] = time.sleep,
+    *,
+    api_key_header: bool = False,
 ) -> httpx.Response:
     """Retry transient HTTP failures with capped exponential backoff, then fail safely."""
     last_error: ProviderError = ProviderError("provider_unavailable")
@@ -25,7 +27,9 @@ def post_provider_json(
         try:
             response = client.post(
                 url,
-                headers={"Authorization": f"Bearer {api_key.get_secret_value()}"},
+                headers={"x-goog-api-key": api_key.get_secret_value()}
+                if api_key_header
+                else {"Authorization": f"Bearer {api_key.get_secret_value()}"},
                 json=dict(payload),
                 timeout=remaining_timeout(settings.provider_timeout_seconds),
             )

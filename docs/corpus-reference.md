@@ -21,7 +21,7 @@ and provide your own questions, whether each is answerable, and the short name
 plus physical page(s) supporting it. A human reference answer is optional; it is
 not automatically scored. Deliberately unanswerable questions have no gold pages.
 The planned dataset is 25 answerable and 5 unanswerable questions; you can start
-with fewer. A five-question assistant-authored pilot is now available at the user's
+with fewer. A 30-question assistant-authored baseline is now available at the user's
 explicit request: [questions, answer key, and evidence](../eval/golden-review.md).
 It has source checks but still awaits independent human review and a real run.
 

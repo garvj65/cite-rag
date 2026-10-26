@@ -14,6 +14,8 @@ def provider_settings(settings, **updates):
         update={
             "enable_real_providers": True,
             "gemini_api_key": SecretStr("test-only-key"),
+            "embedding_provider": "openai",
+            "openai_api_key": SecretStr("test-only-openai-key"),
             **updates,
         }
     )
@@ -61,6 +63,16 @@ def test_provider_contract_and_reordered_response(settings, vendor):
 
     def handle(request):
         calls.append(request)
+        if vendor == "gemini":
+            return httpx.Response(
+                200,
+                json={
+                    "embeddings": [
+                        {"values": [1.0] * EMBEDDING_DIMENSIONS},
+                        {"values": [2.0] * EMBEDDING_DIMENSIONS},
+                    ]
+                },
+            )
         return httpx.Response(
             200,
             json={
@@ -83,7 +95,17 @@ def test_provider_contract_and_reordered_response(settings, vendor):
     assert calls[0].url.host == (
         "api.openai.com" if vendor == "openai" else "generativelanguage.googleapis.com"
     )
-    assert b'"dimensions":1536' in calls[0].content
+    if vendor == "openai":
+        assert b'"dimensions":1536' in calls[0].content
+    else:
+        import json
+
+        body = json.loads(calls[0].content)
+        assert calls[0].url.path.endswith("/models/gemini-embedding-2:batchEmbedContents")
+        assert calls[0].headers["x-goog-api-key"] == "test-only-key"
+        assert "Authorization" not in calls[0].headers
+        assert [r["content"]["parts"][0]["text"] for r in body["requests"]] == ["first", "second"]
+        assert all(r["outputDimensionality"] == EMBEDDING_DIMENSIONS for r in body["requests"])
 
 
 @pytest.mark.parametrize("status", [408, 429, 500, 503])
@@ -174,3 +196,33 @@ def test_non_json_embedding_response(settings):
     ) as c:
         with pytest.raises(ProviderError, match="invalid_embedding_response"):
             HTTPEmbeddingProvider(provider_settings(settings), c).embed(["text"])
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        [],
+        [1.0],
+        [0.0] * EMBEDDING_DIMENSIONS,
+        [float("nan")] * EMBEDDING_DIMENSIONS,
+        [True] * EMBEDDING_DIMENSIONS,
+    ],
+)
+def test_native_gemini_rejects_invalid_dimensions_values_and_zero_vectors(settings, values):
+    import json
+
+    response = httpx.Response(200, content=json.dumps({"embeddings": [{"values": values}]}))
+    with httpx.Client(transport=httpx.MockTransport(lambda _: response)) as client:
+        with pytest.raises(ProviderError, match="invalid_embedding_response"):
+            HTTPEmbeddingProvider(
+                provider_settings(settings, embedding_provider="gemini"), client
+            ).embed(["x"])
+
+
+def test_native_gemini_rejects_aggregated_or_missing_batch_items(settings):
+    response = httpx.Response(200, json={"embeddings": [{"values": [1.0] * EMBEDDING_DIMENSIONS}]})
+    with httpx.Client(transport=httpx.MockTransport(lambda _: response)) as client:
+        with pytest.raises(ProviderError, match="invalid_embedding_response"):
+            HTTPEmbeddingProvider(
+                provider_settings(settings, embedding_provider="gemini"), client
+            ).embed(["x", "y"])

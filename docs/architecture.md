@@ -26,7 +26,9 @@ without a tokenizer vocabulary download in tests. They do not provide an exact
 model-token budget. Character offsets refer to canonical whitespace-normalized
 page text; cleaning never rewrites words.
 
-All embeddings are requested at 1536 dimensions. Fake embeddings use a separate
+All embeddings are requested at 1536 dimensions. Gemini uses its native synchronous
+batch embedding endpoint with one content/request per chunk; response order and
+count preserve the input mapping. OpenAI retains its compatible endpoint. Fake embeddings use a separate
 model identity and a different profile from semantic embeddings. Future retrieval
 must filter by one profile and use its exact provider/model.
 
@@ -138,8 +140,8 @@ revision/dirty state, and raw per-question records. Credentials/database URLs ar
 excluded. The comparison script checks the same document IDs across chunk profiles
 and uses explicit opt-in for ingestion. Experiments require a quiescent database.
 
-The harness and an assistant-authored five-question pilot are implemented.
+The harness and an assistant-authored 30-question baseline are implemented.
 Independent human label review and real semantic evaluation remain pending.
-See [the pilot provenance and evidence](../eval/golden-review.md). A manually
+See [the benchmark provenance and evidence](../eval/golden-review.md). A manually
 dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
 See the [browser evaluation handoff](evaluation-handoff.md).

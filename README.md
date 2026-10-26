@@ -3,9 +3,8 @@
 A RAG research workspace for answers with verifiable document, page, and quote
 citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
 verified quotes, a responsive React interface, and the M4 evaluation harness are
-implemented. A source-checked, **assistant-authored five-question golden pilot** is
-encoded at the user's request. Independent human review, the expanded benchmark,
-and real quality measurements remain pending; no semantic-quality numbers are
+implemented. A source-checked, **assistant-authored 30-question golden baseline** is
+encoded at the user's request. Independent human review and real quality measurements remain pending; no semantic-quality numbers are
 fabricated.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
@@ -83,6 +82,10 @@ The default model configuration is **Gemini Embedding 2** for retrieval and
 original OpenAI-only specification. The original `text-embedding-3-small` option
 remains selectable behind the same interface. No automatic provider fallback
 exists, and no local model/GPU is required.
+
+Gemini embeddings use the native synchronous `batchEmbedContents` endpoint; each
+chunk receives its own validated 1536-dimensional vector. Chat uses the
+OpenAI-compatible endpoint. Adapters stay behind provider interfaces.
 
 Google lists free API tiers for both suggested models as of 2026-10-24, subject
 to quotas, account/region eligibility, availability, and terms. Use a free-tier
@@ -347,8 +350,8 @@ Use [the browser-only handoff](docs/evaluation-handoff.md) to run this through
 GitHub Actions without a local build. The explicit manual workflow uses the
 `GEMINI_API_KEY` repository secret; normal CI never calls model providers.
 
-`eval/golden.jsonl` contains the five-question assistant-authored pilot (4 answerable,
-1 unanswerable). Read [the questions, answer key, and source checks](eval/golden-review.md)
+`eval/golden.jsonl` contains the 30-question assistant-authored baseline (25 answerable,
+5 unanswerable). Read [the questions, answer key, and source checks](eval/golden-review.md)
 before the first real run. Reference answers support human review and are not
 automatically scored. After reviewing the labels and indexing the matching corpus, run:
 
@@ -371,14 +374,14 @@ faithfulness judge is used, and reference answers are not automatically scored.
 
 Pilot questions and reference answers were drafted by the assistant on 2026-10-26
 at the user's explicit request and checked against the PDFs. They have not yet had
-independent human review. The planned 25-answerable/5-unanswerable set and real
-quality measurements remain pending. Mechanical tests, source checks, and code
+independent human review. The planned 25-answerable/5-unanswerable set is encoded; real quality measurements
+remain pending. Mechanical tests, source checks, and code
 coverage are not semantic retrieval or answer-quality measurements.
 
 ## Limitations and next milestone
 
 - M1–M3 return passages and evidence-gated cited answers through the API/UI.
-  M4's harness and a five-question golden pilot are implemented; reviewed benchmark
+  M4's harness and a 30-question golden baseline are implemented; reviewed benchmark
   data and real quality results remain required before the project's full definition
   of done can be met.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column

@@ -2,15 +2,15 @@
 
 The app, automated checks, and evaluation machinery are implemented. The real
 quality benchmark still needs **reviewed golden labels** and access to the chosen
-Gemini models. A five-question assistant-authored pilot is encoded at your request;
+Gemini models. A 30-question assistant-authored baseline is encoded at your request;
 it is ready for your review, not an independent benchmark. The project cannot honestly substitute a fake-provider
 run for those measurements. M5 remains outside this release until M4 is measured.
 
-1. Review [the five pilot questions, answer key, and source checks](../eval/golden-review.md)
+1. Review [the 30 questions, answer key, and source checks](../eval/golden-review.md)
    against the two PDFs in the [corpus reference](corpus-reference.md). The encoded
    file is `eval/golden.jsonl`; independent human review is pending. Use the branch
-   containing the pilot for the first run, then expand toward 25 answerable and
-   5 unanswerable questions. GitHub's editor is sufficient; no local build is needed.
+   containing the baseline for the first run. The original q01–q05 remain intact;
+   q01–q30 now provide 25 answerable and 5 unanswerable questions. GitHub's editor is sufficient; no local build is needed.
 2. In the repository, open **Settings → Secrets and variables → Actions → New
    repository secret** and add **`GEMINI_API_KEY`**. Keep the value in GitHub's
    secret form, never source code, an issue, or chat. Use your intended account
@@ -44,3 +44,20 @@ Citation validity means the quotes occur in supplied chunks. It does not measure
 semantic entailment of every answer claim. No LLM faithfulness judge is used.
 Human review and real adversarial testing remain necessary before describing
 answer faithfulness or injection resistance as established.
+
+
+## Provider access preflight
+
+The workflow now runs `scripts/check_providers.py --allow-real-calls` before
+corpus ingestion. It makes a tiny embedding request and a schema-constrained
+chat request through the actual adapters. It prints component outcomes, numeric
+HTTP statuses, and allowlisted provider error/reason codes only. It never prints
+API keys, authorization headers, prompts, generated text, vectors, or provider
+error messages/bodies. Local tests use MockTransport and require no secret.
+
+A preflight failure stops the expensive ingestion/evaluation path. HTTP 400 with
+API_KEY_INVALID indicates credential trouble; 401/403 indicate authentication or
+access issues; 404 can indicate unavailable models/endpoints; 429 indicates quota
+or rate limits. Inspect the safe codes and the provider account configuration.
+No provider or model is silently replaced. Account-specific failures need the
+account owner to fix access or replace the repository secret securely.
