@@ -211,3 +211,29 @@ def test_atomic_report_failure_preserves_existing_output(tmp_path, monkeypatch):
         atomic_write(path, "new")
     assert path.read_text() == "existing"
     assert list(tmp_path.iterdir()) == [path]
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_retrieval_only_never_calls_answers_and_leaves_answer_metrics_unmeasured(failed):
+    search, answers = Mock(), Mock()
+    search.search.return_value = retrieval()
+    if failed:
+        search.search.side_effect = ProviderError("private")
+    answers.answer_from_retrieval.side_effect = AssertionError("LLM must not run")
+    result = evaluate_questions(
+        [question(), question(False)],
+        search,
+        answers,
+        EvaluationOptions(retrieval_only=True),
+        {"mechanics_only": False},
+    )
+    answers.answer_from_retrieval.assert_not_called()
+    assert result.summary.recall_at_k == result.summary.mrr == (0 if failed else 1)
+    assert result.summary.errors == (2 if failed else 0)
+    assert result.summary.refusal_accuracy is result.summary.citation_validity is None
+    assert result.summary.correct_refusals == 0
+    assert all(row.answer is None for row in result.rows)
+    report = render_report(result)
+    assert "RETRIEVAL ONLY" in report and "| retrieval |" in report
+    assert "no LLM calls or answer metrics" in report
+    assert "latency covers retrieval" in report

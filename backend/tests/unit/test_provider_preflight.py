@@ -109,3 +109,32 @@ def test_success_diagnostics_report_shapes_without_embedding_values():
         "embedding_rows": 1,
         "embedding_dimensions": [2],
     }
+
+
+def test_embedding_only_preflight_never_calls_chat(settings):
+    config = settings.model_copy(
+        update={"enable_real_providers": True, "gemini_api_key": SecretStr("test-only-key")}
+    )
+    requests = []
+
+    def handle(request):
+        requests.append(request)
+        assert request.url.path.endswith(":batchEmbedContents")
+        return httpx.Response(200, json={"embeddings": [{"values": [1.0] * EMBEDDING_DIMENSIONS}]})
+
+    reports = check_providers.check_providers(
+        config, httpx.MockTransport(handle), embedding_only=True
+    )
+    assert len(requests) == 1 and reports[0]["component"] == "embedding" and reports[0]["ok"]
+
+
+def test_embedding_only_cli_passes_explicit_flag(settings, monkeypatch):
+    monkeypatch.setattr(
+        check_providers,
+        "Settings",
+        lambda: settings.model_copy(update={"enable_real_providers": True}),
+    )
+    check = Mock(return_value=[{"component": "embedding", "ok": True}])
+    monkeypatch.setattr(check_providers, "check_providers", check)
+    assert check_providers.main(["--allow-real-calls", "--embedding-only"]) == 0
+    assert check.call_args.kwargs == {"embedding_only": True}

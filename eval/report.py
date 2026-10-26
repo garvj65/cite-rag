@@ -16,9 +16,9 @@ def _number(value: float | None) -> str:
 def results_table(results: list[EvaluationResult]) -> str:
     """Render comparable strategy/chunk rows with explicit errors and sample counts."""
     lines = [
-        "| Strategy | Chunk words | k | Questions | Errors | Recall@k | MRR@k | "
+        "| Mode | Strategy | Chunk words | k | Questions | Errors | Recall@k | MRR@k | "
         "Citation validity | Refusal accuracy | p50 ms | p95 ms |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for result in results:
         options, summary = result.options, result.summary
@@ -35,7 +35,8 @@ def results_table(results: list[EvaluationResult]) -> str:
             summary.latency_p95_ms,
         ]
         lines.append(
-            f"| {options.strategy} | {chunk} | {options.k} | "
+            f"| {'retrieval' if options.retrieval_only else 'end-to-end'} | "
+            f"{options.strategy} | {chunk} | {options.k} | "
             f"{summary.questions} | {summary.errors} | "
             + " | ".join(_number(value) for value in metrics)
             + " |"
@@ -51,9 +52,18 @@ def render_report(result: EvaluationResult) -> str:
         if result.metadata.get("mechanics_only")
         else "Configured-provider evaluation"
     )
+    if result.options.retrieval_only:
+        label += " — RETRIEVAL ONLY; no LLM calls or answer metrics"
     return (
         f"# CiteRAG evaluation\n\n**{label}**\n\n"
         + results_table([result])
+        + (
+            "\n\nRetrieval-only run: latency covers retrieval and bookkeeping only. "
+            "Citations, refusals, and answer quality were not evaluated. N/A does not mean "
+            "a perfect score or a failure.\n"
+            if result.options.retrieval_only
+            else ""
+        )
         + f"\n\nAnswerable: {summary.answerable}; unanswerable: {summary.unanswerable}; "
         f"correct refusals: {summary.correct_refusals}.\n"
         "Raw citation counts before refusal filtering/deduplication: "
@@ -62,8 +72,8 @@ def render_report(result: EvaluationResult) -> str:
         "Recall and MRR are macro averages over answerable questions. k counts chunks; "
         "recall deduplicates pages, while MRR uses the first matching chunk rank. "
         "Retrieval failures score zero; generation failures retain retrieval measurements. "
-        "Errors are never counted as correct refusals. Latency includes retrieval, generation, "
-        "validation, and retries for every attempted question, including failures. "
+        "Errors are never counted as correct refusals. End-to-end latency includes retrieval, "
+        "generation, validation, and retries for every attempted question, including failures. "
         "Intentional pauses between questions are excluded from latency.\n\n"
         "No LLM judge is used. Citation validity measures quote provenance, not answer entailment. "
         "Faithfulness is not measured. A fixed seed controls question order; live providers, "
@@ -93,6 +103,8 @@ def write_report(result: EvaluationResult, directory: Path) -> Path:
     """Save Markdown, complete JSON, and per-question JSONL with a unique run name."""
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     mode = "mechanics" if result.metadata.get("mechanics_only") else "configured"
+    if result.options.retrieval_only:
+        mode += "_retrieval"
     stem = f"{timestamp}_{mode}_{result.options.strategy}_k{result.options.k}"
     target = directory / f"{stem}.md"
     atomic_write(directory / f"{stem}.json", result.model_dump_json(indent=2) + "\n")

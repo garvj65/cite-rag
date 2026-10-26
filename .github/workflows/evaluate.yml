@@ -12,6 +12,10 @@ on:
         type: choice
         options: [hybrid, vector, keyword, all]
         default: hybrid
+      retrieval_only:
+        description: Measure retrieval only (no chat calls; answer metrics N/A)
+        type: boolean
+        default: false
       chat_model:
         description: Explicit chat model for this run (no automatic fallback)
         type: choice
@@ -52,6 +56,7 @@ jobs:
       GEMINI_EMBEDDING_MODEL: gemini-embedding-2
       GEMINI_CHAT_MODEL: ${{ inputs.chat_model }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      EVAL_RETRIEVAL_ONLY: ${{ inputs.retrieval_only }}
       EVAL_STRATEGY: ${{ inputs.strategy }}
       EVAL_DELAY_SECONDS: ${{ inputs.delay_seconds }}
     steps:
@@ -78,7 +83,11 @@ jobs:
           EvaluationOptions(question_delay_seconds=float(os.environ["EVAL_DELAY_SECONDS"]))
           PY
       - name: Check provider access with sanitized diagnostics
-        run: uv run python scripts/check_providers.py --allow-real-calls
+        shell: bash
+        run: |
+          flags=()
+          if [ "$EVAL_RETRIEVAL_ONLY" = true ]; then flags+=(--embedding-only); fi
+          uv run python scripts/check_providers.py --allow-real-calls "${flags[@]}"
       - name: Download the approved public corpus and check document identities
         run: |
           uv run python scripts/download_corpus.py
@@ -103,9 +112,11 @@ jobs:
         run: |
           strategies=("$EVAL_STRATEGY")
           if [ "$EVAL_STRATEGY" = all ]; then strategies=(vector keyword hybrid); fi
+          flags=()
+          if [ "$EVAL_RETRIEVAL_ONLY" = true ]; then flags+=(--retrieval-only); fi
           status=0
           for strategy in "${strategies[@]}"; do
-            uv run python -m eval.run --strategy "$strategy" --k 5 --seed 42 --delay-seconds "$EVAL_DELAY_SECONDS" || status=1
+            uv run python -m eval.run --strategy "$strategy" --k 5 --seed 42 --delay-seconds "$EVAL_DELAY_SECONDS" "${flags[@]}" || status=1
           done
           exit "$status"
       - name: Publish measured aggregate table in run summary

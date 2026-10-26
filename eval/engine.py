@@ -59,7 +59,8 @@ def evaluate_questions(
         try:
             retrieval = search.search(question.question, options.strategy, options.k)
             retrieved_at = clock()
-            answer = answers.answer_from_retrieval(question.question, retrieval)
+            if not options.retrieval_only:
+                answer = answers.answer_from_retrieval(question.question, retrieval)
         except ProviderConfigurationError:
             error = "provider_not_configured"
         except ProviderTimeoutError:
@@ -94,10 +95,15 @@ def evaluate_questions(
                 latency_ms=(finished - started) * 1000,
             )
         )
-    return EvaluationResult(options=options, metadata=metadata, summary=summarize(rows), rows=rows)
+    return EvaluationResult(
+        options=options,
+        metadata=metadata,
+        summary=summarize(rows, retrieval_only=options.retrieval_only),
+        rows=rows,
+    )
 
 
-def summarize(rows: Sequence[EvaluationRow]) -> EvaluationSummary:
+def summarize(rows: Sequence[EvaluationRow], *, retrieval_only: bool = False) -> EvaluationSummary:
     """Macro-average page metrics and micro-average raw citation verification counts."""
     recalls = [row.recall for row in rows if row.recall is not None]
     ranks = [row.reciprocal_rank for row in rows if row.reciprocal_rank is not None]
@@ -117,7 +123,7 @@ def summarize(rows: Sequence[EvaluationRow]) -> EvaluationSummary:
         citation_validity=citation_validity(valid, proposed),
         citations_proposed=proposed,
         citations_valid=valid,
-        refusal_accuracy=refusal_accuracy(refused, negatives),
+        refusal_accuracy=None if retrieval_only else refusal_accuracy(refused, negatives),
         correct_refusals=refused,
         latency_p50_ms=percentile([row.latency_ms for row in rows], 0.5),
         latency_p95_ms=percentile([row.latency_ms for row in rows], 0.95),

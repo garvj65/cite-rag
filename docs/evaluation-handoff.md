@@ -68,3 +68,11 @@ experiment, recorded in its metadata; it is never an automatic fallback. Google
 [lists free tiers](https://ai.google.dev/gemini-api/docs/pricing) for both, subject
 to account quotas and eligibility. Do not combine results from different chat
 models without labeling them.
+
+For ranking measurements during chat outages or quota exhaustion, explicitly
+check **Measure retrieval only**. This skips chat preflight and generation,
+leaving citation/refusal/answer metrics N/A. It measures retrieval latency only;
+do not compare it with full answer latency. You can reduce question pacing for
+this mode subject to embedding quotas. The mode is recorded in each JSON report
+and displayed in the aggregate table. Full answer evaluation remains a separate
+run with this checkbox off.

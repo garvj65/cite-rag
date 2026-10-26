@@ -81,9 +81,12 @@ def response_diagnostic(response: httpx.Response) -> dict[str, object]:
 
 
 def check_providers(
-    settings: Settings, transport: httpx.BaseTransport | None = None
+    settings: Settings,
+    transport: httpx.BaseTransport | None = None,
+    *,
+    embedding_only: bool = False,
 ) -> list[dict[str, object]]:
-    """Try one tiny embedding batch and one schema-constrained chat without printing content."""
+    """Check one tiny embedding batch and optionally chat, without printing content."""
     reports: list[dict[str, object]] = []
     attempts: list[dict[str, object]] = []
 
@@ -92,7 +95,7 @@ def check_providers(
         attempts.append(response_diagnostic(response))
 
     with httpx.Client(transport=transport, event_hooks={"response": [capture]}) as client:
-        for component in ("embedding", "chat"):
+        for component in ("embedding",) if embedding_only else ("embedding", "chat"):
             attempts = []
             report: dict[str, object] = {"component": component, "ok": False}
             try:
@@ -123,6 +126,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Require explicit real-call opt-in and return only sanitized diagnostic JSON."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--allow-real-calls", action="store_true")
+    parser.add_argument("--embedding-only", action="store_true")
     args = parser.parse_args(argv)
     try:
         settings = Settings()
@@ -132,7 +136,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.allow_real_calls or not settings.enable_real_providers:
         print('{"error":"real_calls_not_authorized"}')
         return 2
-    reports = check_providers(settings)
+    reports = (
+        check_providers(settings, embedding_only=True)
+        if args.embedding_only
+        else check_providers(settings)
+    )
     print(json.dumps({"checks": reports}))
     return 0 if all(report["ok"] for report in reports) else 1
 

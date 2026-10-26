@@ -129,3 +129,13 @@ Malformed model output is an error and has no countable citation list. Interpret
 citation validity alongside error counts; a high validity ratio alone cannot
 establish reliable answer generation. Latency measures the RAG service path,
 excluding index preflight, report serialization, and browser-to-API transport.
+
+## Retrieval-only measurement when chat is unavailable
+
+`uv run python -m eval.run --strategy hybrid --k 5 --retrieval-only` measures the
+same page rankings on the same golden data and index, without calling or creating
+a chat provider. Citation validity and refusal accuracy are **N/A**; latency is
+retrieval-only and must not be compared with end-to-end answer latency. Reports
+and tables label the mode explicitly. This is a separate explicit experiment,
+not a fallback or a substitute for measuring real answers. The workflow's
+`retrieval_only` checkbox uses embedding-only preflight and enables this CLI flag.
