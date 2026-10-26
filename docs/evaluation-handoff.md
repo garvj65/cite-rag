@@ -61,3 +61,10 @@ access issues; 404 can indicate unavailable models/endpoints; 429 indicates quot
 or rate limits. Inspect the safe codes and the provider account configuration.
 No provider or model is silently replaced. Account-specific failures need the
 account owner to fix access or replace the repository secret securely.
+
+The manual workflow also exposes an explicit `chat_model` choice. The app default
+remains Gemini 3.8 Flash. Selecting Gemini 3.6 Flash is a separate configured
+experiment, recorded in its metadata; it is never an automatic fallback. Google
+[lists free tiers](https://ai.google.dev/gemini-api/docs/pricing) for both, subject
+to account quotas and eligibility. Do not combine results from different chat
+models without labeling them.

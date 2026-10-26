@@ -52,3 +52,17 @@ malformed/truncated responses, provider blocks, and transient retries. The
 [official REST example](https://ai.google.dev/gemini-api/docs/generate-content/structured-output)
 and [API reference](https://ai.google.dev/api/generate-content) define the contract.
 A follow-up real check is required before claiming chat or quality measurements.
+
+## Native chat availability
+
+[Run 40270187206](https://github.com/garvj65/cite-rag/actions/runs/40270187206)
+used revision `b72dc6569430e6adc0ee1855118b2296b4519448`. Embedding preflight
+passed again (HTTP 200, 1 x 1536). Native Gemini 3.8 Flash chat returned HTTP 503
+with the allowlisted provider status `UNAVAILABLE` on all three attempts. No
+corpus was ingested and no questions were evaluated. This confirms a live chat
+availability blocker across both native and compatibility endpoints; it does
+not establish a key/account/billing root cause.
+
+A separate Gemini 3.6 Flash experiment is selectable explicitly in the workflow;
+the app default and existing evidence remain unchanged. No automatic or paid
+provider fallback is used. Results are pending.

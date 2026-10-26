@@ -12,6 +12,11 @@ on:
         type: choice
         options: [hybrid, vector, keyword, all]
         default: hybrid
+      chat_model:
+        description: Explicit chat model for this run (no automatic fallback)
+        type: choice
+        options: [gemini-3.8-flash, gemini-3.6-flash]
+        default: gemini-3.8-flash
       delay_seconds:
         description: Pause between questions, excluded from latency (0–300 seconds)
         type: number
@@ -43,7 +48,7 @@ jobs:
       EMBEDDING_PROVIDER: gemini
       LLM_PROVIDER: gemini
       GEMINI_EMBEDDING_MODEL: gemini-embedding-2
-      GEMINI_CHAT_MODEL: gemini-3.8-flash
+      GEMINI_CHAT_MODEL: ${{ inputs.chat_model }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       EVAL_STRATEGY: ${{ inputs.strategy }}
       EVAL_DELAY_SECONDS: ${{ inputs.delay_seconds }}
