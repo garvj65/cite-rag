@@ -1,5 +1,14 @@
 # Evaluation results
 
+[The Flash-Lite quality pass](20261026_flashlite.md) measures all three strategies
+on the same frozen 30-question development baseline. Hybrid returned 21/25
+supported positives, refused all five negatives, and had zero errors. Vector
+retained one timeout. All 45 returned quotes were source-checked; a valid quote
+does not guarantee faithful wording (see the q01 review flag).
+[Original JSON/Markdown and checksums](20261026_flashlite/README.md) preserve all
+90 first-run records. A separate browser validation is reported alongside them;
+it does not replace any comparison row.
+
 [The 2026-10-26 measured Gemini baseline](20261026_gemini_baseline.md) reports all
 three strategies on 30 assistant-authored questions (25 answerable, 5 negative).
 The retrieval-only run completed without errors. The separate end-to-end attempt

@@ -5,8 +5,9 @@ citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
 verified quotes, a responsive React interface, and the M4 evaluation harness are
 implemented. A source-checked, **assistant-authored 30-question golden baseline** is
 encoded at the user's request. Real Gemini retrieval and answer attempts are
-[measured](eval/results/20261026_gemini_baseline.md), including rate-limit failures
-and refusal gaps. Independent human label review remains pending.
+[measured](eval/results/20261026_flashlite.md): hybrid returned 21/25 supported
+positive answers, refused all five negatives, and had zero errors in the Flash-Lite
+run. Vector retained one timeout. Quote validity does not prove semantic faithfulness. Independent human label review remains pending.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
@@ -14,12 +15,16 @@ and refusal gaps. Independent human label review remains pending.
 · [M4 validation](docs/validation-m4.md)
 · [Release validation](docs/validation-release.md)
 · [Benchmark validation](docs/validation-benchmark.md)
+· [Quality pass validation](docs/validation-quality.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
 [Free-tier deployment runbook](docs/deployment.md) ·
 [Browser evaluation handoff](docs/evaluation-handoff.md) · [Corpus reference](docs/corpus-reference.md)
 
-![CiteRAG research workspace](docs/screenshots/citerag.png)
+![CiteRAG research workspace, real Flash-Lite response](docs/screenshots/citerag.png)
+
+[Live browser check and original captures](eval/results/20261026_flashlite/browser-validation/README.md).
+This is an actual model response; its “should”/“must” wording flag is retained for review.
 
 ## Start locally
 
@@ -351,11 +356,11 @@ chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
 See [the M4 validation record](docs/validation-m4.md). These are software checks;
 the live baseline and its limitations are reported below.
 
-Latest benchmark implementation verification: **326 backend/evaluation tests**, including **24 PostgreSQL
-integration tests**, **99.75% backend app coverage**, **38 frontend tests**, and
+Latest quality pass verification: **341 backend/evaluation tests**, including **24 PostgreSQL
+integration tests**, **99.77% backend app coverage**, **38 frontend tests**, and
 **5 browser tests** passed. Full CI also verifies nondefault client limits and
 rendered nginx timeouts through the actual Compose stack. See
-[the benchmark validation record](docs/validation-benchmark.md) for immutable revision,
+[the quality validation record](docs/validation-quality.md) for immutable revisions,
 CI links, coverage denominators, secret-scan scope, and remaining requirements.
 
 ## Evaluation status
@@ -385,6 +390,33 @@ embeds missing configurations. Fake/mixed runs are labeled mechanics only.
 An empty golden file produces an input error, not a benchmark result. No LLM
 faithfulness judge is used, and reference answers are not automatically scored.
 
+**Latest end-to-end run: Gemini 3.5 Flash-Lite + Gemini Embedding 2.** Same
+30-question baseline, corpus, 400/80 chunk settings, k=5, and seed=42.
+
+| Strategy | Recall@5 | MRR@5 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Errors / 30 | p50 / p95 seconds |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Vector | 88.00% | 0.6747 | 24/27 (88.89%) | 5/5 | 19 | 1 | 22.3214 / 133.3919 |
+| Keyword | 6.00% | 0.0800 | N/A (0 proposals) | 5/5 | 0 | 0 | 0.0030 / 0.0042 |
+| Hybrid | 88.00% | 0.7047 | 25/27 (92.59%) | 5/5 | 21 | 0 | 21.2743 / 58.1102 |
+
+[Full Flash-Lite analysis, raw records and checksums](eval/results/20261026_flashlite.md).
+All **45 returned quotes matched their original source chunks** on recheck.
+The comparison workflow exited with failure because vector q13 timed out; that
+row is retained. Hybrid's corrected gate now admits strong single-source evidence,
+using component scores instead of RRF as confidence. Numeric thresholds, prompts,
+and labels were unchanged. Vector remains the explicitly selected default.
+
+Supported counts are application outcomes, **not measured correctness rates**.
+Keyword refused every positive. Hybrid q01 strengthens the source's “should” to
+“must” despite a valid quote: human semantic review remains necessary. q30's
+false-premise policy and independent label/held-out review remain pending. Pacing
+inside a question and retries count toward latency; the question delay was zero.
+No paid/fake fallback or LLM faithfulness judge was used. The separate real
+browser answer/citation/refusal check passed; its records and original captures
+are linked in the analysis.
+
+**Earlier frozen baseline (before the hybrid gate correction and model change):**
+
 Measured on 2026-10-26: two NIST PDFs, 112 pages, 149 chunks; 400-word chunks,
 80-word overlap, k=5, seed=42. Each strategy processed all 30 questions (25
 answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:**
@@ -405,9 +437,10 @@ answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:*
 
 The answer workflow exited with failure because of provider errors. The high
 keyword/hybrid refusal scores came with **zero supported positive answers**;
-they do not demonstrate useful answering. Hybrid's provisional RRF evidence gate
-rejects a chunk appearing in only one ranking. **Vector is the default strategy**;
-no prompt, retrieval algorithm, threshold, or label was tuned after seeing scores.
+they did not demonstrate useful answering. At that revision the provisional RRF
+gate rejected chunks appearing in only one ranking. The later quality pass
+corrects this gate and records its model/pacing changes separately; these older
+results and labels remain unchanged.
 The vector `q30` response is an expected-refusal disagreement involving a cited
 non-prescriptive-framework explanation; its frozen label needs independent review.
 
@@ -425,8 +458,9 @@ the 3.6 Flash experiment was selected explicitly. No paid or fake fallback exist
 
 - M1–M3 return passages and evidence-gated cited answers through the API/UI.
   M4's harness and 30-question golden baseline are implemented and measured.
-  Live provider reliability, independent label review, hybrid-gate calibration,
-  and a fresh held-out answer benchmark remain open quality work.
+  Intermittent provider failures, semantic wording drift, independent label review,
+  and a fresh held-out answer benchmark remain open quality work. The hybrid RRF
+  evidence-gate defect is corrected; component thresholds remain provisional.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column
   layouts, equations, or images. Page boundaries can divide useful context.
 - English full-text search is appropriate for this corpus; other languages need

@@ -1,0 +1,2508 @@
+{
+  "options": {
+    "strategy": "hybrid",
+    "k": 5,
+    "seed": 42,
+    "question_delay_seconds": 0.0,
+    "retrieval_only": false
+  },
+  "metadata": {
+    "created_at": "2026-10-26T16:31:02.504219+00:00",
+    "git_commit": "a0e83ef53f2462e166deb2aecee98bda7ec4c17e",
+    "working_tree_dirty": true,
+    "python_version": "3.12.3",
+    "scripted_response_sha256": null,
+    "golden_sha256": "b1307136fd933bf5b2cf36a1208304e1dfc06dc69f8c939a4a73b95e78224c56",
+    "index_profile": "4a3e52273c1fcc3f62adc29a0d5a10b20b4b5757447d1fb87e8bf333686da91d",
+    "embedding_model": "gemini/gemini-embedding-2",
+    "mechanics_only": false,
+    "settings": {
+      "enable_real_providers": true,
+      "embedding_provider": "gemini",
+      "gemini_embedding_model": "gemini-embedding-2",
+      "openai_embedding_model": "text-embedding-3-small",
+      "llm_provider": "gemini",
+      "gemini_chat_model": "gemini-3.5-flash-lite",
+      "openai_chat_model": "",
+      "answer_min_vector_score": 0.35,
+      "answer_min_keyword_score": 0.05,
+      "answer_context_characters": 24000,
+      "answer_max_characters": 12000,
+      "answer_max_citations": 8,
+      "answer_max_quote_characters": 2000,
+      "model_max_output_characters": 50000,
+      "chat_max_completion_tokens": 4096,
+      "chunk_size_words": 400,
+      "chunk_overlap_words": 80,
+      "provider_timeout_seconds": 30.0,
+      "provider_max_attempts": 3,
+      "provider_backoff_seconds": 30.0,
+      "provider_max_backoff_seconds": 60.0,
+      "gemini_chat_requests_per_minute": 12,
+      "gemini_embedding_inputs_per_minute": 90,
+      "max_query_characters": 2000,
+      "hybrid_candidate_k": 20,
+      "rrf_constant": 60
+    },
+    "corpus": [
+      {
+        "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+        "title": "NIST Generative AI Risk Management Profile",
+        "pdf_pages": 64,
+        "indexed_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64
+        ]
+      },
+      {
+        "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+        "title": "NIST AI Risk Management Framework 1.0",
+        "pdf_pages": 48,
+        "indexed_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48
+        ]
+      }
+    ],
+    "faithfulness": "not measured; no LLM judge"
+  },
+  "summary": {
+    "questions": 30,
+    "answerable": 25,
+    "unanswerable": 5,
+    "errors": 0,
+    "recall_at_k": 0.88,
+    "mrr": 0.7046666666666667,
+    "citation_validity": 0.9259259259259259,
+    "citations_proposed": 27,
+    "citations_valid": 25,
+    "refusal_accuracy": 1.0,
+    "correct_refusals": 5,
+    "latency_p50_ms": 21274.347420500024,
+    "latency_p95_ms": 58110.18988534977
+  },
+  "rows": [
+    {
+      "id": "q20",
+      "question": "What can over-reliance on synthetic training data do to a generative model?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 41,
+          "chunk_id": 120,
+          "score": 0.01639344262295082,
+          "vector_score": 0.6761973727337937,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 40,
+          "chunk_id": 119,
+          "score": 0.016129032258064516,
+          "vector_score": 0.6727352543315455,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11,
+          "chunk_id": 84,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6696018959990805,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12,
+          "chunk_id": 86,
+          "score": 0.015625,
+          "vector_score": 0.6655764185008194,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 62,
+          "chunk_id": 147,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6600043988217544,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Over-reliance on GAI-produced (synthetic) training data can lead to concerns regarding model collapse, which is associated with issues like homogenization.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 41,
+            "quote": "Assess the proportion of synthetic to non-synthetic training data and verify training data is not overly homogenous or GAI-produced to mitigate concerns of model collapse.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 120,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 329.3953630000033,
+      "latency_ms": 19554.71776299987
+    },
+    {
+      "id": "q15",
+      "question": "How should organizations connect AI risk management to enterprise risk management?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13,
+          "chunk_id": 19,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7849062748673337,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 7,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7499946653863336,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 26,
+          "chunk_id": 39,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7422146871426705,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 43,
+          "chunk_id": 59,
+          "score": 0.015625,
+          "vector_score": 0.7304069332571763,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7282886398273127,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Organizations should integrate and incorporate AI risk management into their broader enterprise risk management strategies and processes, treating AI risks alongside other critical risks such as cybersecurity and privacy to achieve more integrated outcomes and organizational efficiencies.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 13,
+            "quote": "AI risk management should be integrated and incorporated into broader enterprise risk management strategies and processes. Treating AI risks along with other critical risks, such as cybersecurity and privacy, will yield a more integrated outcome and organizational efficiencies.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 19,
+            "chunk_index": 1
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 290.7594710000012,
+      "latency_ms": 81670.44527899998
+    },
+    {
+      "id": "q11",
+      "question": "How does the AI RMF define reliability in terms of performance, time, and conditions?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 18
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19,
+          "chunk_id": 27,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7495975866074379,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 18,
+          "chunk_id": 26,
+          "score": 0.016129032258064516,
+          "vector_score": 0.748535409307863,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 17,
+          "chunk_id": 24,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7415428027733196,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20,
+          "chunk_id": 29,
+          "score": 0.015625,
+          "vector_score": 0.7312281478079276,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 18,
+          "chunk_id": 25,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7221829228837358,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "The AI RMF defines reliability (citing ISO/IEC TS 5723:2022) as the “ability of an item to perform as required, without failure, for a given time interval, under given conditions,” functioning as a goal for overall correctness under expected use conditions and over a given period.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 18,
+            "quote": "Reliability is defined in the same standard as the “ability of an item to perform as required, without failure, for a given time interval, under given conditions” (Source: ISO /IEC TS 5723:2022). Reliability is a goal for overall correctness of AI system operation under the conditions of expected use and over a given period of time, including the entire lifetime of the system.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 26,
+            "chunk_index": 1
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "retrieval_latency_ms": 321.9701409998379,
+      "latency_ms": 18099.992567999834
+    },
+    {
+      "id": "q27",
+      "question": "What Recall@5 score did Gemini 3.8 Flash achieve on these two NIST PDFs?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 3,
+          "chunk_id": 69,
+          "score": 0.01639344262295082,
+          "vector_score": 0.6593001871259145,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 2,
+          "chunk_id": 68,
+          "score": 0.016129032258064516,
+          "vector_score": 0.6563973445181932,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 1,
+          "chunk_id": 67,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6391371587024359,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 2,
+          "chunk_id": 2,
+          "score": 0.015625,
+          "vector_score": 0.6379884101159612,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 48,
+          "chunk_id": 66,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6355129970571419,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 294.71249399989574,
+      "latency_ms": 28309.425797999895
+    },
+    {
+      "id": "q23",
+      "question": "What kinds of information can content provenance metadata record for generative AI?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 55
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 55,
+          "chunk_id": 139,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7811693884336441,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 55,
+          "chunk_id": 138,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7231231725967711,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 43,
+          "chunk_id": 122,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7199620389949697,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 56,
+          "chunk_id": 140,
+          "score": 0.015625,
+          "vector_score": 0.7175730375814979,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 31,
+          "chunk_id": 109,
+          "score": 0.015384615384615385,
+          "vector_score": 0.694913835849226,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Provenance metadata for generative AI can record information about GAI model developers or content creators, the date and time of creation, location, modifications, and sources.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 55,
+            "quote": "Provenance metadata can include information about GAI model developers or creators of GAI content, date/time of creation, location, modiﬁcations, and sources.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 138,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 356.72465199991166,
+      "latency_ms": 24469.85496299999
+    },
+    {
+      "id": "q07",
+      "question": "What two components form the AI RMF definition of risk?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9,
+          "chunk_id": 11,
+          "score": 0.01639344262295082,
+          "vector_score": 0.8144247531890927,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 6,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7861038232856127,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7644313134014898,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 4,
+          "chunk_id": 4,
+          "score": 0.015625,
+          "vector_score": 0.758450849333255,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 7,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7582799052167003,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "In the context of the AI RMF, risk is defined as the composite measure of an event's probability of occurring and the magnitude or degree of the consequences of that event.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 9,
+            "quote": "In the context of the AI RMF,risk refers to the composite measure of an event’s probability of occurring and the magnitude or degree of the consequences of the corresponding event.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 11,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 301.49523500017494,
+      "latency_ms": 14772.299041000224
+    },
+    {
+      "id": "q06",
+      "question": "Is the AI RMF intended only for one industry or use case, and is its use mandatory?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 7
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 6,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7912767018855311,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7870032163298848,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 7,
+          "chunk_id": 8,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7838151753294943,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 47,
+          "chunk_id": 65,
+          "score": 0.015625,
+          "vector_score": 0.7806023068853626,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 7,
+          "chunk_id": 9,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7698104341066945,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "invalid_citations",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "retrieval_latency_ms": 293.25683799993385,
+      "latency_ms": 25608.238875000097
+    },
+    {
+      "id": "q13",
+      "question": "Which three major categories of AI bias does NIST identify in the AI RMF?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 23
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 23,
+          "chunk_id": 35,
+          "score": 0.03278688524590164,
+          "vector_score": 0.8639674158232281,
+          "keyword_score": 0.017424243
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7578170110959828,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 6,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7517957234991434,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 8,
+          "chunk_id": 10,
+          "score": 0.015625,
+          "vector_score": 0.7453885967003474,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9,
+          "chunk_id": 11,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7448146647436038,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "NIST identifies three major categories of AI bias in the AI RMF: systemic, computational and statistical, and human-cognitive.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 23,
+            "quote": "NIST has identified three major categories of AI bias to be considered and managed: systemic, computational and statistical, and human-cognitive.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 35,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 306.77914400007467,
+      "latency_ms": 18316.497500999958
+    },
+    {
+      "id": "q12",
+      "question": "How does the AI RMF distinguish transparency, explainability, and interpretability?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 22
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 21,
+          "chunk_id": 31,
+          "score": 0.01639344262295082,
+          "vector_score": 0.8240752465747989,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 22,
+          "chunk_id": 33,
+          "score": 0.016129032258064516,
+          "vector_score": 0.8237121034526531,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20,
+          "chunk_id": 30,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7646081553077249,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 17,
+          "chunk_id": 24,
+          "score": 0.015625,
+          "vector_score": 0.7597904897860167,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20,
+          "chunk_id": 29,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7565240424617501,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "invalid_citations",
+        "mode": "model",
+        "verification": {
+          "proposed": 2,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "retrieval_latency_ms": 320.9908930000438,
+      "latency_ms": 21448.5028160002
+    },
+    {
+      "id": "q16",
+      "question": "Which AI RMF function establishes the context for risk, and which uses quantitative, qualitative, or mixed methods to assess it?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 29
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 33
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 33,
+          "chunk_id": 47,
+          "score": 0.032018442622950824,
+          "vector_score": 0.7652778293937613,
+          "keyword_score": 0.0125
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 30,
+          "chunk_id": 43,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7800485652584436,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 31,
+          "chunk_id": 45,
+          "score": 0.016129032258064516,
+          "vector_score": 0.779055532672336,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 25,
+          "chunk_id": 37,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7682067929485739,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9,
+          "chunk_id": 11,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7650773473199233,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "The MAP function establishes and understands the context for risk (e.g., MAP 1: \"Context is established and understood\"), while the MEASURE function employs quantitative, qualitative, or mixed-method tools to analyze, assess, benchmark, and monitor AI risk.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 31,
+            "quote": "MAP 1: Context is established and understood.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 45,
+            "chunk_index": 0
+          },
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 33,
+            "quote": "The MEASURE function employs quantitative, qualitative, or mixed-method tools, tech- niques, and methodologies to analyze, assess, benchmark, and monitor AI risk and related impacts.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 47,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 2,
+          "valid": 2
+        }
+      },
+      "error": null,
+      "recall": 0.5,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 324.019084000156,
+      "latency_ms": 17226.361159000135
+    },
+    {
+      "id": "q10",
+      "question": "What should happen when an AI system presents unacceptable negative risk levels?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13,
+          "chunk_id": 18,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7598205804824829,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 19,
+          "chunk_id": 97,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7524640560150146,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19,
+          "chunk_id": 28,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7423674956196342,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 7,
+          "score": 0.015625,
+          "vector_score": 0.73934712879028,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 36,
+          "chunk_id": 114,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7372658472438413,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "When an AI system presents unacceptable negative risk levels (such as situations where significant negative impacts are imminent, severe harms are actually occurring, or catastrophic risks are present), its development and deployment should cease in a safe manner until those risks can be sufficiently managed.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 13,
+            "quote": "In cases where an AI system presents unacceptable negative risk levels – such as where significant negative impacts are imminent, severe harms are actually occurring, or catastrophic risks are present – development and deployment should cease in a safe manner until risks can be sufficiently managed.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 18,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 354.79293799994593,
+      "latency_ms": 81686.46003899994
+    },
+    {
+      "id": "q26",
+      "question": "Compare the AI RMF general privacy aims with the GenAI Profile concerns about personal training data.",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 22
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 71,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7474087332353356,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 44,
+          "chunk_id": 61,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7419173082911107,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 72,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7390709104924269,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11,
+          "chunk_id": 84,
+          "score": 0.015625,
+          "vector_score": 0.7255069239418505,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 43,
+          "chunk_id": 59,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7239566979305075,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.5,
+      "reciprocal_rank": 0.25,
+      "retrieval_latency_ms": 385.29439400008414,
+      "latency_ms": 21271.343422000202
+    },
+    {
+      "id": "q30",
+      "question": "What uniform annual dollar budget does NIST require every organization to spend implementing the AI RMF?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 6,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7633542764263114,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7572897082483616,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 47,
+          "chunk_id": 65,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7557902945974124,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 2,
+          "chunk_id": 2,
+          "score": 0.015625,
+          "vector_score": 0.7554006310705614,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 2,
+          "chunk_id": 68,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7466566546711124,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 331.5783289999672,
+      "latency_ms": 19568.268491000024
+    },
+    {
+      "id": "q22",
+      "question": "During which two phases does action MS-2.5-003 recommend checking sources and citations in GAI outputs?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 35
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 35,
+          "chunk_id": 113,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7882971258873872,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 33,
+          "chunk_id": 111,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7727135772112002,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 29,
+          "chunk_id": 107,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7668983062385856,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 41,
+          "chunk_id": 120,
+          "score": 0.015625,
+          "vector_score": 0.7666113237508043,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 36,
+          "chunk_id": 114,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7615328034541397,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Action MS-2.5-003 recommends reviewing and verifying sources and citations in GAI system outputs during pre-deployment risk measurement and ongoing monitoring activities.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 35,
+            "quote": "MS-2.5-003 Review and verify sources and citations in GAI system outputs during pre-deployment risk measurement and ongoing monitoring activities.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 113,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 316.4868280000519,
+      "latency_ms": 19125.9140090001
+    },
+    {
+      "id": "q17",
+      "question": "Which four primary considerations limited the scope of the GAI Public Working Group described in the introduction?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 6
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 51,
+          "chunk_id": 130,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7564463004005295,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 6,
+          "chunk_id": 73,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7445037060385723,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 4,
+          "chunk_id": 70,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7195601365459818,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 72,
+          "score": 0.015625,
+          "vector_score": 0.7123413428855822,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 51,
+          "chunk_id": 131,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7107703089715869,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "The focus of NIST’s Generative AI Public Working Group (GAI PWG) was limited to four primary considerations relevant to GAI: Governance, Content Provenance, Pre-deployment Testing, and Incident Disclosure.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 6,
+            "quote": "The focus of the GAI PWG was limited to four primary considerations relevant to GAI: Governance, Content Provenance, Pre-deployment Testing, and Incident Disclosure (further described in Appendix A).",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 73,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "retrieval_latency_ms": 272.659812000029,
+      "latency_ms": 24031.12682100004
+    },
+    {
+      "id": "q28",
+      "question": "What exact cosine-similarity threshold does NIST mandate for accepting a RAG answer as supported?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 2,
+          "chunk_id": 68,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7095621919612887,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 3,
+          "chunk_id": 69,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7001529873968086,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6991401541878827,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 1,
+          "chunk_id": 67,
+          "score": 0.015625,
+          "vector_score": 0.6913103983487319,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 2,
+          "chunk_id": 2,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6878621152723078,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 322.0910830000321,
+      "latency_ms": 25244.784154000172
+    },
+    {
+      "id": "q02",
+      "question": "At what stage should AI safety considerations begin, according to the AI Risk Management Framework?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20,
+          "chunk_id": 29,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7714446697964952,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19,
+          "chunk_id": 28,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7575726608425918,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13,
+          "chunk_id": 19,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7517019286244563,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 1,
+          "chunk_id": 1,
+          "score": 0.015625,
+          "vector_score": 0.7489975759673073,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13,
+          "chunk_id": 18,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7483942062619815,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "According to the AI Risk Management Framework, AI safety considerations should be employed throughout the lifecycle and should start as early as possible during the planning and design stage.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 20,
+            "quote": "Employing safety considerations during the lifecycle and starting as early as possible with planning and design can prevent failures or conditions that can render a system dangerous.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 29,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 288.66056299989395,
+      "latency_ms": 21277.351418999842
+    },
+    {
+      "id": "q14",
+      "question": "What are the four AI RMF Core functions, and which function cuts across the others?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 25
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 25,
+          "chunk_id": 37,
+          "score": 0.01639344262295082,
+          "vector_score": 0.8345873956398285,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 8,
+          "chunk_id": 10,
+          "score": 0.016129032258064516,
+          "vector_score": 0.77705629653752,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 27,
+          "chunk_id": 40,
+          "score": 0.015873015873015872,
+          "vector_score": 0.774579755836764,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 26,
+          "chunk_id": 38,
+          "score": 0.015625,
+          "vector_score": 0.7709556171999891,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 4,
+          "chunk_id": 4,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7579888682391958,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "The four AI RMF Core functions are GOVERN, MAP, MEASURE, and MANAGE. Among them, GOVERN is the cross-cutting function that is infused throughout AI risk management and enables the other functions.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 25,
+            "quote": "As illus- trated in Figure 5, the Core is composed of four functions: GOVERN , MAP, MEASURE , and MANAGE .",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 37,
+            "chunk_index": 0
+          },
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 25,
+            "quote": "Governance is designed to be a cross-cutting function to inform and be infused throughout the other three functions.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 37,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 2,
+          "valid": 2
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 319.09050200010824,
+      "latency_ms": 14775.80507100015
+    },
+    {
+      "id": "q19",
+      "question": "What is automation bias, and how can it worsen generative AI risks?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12,
+          "chunk_id": 86,
+          "score": 0.01639344262295082,
+          "vector_score": 0.712924259698744,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 45,
+          "chunk_id": 62,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7111774391460056,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 59,
+          "chunk_id": 144,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7090869838569481,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 45,
+          "chunk_id": 63,
+          "score": 0.015625,
+          "vector_score": 0.7042058681214692,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13,
+          "chunk_id": 87,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7019733608946237,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Automation bias is defined as excessive deference to automated systems, which can occur as humans over-rely on generative AI (GAI) systems or unjustifiably perceive GAI content to be of higher quality than other sources due to the technology's complexity and increasing reliability. This bias can worsen other GAI risks, such as risks related to confabulation, bias, or homogenization.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 13,
+            "quote": "Conversely, due to the complexity and increasing reliability of GAI technology, over time, humans may over-rely on GAI systems or may unjustiﬁably perceive GAI content to be of higher quality than that produced by other sources. This phenomenon is an example of automation bias, or excessive deference to automated systems. Automation bias can exacerbate other risks of GAI, such as risks of confabulation or risks of bias or homogenization.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 87,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.2,
+      "retrieval_latency_ms": 306.63239099999373,
+      "latency_ms": 16296.981251000034
+    },
+    {
+      "id": "q03",
+      "question": "Besides false content, what two kinds of inconsistency does the Generative AI Profile include under confabulation?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 10
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 10,
+          "chunk_id": 82,
+          "score": 0.01639344262295082,
+          "vector_score": 0.762240596999814,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 10,
+          "chunk_id": 81,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7609447066241165,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 71,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6985411472994006,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13,
+          "chunk_id": 87,
+          "score": 0.015625,
+          "vector_score": 0.696568452902927,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 6,
+          "chunk_id": 73,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6950470885437966,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Under confabulation, the Generative AI Profile includes generated outputs that diverge from prompts or other inputs, as well as outputs that contradict previously generated statements in the same context.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 10,
+            "quote": "Confabulations also include generated outputs that diverge from the prompts or other input or that contradict previously generated statements in the same context.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 81,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 288.2200360002116,
+      "latency_ms": 21414.911611000207
+    },
+    {
+      "id": "q18",
+      "question": "Which privacy principles can be put at risk when personal data is used to train generative AI?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11,
+          "chunk_id": 84,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7581865728951387,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 8,
+          "chunk_id": 78,
+          "score": 0.016129032258064516,
+          "vector_score": 0.707884623425548,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12,
+          "chunk_id": 85,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7047582660422103,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 15,
+          "chunk_id": 91,
+          "score": 0.015625,
+          "vector_score": 0.6960258016524986,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 43,
+          "chunk_id": 59,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6891406138288183,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "When personal data is included in generative AI training data, issues like data memorization can reveal sensitive information from the public domain, posing exacerbated privacy risks even for data present in only a small number of training samples.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 11,
+            "quote": "have revealed sensitive information (from the public domain) that was included in their training data. This problem has been referred to as data memorization, and may pose exacerbated privacy risks even for data present only in a small number of training samples.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 84,
+            "chunk_index": 1
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 309.02154900013556,
+      "latency_ms": 24438.217587000054
+    },
+    {
+      "id": "q29",
+      "question": "What exact Python function implementation for Reciprocal Rank Fusion retrieval is provided in these PDFs?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 48,
+          "chunk_id": 66,
+          "score": 0.01639344262295082,
+          "vector_score": 0.6129507374421751,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 2,
+          "chunk_id": 68,
+          "score": 0.016129032258064516,
+          "vector_score": 0.6120394553028534,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 25,
+          "chunk_id": 37,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6089376808872042,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 7,
+          "chunk_id": 9,
+          "score": 0.015625,
+          "vector_score": 0.6083023778900617,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 64,
+          "chunk_id": 149,
+          "score": 0.015384615384615385,
+          "vector_score": 0.608295971896917,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 441.6696910000155,
+      "latency_ms": 29314.322181999843
+    },
+    {
+      "id": "q05",
+      "question": "How many confirmed AI safety incidents worldwide in calendar year 2025 are reported in these documents?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 56,
+          "chunk_id": 141,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7212265867106501,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 57,
+          "chunk_id": 142,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7036924936220138,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 50,
+          "chunk_id": 129,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6949283223003919,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 58,
+          "chunk_id": 143,
+          "score": 0.015625,
+          "vector_score": 0.6872936190158754,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19,
+          "chunk_id": 28,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6720558810318655,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 313.79519300003267,
+      "latency_ms": 8291.567026000166
+    },
+    {
+      "id": "q25",
+      "question": "Why may human-exam scores and laboratory benchmarks fail to establish generative AI reliability in actual use?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 53
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 11,
+          "chunk_id": 15,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7090658762462166,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 18,
+          "chunk_id": 26,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7041525639670267,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 53,
+          "chunk_id": 134,
+          "score": 0.015873015873015872,
+          "vector_score": 0.690645114125793,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 45,
+          "chunk_id": 62,
+          "score": 0.015625,
+          "vector_score": 0.6899903497149875,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 52,
+          "chunk_id": 133,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6893912391248864,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Standardized tests designed for humans (such as professional licensing exams or intelligence tests) do not guarantee generative AI validity or reliability because they are anecdotal tests of capabilities that may not reflect deployment contexts. Additionally, current testing approaches often remain limited to laboratory conditions, benchmark test datasets, and in silico techniques that may not extrapolate well to real-world conditions or directly assess impacts in actual use.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 53,
+            "quote": "the anecdotal testing of GAI system capabilities through video games or standardized tests designed for humans (e.g., intelligence tests, professional licensing exams) does not guarantee GAI system validity or reliability in those domains. Similarly, jailbreaking or prompt engineering tests may not systematically assess validity or reliability risks. Measurement gaps can arise from mismatches between laboratory and real-world settings. Current testing approaches often remain focused on laboratory conditions or restricted to benchmark test datasets and in silico techniques that may not extrapolate well to—or directly assess GAI impacts in real- world conditions.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 134,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "retrieval_latency_ms": 294.0000640001017,
+      "latency_ms": 19532.667683
+    },
+    {
+      "id": "q08",
+      "question": "Does the AI RMF prescribe a universal risk tolerance, and what influences acceptable risk?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 12
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 12,
+          "chunk_id": 16,
+          "score": 0.01639344262295082,
+          "vector_score": 0.825167147015536,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 12,
+          "chunk_id": 17,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7678029302845958,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13,
+          "chunk_id": 18,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7618004026711672,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9,
+          "chunk_id": 11,
+          "score": 0.015625,
+          "vector_score": 0.7602291501046464,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 6,
+          "chunk_id": 6,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7578783261143935,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "No, the AI RMF does not prescribe a universal risk tolerance. Acceptable risk and risk tolerance are highly contextual, specific to applications and use cases, and can be influenced by legal or regulatory requirements as well as policies and norms established by AI system owners, organizations, industries, communities, or policy makers.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 12,
+            "quote": "While the AI RMF can be used to prioritize risk, it does not prescribe risk tolerance.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 16,
+            "chunk_index": 0
+          },
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 12,
+            "quote": "Risk tolerance can be influenced by legal or regula- tory requirements (Adapted from: ISO GUIDE 73). Risk tolerance and the level of risk that is acceptable to organizations or society are highly contextual and application and use-case specific. Risk tolerances can be influenced by policies and norms established by AI sys- tem owners, organizations, industries, communities, or policy makers.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 16,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 2,
+          "valid": 2
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 295.7470399999238,
+      "latency_ms": 22249.767402999852
+    },
+    {
+      "id": "q09",
+      "question": "Why can third-party components make AI risk measurement harder?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 10
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 11,
+          "chunk_id": 15,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7606188117536912,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 10,
+          "chunk_id": 13,
+          "score": 0.016129032258064516,
+          "vector_score": 0.759358681459542,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 11,
+          "chunk_id": 14,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7557777630620542,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 43,
+          "chunk_id": 59,
+          "score": 0.015625,
+          "vector_score": 0.707606386198334,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 52,
+          "chunk_id": 133,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7046120376769844,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "Third-party components (such as data, software, or hardware) can complicate AI risk measurement for several reasons:\n- Risk can originate directly from the third-party data, software, or hardware itself, as well as from how it is utilized.\n- The risk metrics or methodologies used by the organization developing the AI system may not align with those used by the organization deploying or operating it, and developers may lack transparency regarding their methods.\n- Risk measurement and management can be further complicated by how customers integrate or use third-party data and systems, especially when there is a lack of sufficient internal governance structures and technical safeguards.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 10,
+            "quote": "Risks related to third-party software, hardware, and data: Third-party data or systems can accelerate research and development and facilitate technology transition. They also may complicate risk measurement. Risk can emerge both from third-party data, software or hardware itself and how it is used. Risk metrics or methodologies used by the organization developing the AI system may not align with the risk metrics or methodologies uses by the organization deploying or operating the system. Also, the organization developing the AI system may not be transparent about the risk metrics or methodologies it used. Risk measurement and management can be complicated by how customers use or integrate third- party data or systems into AI products or services, particularly without sufficient internal governance structures and technical safeguards.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 13,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "retrieval_latency_ms": 314.37896200009163,
+      "latency_ms": 12056.494780000094
+    },
+    {
+      "id": "q24",
+      "question": "What background should an effective AI red team bring to a deployment context?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 54
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 54,
+          "chunk_id": 137,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7918800263834411,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 53,
+          "chunk_id": 135,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7087793327245929,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 55,
+          "chunk_id": 138,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6965211342212467,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 54,
+          "chunk_id": 136,
+          "score": 0.015625,
+          "vector_score": 0.6931262565029511,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 52,
+          "chunk_id": 133,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6772211771212012,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "For optimal results, an effective AI red team should exhibit domain expertise as well as an awareness of the socio-cultural aspects of the deployment context.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 54,
+            "quote": "For best results, AI red teams should demonstrate domain expertise, and awareness of socio-cultural aspects within the deployment context.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 137,
+            "chunk_index": 1
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 332.620334000012,
+      "latency_ms": 17259.71489099993
+    },
+    {
+      "id": "q01",
+      "question": "What should accompany an AI system's accuracy measurements, according to the AI Risk Management Framework?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19,
+          "chunk_id": 27,
+          "score": 0.01639344262295082,
+          "vector_score": 0.8247718491408746,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 11,
+          "chunk_id": 14,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7844702881506096,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 33,
+          "chunk_id": 47,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7736546801947252,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 34,
+          "chunk_id": 48,
+          "score": 0.015625,
+          "vector_score": 0.7731417497570742,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 17,
+          "chunk_id": 24,
+          "score": 0.015384615384615385,
+          "vector_score": 0.7662895205334278,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "According to the AI Risk Management Framework, accuracy measurements must always be accompanied by clearly defined and realistic test sets that represent expected use conditions, along with details regarding the test methodology, and these items should be included in the associated documentation.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 19,
+            "quote": "Accuracy measurements should always be paired with clearly defined and realistic test sets – that are representative of conditions of expected use – and details about test methodology; these should be included in associated documen- tation.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 27,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 347.9964119999295,
+      "latency_ms": 17966.928267999945
+    },
+    {
+      "id": "q04",
+      "question": "Which two model-size reduction methods does the Generative AI Profile mention for reducing environmental impacts during inference?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 72,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7144122633861383,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12,
+          "chunk_id": 85,
+          "score": 0.016129032258064516,
+          "vector_score": 0.7087664627215237,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 71,
+          "score": 0.015873015873015872,
+          "vector_score": 0.7001074790442289,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 41,
+          "chunk_id": 120,
+          "score": 0.015625,
+          "vector_score": 0.6848620208851732,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 2,
+          "chunk_id": 68,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6819399974417738,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "The Generative AI Profile mentions model distillation and model compression as methods for creating smaller versions of trained models to reduce environmental impacts during inference.",
+        "citations": [
+          {
+            "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+            "page": 12,
+            "quote": "Methods for creating smaller versions of trained models, such as model distillation or compression, could reduce environmental impacts at inference time, but training and tuning such models may still contribute to their environmental impacts.",
+            "document_title": "NIST Generative AI Risk Management Profile",
+            "source": "National Institute of Standards and Technology (NIST AI 600-1, July 2024)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+            "chunk_id": 85,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "retrieval_latency_ms": 304.15084999981445,
+      "latency_ms": 21388.278784000024
+    },
+    {
+      "id": "q21",
+      "question": "How do direct and indirect prompt injection differ in the GenAI Profile?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 15
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 71,
+          "score": 0.01639344262295082,
+          "vector_score": 0.7051756699017688,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 14,
+          "chunk_id": 90,
+          "score": 0.016129032258064516,
+          "vector_score": 0.6927623861914368,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 7,
+          "chunk_id": 75,
+          "score": 0.015873015873015872,
+          "vector_score": 0.6763597507919269,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 5,
+          "chunk_id": 72,
+          "score": 0.015625,
+          "vector_score": 0.6749904327127241,
+          "keyword_score": null
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 58,
+          "chunk_id": 143,
+          "score": 0.015384615384615385,
+          "vector_score": 0.6736412638151021,
+          "keyword_score": null
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 332.7686719999292,
+      "latency_ms": 22138.45404299991
+    }
+  ]
+}

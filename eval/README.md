@@ -3,8 +3,9 @@
 The harness is implemented. At the user's explicit request on 2026-10-26,
 `golden.jsonl` now contains an **assistant-authored baseline: 25 answerable questions
 and 5 unanswerable questions**. Read [the answer key and evidence review](golden-review.md).
-Source/hash/page/chunk checks passed. [Real configured-provider results](results/20261026_gemini_baseline.md)
-include a zero-error retrieval comparison and a rate-limited end-to-end attempt.
+Source/hash/page/chunk checks passed. [The Flash-Lite quality pass](results/20261026_flashlite.md)
+retains a zero-error hybrid answer run and one vector timeout, alongside the
+[earlier frozen baseline](results/20261026_gemini_baseline.md).
 Independent human review remains pending. Test/CI questions remain
 separate synthetic fixtures. Empty datasets still fail validation.
 

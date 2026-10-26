@@ -1,7 +1,8 @@
 # Run the real benchmark from your browser
 
 The app, automated checks, and evaluation machinery are implemented.
-[The first real runs](../eval/results/20261026_gemini_baseline.md) are preserved,
+[The first real runs](../eval/results/20261026_gemini_baseline.md) and
+[the Flash-Lite quality pass](../eval/results/20261026_flashlite.md) are preserved,
 including rate-limit failures and refusal gaps. A reliable answer benchmark still
 needs **independently reviewed golden labels** and sufficient model quota. A 30-question assistant-authored baseline is encoded at your request;
 it is ready for your review, not an independent benchmark. The project cannot honestly substitute a fake-provider
@@ -82,7 +83,7 @@ run with this checkbox off.
 ## Explicit live browser check
 
 The manual workflow optionally runs Chromium against a fresh local API and Vite
-UI after a successful answer evaluation. It submits q01 and q05, checks a real
+UI after successful ingestion, even if evaluated questions retain errors. It submits q01 and q05, checks a real
 answer, expands a citation, checks its exact quote and PDF page link, and checks
 a citation-free refusal. No answer responses are intercepted. Its JSON record
 and screenshots are included in the artifact. This consumes up to two additional
