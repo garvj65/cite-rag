@@ -65,4 +65,19 @@ not establish a key/account/billing root cause.
 
 A separate Gemini 3.6 Flash experiment is selectable explicitly in the workflow;
 the app default and existing evidence remain unchanged. No automatic or paid
-provider fallback is used. Results are pending.
+provider fallback is used.
+
+## Gemini 3.6 Flash preflight and partial ingestion
+
+[Run 40270698621](https://github.com/garvj65/cite-rag/actions/runs/40270698621)
+used revision `b1b143a30f0cbe6679e2f1e20a40f21761c19db2`, explicitly selecting
+Gemini 3.6 Flash. Both embedding and schema-constrained chat preflights passed
+with HTTP 200. The RMF PDF indexed successfully: 48 pages and 66 chunks. GenAI
+ingestion failed with `embedding_failed`; zero questions were evaluated. The
+failed request status was not logged, so quota or availability is not yet proven
+as the cause.
+
+Provider failures now log only numeric HTTP status at WARNING, without URL,
+headers, messages, or document text. The explicit benchmark uses existing
+backoff settings at 30/60 seconds (three attempts), capped at 60 seconds, to
+allow more recovery time. Application defaults remain unchanged.

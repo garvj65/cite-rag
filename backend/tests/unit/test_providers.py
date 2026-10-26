@@ -226,3 +226,19 @@ def test_native_gemini_rejects_aggregated_or_missing_batch_items(settings):
             HTTPEmbeddingProvider(
                 provider_settings(settings, embedding_provider="gemini"), client
             ).embed(["x", "y"])
+
+
+def test_http_failure_log_contains_only_status_not_key_url_or_body(settings, caplog):
+    config = provider_settings(settings, provider_max_attempts=1)
+    with httpx.Client(
+        transport=httpx.MockTransport(
+            lambda _: httpx.Response(
+                429, json={"error": {"message": "private document and secret-key"}}
+            )
+        )
+    ) as client:
+        with pytest.raises(ProviderError):
+            HTTPEmbeddingProvider(config, client).embed(["private document"])
+    assert "Provider request failed with HTTP 429" in caplog.text
+    assert "private document" not in caplog.text and "secret-key" not in caplog.text
+    assert "https://" not in caplog.text and "test-only-key" not in caplog.text

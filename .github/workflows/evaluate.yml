@@ -45,6 +45,8 @@ jobs:
     env:
       DATABASE_URL: postgresql+psycopg://citerag:disposable-evaluation-only@127.0.0.1:55432/citerag_eval
       ENABLE_REAL_PROVIDERS: "true"
+      PROVIDER_BACKOFF_SECONDS: "30"
+      PROVIDER_MAX_BACKOFF_SECONDS: "60"
       EMBEDDING_PROVIDER: gemini
       LLM_PROVIDER: gemini
       GEMINI_EMBEDDING_MODEL: gemini-embedding-2

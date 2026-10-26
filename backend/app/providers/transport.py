@@ -1,5 +1,6 @@
 """Shared bounded HTTP retries; neither request nor response bodies are logged."""
 
+import logging
 import time
 from collections.abc import Callable, Mapping
 
@@ -9,6 +10,8 @@ from pydantic import SecretStr
 from app.deadlines import remaining_timeout
 from app.errors import ProviderError, ProviderTimeoutError, RequestDeadlineError
 from app.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 def post_provider_json(
@@ -40,6 +43,7 @@ def post_provider_json(
         else:
             if response.is_success:
                 return response
+            logger.warning("Provider request failed with HTTP %d", response.status_code)
             if response.status_code not in (408, 429) and response.status_code < 500:
                 raise ProviderError("provider_request_rejected")
             last_error = ProviderError("provider_temporarily_unavailable")
