@@ -28,7 +28,10 @@ page text; cleaning never rewrites words.
 
 All embeddings are requested at 1536 dimensions. Gemini uses its native synchronous
 batch embedding endpoint with one content/request per chunk; response order and
-count preserve the input mapping. OpenAI retains its compatible endpoint. Fake embeddings use a separate
+count preserve the input mapping. Gemini chat uses native `generateContent` with
+separate system instructions and a schema-constrained JSON response. Only complete
+text output is accepted; thought parts are excluded and provider blocks are errors.
+OpenAI retains its own endpoint. Fake embeddings use a separate
 model identity and a different profile from semantic embeddings. Future retrieval
 must filter by one profile and use its exact provider/model.
 

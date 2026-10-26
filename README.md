@@ -84,15 +84,16 @@ remains selectable behind the same interface. No automatic provider fallback
 exists, and no local model/GPU is required.
 
 Gemini embeddings use the native synchronous `batchEmbedContents` endpoint; each
-chunk receives its own validated 1536-dimensional vector. Chat uses the
-OpenAI-compatible endpoint. Adapters stay behind provider interfaces.
+chunk receives its own validated 1536-dimensional vector. Gemini chat uses native
+`generateContent` with a JSON response schema and separate system instructions.
+OpenAI retains its own API. Adapters stay behind provider interfaces.
 
 Google lists free API tiers for both suggested models as of 2026-10-24, subject
 to quotas, account/region eligibility, availability, and terms. Use a free-tier
 project; the application cannot enforce your account's billing configuration.
 See [pricing](https://ai.google.dev/gemini-api/docs/pricing),
 [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), and
-[OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai). Free-tier
+[structured outputs](https://ai.google.dev/gemini-api/docs/generate-content/structured-output). Free-tier
 content may be used to improve Google's products; the selected PDFs are public.
 
 For real embeddings and answers, edit the local `.env`:
@@ -115,7 +116,8 @@ ENABLE_REAL_PROVIDERS=false
 Fake embeddings are deterministic lexical hashes. They support repeatable
 mechanics tests and a keyless demo; they do not establish semantic retrieval
 quality. There is no implicit switch into fake mode. Real-provider contracts
-have mocked coverage, but authenticated model calls have not been verified yet.
+have mocked coverage. An authenticated native embedding check has passed;
+full corpus and chat measurements are tracked in [provider attempts](eval/results/20261026_provider-attempts.md).
 The scripted LLM defaults to a fixed unsupported response. Tests/CI may supply
 `FAKE_LLM_RESPONSE` with one predetermined JSON response; this is labeled as a
 scripted demo in the UI and does not simulate semantic reasoning.

@@ -62,10 +62,12 @@ def test_checks_use_mock_http_and_report_only_safe_metadata(settings, failure):
         return httpx.Response(
             200,
             json={
-                "choices": [
+                "candidates": [
                     {
-                        "finish_reason": "stop",
-                        "message": {"content": '{"answer":"","citations":[],"supported":false}'},
+                        "finishReason": "STOP",
+                        "content": {
+                            "parts": [{"text": '{"answer":"","citations":[],"supported":false}'}]
+                        },
                     }
                 ]
             },

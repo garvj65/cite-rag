@@ -33,4 +33,22 @@ The Gemini embedding adapter was changed to Google's native synchronous
 `batchEmbedContents` endpoint, requesting 1536 dimensions separately for each
 input. It checks count, dimensionality, finite numeric values, and nonzero vectors.
 OpenAI remains explicitly selectable through its existing adapter. No model or
-provider fallback was introduced. Follow-up native-API results are pending.
+provider fallback was introduced.
+
+## Native embedding verification
+
+[Run 40269756099](https://github.com/garvj65/cite-rag/actions/runs/40269756099)
+used revision `573358bd56a5f2a04569fdad94e4f5f1a57b4ab9` and the expanded
+30-question dataset. Native embedding preflight passed: HTTP 200, one embedding,
+1536 dimensions, and all vector checks passed. Chat still returned HTTP 503 on
+two observed HTTP attempts and ended with a sanitized timeout after bounded
+retries. The workflow stopped before ingestion; zero questions were evaluated.
+
+Gemini chat was then updated to its documented native `generateContent` endpoint
+with `generationConfig.responseFormat.text` JSON schema. This is an explicit
+adapter implementation change, with the same configured model and no automatic
+fallback. Tests cover the request contract, split text, thought exclusion,
+malformed/truncated responses, provider blocks, and transient retries. The
+[official REST example](https://ai.google.dev/gemini-api/docs/generate-content/structured-output)
+and [API reference](https://ai.google.dev/api/generate-content) define the contract.
+A follow-up real check is required before claiming chat or quality measurements.
