@@ -1,0 +1,1035 @@
+{
+  "options": {
+    "strategy": "keyword",
+    "k": 5,
+    "seed": 42,
+    "question_delay_seconds": 0.0,
+    "retrieval_only": false
+  },
+  "metadata": {
+    "created_at": "2026-10-26T16:31:01.745537+00:00",
+    "git_commit": "a0e83ef53f2462e166deb2aecee98bda7ec4c17e",
+    "working_tree_dirty": true,
+    "python_version": "3.12.3",
+    "scripted_response_sha256": null,
+    "golden_sha256": "b1307136fd933bf5b2cf36a1208304e1dfc06dc69f8c939a4a73b95e78224c56",
+    "index_profile": "4a3e52273c1fcc3f62adc29a0d5a10b20b4b5757447d1fb87e8bf333686da91d",
+    "embedding_model": "gemini/gemini-embedding-2",
+    "mechanics_only": false,
+    "settings": {
+      "enable_real_providers": true,
+      "embedding_provider": "gemini",
+      "gemini_embedding_model": "gemini-embedding-2",
+      "openai_embedding_model": "text-embedding-3-small",
+      "llm_provider": "gemini",
+      "gemini_chat_model": "gemini-3.5-flash-lite",
+      "openai_chat_model": "",
+      "answer_min_vector_score": 0.35,
+      "answer_min_keyword_score": 0.05,
+      "answer_context_characters": 24000,
+      "answer_max_characters": 12000,
+      "answer_max_citations": 8,
+      "answer_max_quote_characters": 2000,
+      "model_max_output_characters": 50000,
+      "chat_max_completion_tokens": 4096,
+      "chunk_size_words": 400,
+      "chunk_overlap_words": 80,
+      "provider_timeout_seconds": 30.0,
+      "provider_max_attempts": 3,
+      "provider_backoff_seconds": 30.0,
+      "provider_max_backoff_seconds": 60.0,
+      "gemini_chat_requests_per_minute": 12,
+      "gemini_embedding_inputs_per_minute": 90,
+      "max_query_characters": 2000,
+      "hybrid_candidate_k": 20,
+      "rrf_constant": 60
+    },
+    "corpus": [
+      {
+        "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+        "title": "NIST Generative AI Risk Management Profile",
+        "pdf_pages": 64,
+        "indexed_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64
+        ]
+      },
+      {
+        "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+        "title": "NIST AI Risk Management Framework 1.0",
+        "pdf_pages": 48,
+        "indexed_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48
+        ]
+      }
+    ],
+    "faithfulness": "not measured; no LLM judge"
+  },
+  "summary": {
+    "questions": 30,
+    "answerable": 25,
+    "unanswerable": 5,
+    "errors": 0,
+    "recall_at_k": 0.06,
+    "mrr": 0.08,
+    "citation_validity": null,
+    "citations_proposed": 0,
+    "citations_valid": 0,
+    "refusal_accuracy": 1.0,
+    "correct_refusals": 5,
+    "latency_p50_ms": 3.0184134999444723,
+    "latency_p95_ms": 4.244724100067287
+  },
+  "rows": [
+    {
+      "id": "q20",
+      "question": "What can over-reliance on synthetic training data do to a generative model?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 7.752847999881851,
+      "latency_ms": 7.768486999793822
+    },
+    {
+      "id": "q15",
+      "question": "How should organizations connect AI risk management to enterprise risk management?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.2815489998938574,
+      "latency_ms": 3.2924390000061976
+    },
+    {
+      "id": "q11",
+      "question": "How does the AI RMF define reliability in terms of performance, time, and conditions?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 18
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.069403999916176,
+      "latency_ms": 3.0774790000123176
+    },
+    {
+      "id": "q27",
+      "question": "What Recall@5 score did Gemini 3.8 Flash achieve on these two NIST PDFs?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 3.039078000028894,
+      "latency_ms": 3.046551999887015
+    },
+    {
+      "id": "q23",
+      "question": "What kinds of information can content provenance metadata record for generative AI?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 55
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.082918999780304,
+      "latency_ms": 3.09030299990809
+    },
+    {
+      "id": "q07",
+      "question": "What two components form the AI RMF definition of risk?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 9
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.0424639999182546,
+      "latency_ms": 3.0496770000354445
+    },
+    {
+      "id": "q06",
+      "question": "Is the AI RMF intended only for one industry or use case, and is its use mandatory?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 7
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.0470939998394897,
+      "latency_ms": 3.0546680000043125
+    },
+    {
+      "id": "q13",
+      "question": "Which three major categories of AI bias does NIST identify in the AI RMF?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 23
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 23,
+          "chunk_id": 35,
+          "score": 0.017424243,
+          "vector_score": null,
+          "keyword_score": 0.017424243
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "weak_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 4.338003000157187,
+      "latency_ms": 4.356397000037759
+    },
+    {
+      "id": "q12",
+      "question": "How does the AI RMF distinguish transparency, explainability, and interpretability?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 22
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.029741000091235,
+      "latency_ms": 3.0370839999704913
+    },
+    {
+      "id": "q16",
+      "question": "Which AI RMF function establishes the context for risk, and which uses quantitative, qualitative, or mixed methods to assess it?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 29
+        },
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 33
+        }
+      ],
+      "retrieved": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 33,
+          "chunk_id": 47,
+          "score": 0.0125,
+          "vector_score": null,
+          "keyword_score": 0.0125
+        }
+      ],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "weak_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.5,
+      "reciprocal_rank": 1.0,
+      "retrieval_latency_ms": 4.09267700001692,
+      "latency_ms": 4.108235000103377
+    },
+    {
+      "id": "q10",
+      "question": "What should happen when an AI system presents unacceptable negative risk levels?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 13
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.007738999940557,
+      "latency_ms": 3.0200809999314515
+    },
+    {
+      "id": "q26",
+      "question": "Compare the AI RMF general privacy aims with the GenAI Profile concerns about personal training data.",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 22
+        },
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.0217160001484444,
+      "latency_ms": 3.036333000181912
+    },
+    {
+      "id": "q30",
+      "question": "What uniform annual dollar budget does NIST require every organization to spend implementing the AI RMF?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 3.3988870000030147,
+      "latency_ms": 3.406390999998621
+    },
+    {
+      "id": "q22",
+      "question": "During which two phases does action MS-2.5-003 recommend checking sources and citations in GAI outputs?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 35
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.9197159999512223,
+      "latency_ms": 2.9274000000896194
+    },
+    {
+      "id": "q17",
+      "question": "Which four primary considerations limited the scope of the GAI Public Working Group described in the introduction?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 6
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.1720960000711784,
+      "latency_ms": 3.1797900001038215
+    },
+    {
+      "id": "q28",
+      "question": "What exact cosine-similarity threshold does NIST mandate for accepting a RAG answer as supported?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 2.9830239998318575,
+      "latency_ms": 2.9905179999332177
+    },
+    {
+      "id": "q02",
+      "question": "At what stage should AI safety considerations begin, according to the AI Risk Management Framework?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 20
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.974488000063502,
+      "latency_ms": 2.982122000048548
+    },
+    {
+      "id": "q14",
+      "question": "What are the four AI RMF Core functions, and which function cuts across the others?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 25
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.98311400001694,
+      "latency_ms": 2.990748000001986
+    },
+    {
+      "id": "q19",
+      "question": "What is automation bias, and how can it worsen generative AI risks?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 13
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.952427999844076,
+      "latency_ms": 2.9600419998132566
+    },
+    {
+      "id": "q03",
+      "question": "Besides false content, what two kinds of inconsistency does the Generative AI Profile include under confabulation?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 10
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.0090120001204923,
+      "latency_ms": 3.016745999957493
+    },
+    {
+      "id": "q18",
+      "question": "Which privacy principles can be put at risk when personal data is used to train generative AI?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 11
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.972614999862344,
+      "latency_ms": 2.980189000027167
+    },
+    {
+      "id": "q29",
+      "question": "What exact Python function implementation for Reciprocal Rank Fusion retrieval is provided in these PDFs?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 3.002319999950487,
+      "latency_ms": 3.0098739998720703
+    },
+    {
+      "id": "q05",
+      "question": "How many confirmed AI safety incidents worldwide in calendar year 2025 are reported in these documents?",
+      "answerable": false,
+      "gold_pages": [],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": null,
+      "reciprocal_rank": null,
+      "retrieval_latency_ms": 2.9757309998785786,
+      "latency_ms": 2.9834750000645727
+    },
+    {
+      "id": "q25",
+      "question": "Why may human-exam scores and laboratory benchmarks fail to establish generative AI reliability in actual use?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 53
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.988804999858985,
+      "latency_ms": 2.996438999844031
+    },
+    {
+      "id": "q08",
+      "question": "Does the AI RMF prescribe a universal risk tolerance, and what influences acceptable risk?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 12
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.0054159999508556,
+      "latency_ms": 3.0131200001051184
+    },
+    {
+      "id": "q09",
+      "question": "Why can third-party components make AI risk measurement harder?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 10
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.9854090000753786,
+      "latency_ms": 2.992962999996962
+    },
+    {
+      "id": "q24",
+      "question": "What background should an effective AI red team bring to a deployment context?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 54
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.9893159999119234,
+      "latency_ms": 3.002359999982218
+    },
+    {
+      "id": "q01",
+      "question": "What should accompany an AI system's accuracy measurements, according to the AI Risk Management Framework?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+          "page": 19
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.9921099999228318,
+      "latency_ms": 2.9999250000400934
+    },
+    {
+      "id": "q04",
+      "question": "Which two model-size reduction methods does the Generative AI Profile mention for reducing environmental impacts during inference?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 12
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 3.018280000105733,
+      "latency_ms": 3.025814000011451
+    },
+    {
+      "id": "q21",
+      "question": "How do direct and indirect prompt injection differ in the GenAI Profile?",
+      "answerable": true,
+      "gold_pages": [
+        {
+          "doc_id": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+          "page": 15
+        }
+      ],
+      "retrieved": [],
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "no_retrieval",
+        "mode": "no_model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      },
+      "error": null,
+      "recall": 0.0,
+      "reciprocal_rank": 0.0,
+      "retrieval_latency_ms": 2.9841859998214204,
+      "latency_ms": 2.991650000012669
+    }
+  ]
+}

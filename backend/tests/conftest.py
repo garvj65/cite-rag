@@ -46,7 +46,12 @@ class MemoryRepository:
 @pytest.fixture
 def settings() -> Settings:
     return Settings(
-        _env_file=None, chunk_size_words=5, chunk_overlap_words=2, embedding_batch_size=2
+        _env_file=None,
+        chunk_size_words=5,
+        chunk_overlap_words=2,
+        embedding_batch_size=2,
+        gemini_chat_requests_per_minute=0,
+        gemini_embedding_inputs_per_minute=0,
     )
 
 

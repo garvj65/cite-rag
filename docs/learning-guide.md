@@ -74,7 +74,7 @@ If an embedding batch fails, we do not save half a searchable document.
 | Component | Job in CiteRAG | What to understand first |
 |---|---|---|
 | Gemini Embedding 2 | Convert passages, and later questions, into vectors | A vector is a list of numbers used for similarity comparisons |
-| Gemini 3.8 Flash | Write an answer using selected passages in M3 | It needs useful evidence and its output must be checked |
+| Gemini 3.5 Flash-Lite | Write an answer using selected passages in M3 | It needs useful evidence and its output must be checked |
 | PostgreSQL | Store documents, text, metadata, and vectors | A database stores and retrieves application records |
 | pgvector | Add vector storage and similarity operations to PostgreSQL | It enables the numerical comparison used in vector search |
 

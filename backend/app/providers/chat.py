@@ -8,6 +8,7 @@ from pydantic import BaseModel, StrictBool, ValidationError
 
 from app.answering.models import ModelAnswer
 from app.errors import ModelOutputError, ProviderConfigurationError, ProviderError
+from app.providers.pacing import get_pacer
 from app.providers.transport import post_provider_json
 from app.settings import Settings
 
@@ -97,9 +98,13 @@ class HTTPChatProvider:
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         """Generate schema-constrained text; evidence validation remains in the application."""
         if self._settings.llm_provider == "gemini":
+            endpoint = (
+                "https://generativelanguage.googleapis.com/v1beta"
+                f"/models/{self._model}:generateContent"
+            )
             response = post_provider_json(
                 self._client,
-                f"https://generativelanguage.googleapis.com/v1beta/models/{self._model}:generateContent",
+                endpoint,
                 self._key,
                 {
                     "systemInstruction": {"parts": [{"text": system_prompt}]},
@@ -117,6 +122,7 @@ class HTTPChatProvider:
                 self._settings,
                 self._sleep,
                 api_key_header=True,
+                pacer=get_pacer(endpoint, self._settings.gemini_chat_requests_per_minute),
             )
             return _gemini_text(response)
         response = post_provider_json(

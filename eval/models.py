@@ -24,6 +24,8 @@ class RetrievedPage(BaseModel):
     page: int
     chunk_id: int
     score: float
+    vector_score: float | None = None
+    keyword_score: float | None = None
 
 
 class EvaluationRow(BaseModel):

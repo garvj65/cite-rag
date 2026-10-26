@@ -23,6 +23,8 @@ class SearchHit(BaseModel):
     chunk_index: int
     text: str
     score: float
+    vector_score: float | None = None
+    keyword_score: float | None = None
 
 
 class SearchResponse(BaseModel):

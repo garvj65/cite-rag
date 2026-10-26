@@ -3,8 +3,9 @@
 The harness is implemented. At the user's explicit request on 2026-10-26,
 `golden.jsonl` now contains an **assistant-authored baseline: 25 answerable questions
 and 5 unanswerable questions**. Read [the answer key and evidence review](golden-review.md).
-Source/hash/page/chunk checks passed. [Real configured-provider results](results/20261026_gemini_baseline.md)
-include a zero-error retrieval comparison and a rate-limited end-to-end attempt.
+Source/hash/page/chunk checks passed. [The Flash-Lite quality pass](results/20261026_flashlite.md)
+retains a zero-error hybrid answer run and one vector timeout, alongside the
+[earlier frozen baseline](results/20261026_gemini_baseline.md).
 Independent human review remains pending. Test/CI questions remain
 separate synthetic fixtures. Empty datasets still fail validation.
 
@@ -55,7 +56,9 @@ uv run python -m eval.run --strategy hybrid --k 5 --seed 42
 `python -m eval.run ...` also works in an activated project environment.
 `--golden PATH` and `--output DIRECTORY` override the paths.
 `--delay-seconds 15` optionally pauses between questions to pace calls. The
-default is zero; intentional waiting is excluded from measured latency. Pacing
+default is zero; this between-question waiting is excluded from latency. Actual
+provider attempts are separately paced by typed Gemini settings, including every
+retry and each embedding input; this in-request waiting is included in latency. Pacing
 does not guarantee provider quota availability or change the seed's limitations. Compose supports:
 
 ```bash

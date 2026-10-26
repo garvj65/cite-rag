@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "records": [
+    {
+      "id": "q01",
+      "answer": {
+        "answer": "According to the AI Risk Management Framework, accuracy measurements should always be accompanied by clearly defined and realistic test sets that represent expected use conditions, along with details about the test methodology. These items must be included in the associated documentation.",
+        "citations": [
+          {
+            "doc_id": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+            "page": 19,
+            "quote": "Accuracy measurements should always be paired with clearly defined and realistic test sets – that are representative of conditions of expected use – and details about test methodology; these should be included in associated documen- tation.",
+            "document_title": "NIST AI Risk Management Framework 1.0",
+            "source": "National Institute of Standards and Technology (NIST AI 100-1, January 2023)",
+            "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "chunk_id": 27,
+            "chunk_index": 0
+          }
+        ],
+        "supported": true,
+        "reason": "supported",
+        "mode": "model",
+        "verification": {
+          "proposed": 1,
+          "valid": 1
+        }
+      }
+    },
+    {
+      "id": "q05",
+      "answer": {
+        "answer": "I couldn't find enough support for an answer in the documents.",
+        "citations": [],
+        "supported": false,
+        "reason": "model_unsupported",
+        "mode": "model",
+        "verification": {
+          "proposed": 0,
+          "valid": 0
+        }
+      }
+    }
+  ]
+}

@@ -84,9 +84,25 @@ class AnswerService:
         thresholds = {
             "vector": self._settings.answer_min_vector_score,
             "keyword": self._settings.answer_min_keyword_score,
-            "hybrid": self._settings.answer_min_hybrid_score,
         }
-        eligible = [hit for hit in retrieval.results if hit.score >= thresholds[retrieval.strategy]]
+        if retrieval.strategy == "hybrid":
+            # RRF orders candidates; it does not measure strength of evidence.
+            eligible = [
+                hit
+                for hit in retrieval.results
+                if (
+                    hit.vector_score is not None
+                    and hit.vector_score >= self._settings.answer_min_vector_score
+                )
+                or (
+                    hit.keyword_score is not None
+                    and hit.keyword_score >= self._settings.answer_min_keyword_score
+                )
+            ]
+        else:
+            eligible = [
+                hit for hit in retrieval.results if hit.score >= thresholds[retrieval.strategy]
+            ]
         if not eligible:
             return response.model_copy(update={"reason": "weak_retrieval"})
         context = build_context(query.strip(), eligible, self._settings.answer_context_characters)

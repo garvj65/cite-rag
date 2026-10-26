@@ -5,8 +5,9 @@ citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
 verified quotes, a responsive React interface, and the M4 evaluation harness are
 implemented. A source-checked, **assistant-authored 30-question golden baseline** is
 encoded at the user's request. Real Gemini retrieval and answer attempts are
-[measured](eval/results/20261026_gemini_baseline.md), including rate-limit failures
-and refusal gaps. Independent human label review remains pending.
+[measured](eval/results/20261026_flashlite.md): hybrid returned 21/25 supported
+positive answers, refused all five negatives, and had zero errors in the Flash-Lite
+run. Vector retained one timeout. Quote validity does not prove semantic faithfulness. Independent human label review remains pending.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
@@ -14,12 +15,16 @@ and refusal gaps. Independent human label review remains pending.
 · [M4 validation](docs/validation-m4.md)
 · [Release validation](docs/validation-release.md)
 · [Benchmark validation](docs/validation-benchmark.md)
+· [Quality pass validation](docs/validation-quality.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
 [Free-tier deployment runbook](docs/deployment.md) ·
 [Browser evaluation handoff](docs/evaluation-handoff.md) · [Corpus reference](docs/corpus-reference.md)
 
-![CiteRAG research workspace](docs/screenshots/citerag.png)
+![CiteRAG research workspace, real Flash-Lite response](docs/screenshots/citerag.png)
+
+[Live browser check and original captures](eval/results/20261026_flashlite/browser-validation/README.md).
+This is an actual model response; its “should”/“must” wording flag is retained for review.
 
 ## Start locally
 
@@ -80,7 +85,7 @@ and identifies its original bytes by SHA-256.
 ## Configure and ingest
 
 The default model configuration is **Gemini Embedding 2** for retrieval and
-**Gemini 3.8 Flash** for M3 answers. The user's free-model preference updates the
+**Gemini 3.5 Flash-Lite** for M3 answers. The user's free-model preference updates the
 original OpenAI-only specification. The original `text-embedding-3-small` option
 remains selectable behind the same interface. No automatic provider fallback
 exists, and no local model/GPU is required.
@@ -90,7 +95,7 @@ chunk receives its own validated 1536-dimensional vector. Gemini chat uses nativ
 `generateContent` with a JSON response schema and separate system instructions.
 OpenAI retains its own API. Adapters stay behind provider interfaces.
 
-Google lists free API tiers for both suggested models as of 2026-10-24, subject
+Google lists free API tiers for both suggested models as of 2026-10-26, subject
 to quotas, account/region eligibility, availability, and terms. Use a free-tier
 project; the application cannot enforce your account's billing configuration.
 See [pricing](https://ai.google.dev/gemini-api/docs/pricing),
@@ -105,14 +110,15 @@ EMBEDDING_PROVIDER=gemini
 ENABLE_REAL_PROVIDERS=true
 GEMINI_API_KEY=your-local-key
 LLM_PROVIDER=gemini
-GEMINI_CHAT_MODEL=gemini-3.6-flash
+GEMINI_CHAT_MODEL=gemini-3.5-flash-lite
 SEARCH_STRATEGY=vector
 ```
 
-The app default remains `gemini-3.8-flash`; the explicit example above uses
-`gemini-3.6-flash`, whose structured chat preflight passed on 2026-10-26 after
-3.8 Flash returned repeated HTTP 503 UNAVAILABLE responses. No automatic model
-switch occurs. See [the live attempts](eval/results/20261026_provider-attempts.md).
+Flash-Lite is an explicit budget configuration based on the account limits shared
+on 2026-10-26 (15 chat requests/minute, 500/day). Gemini 3.8/3.6 Flash remain
+selectable, with lower account limits (5/minute, 20/day). Set chat pacing to 4
+when using either. There is no automatic model switch. Earlier results remain
+frozen in [the live attempts](eval/results/20261026_provider-attempts.md).
 
 For an explicit keyless mechanics demo, instead select:
 
@@ -215,7 +221,7 @@ when sufficient evidence is retrieved.
 
 Generation follows these gates:
 
-1. Empty results or passages below the selected strategy's score threshold
+1. Empty results or passages below the applicable component score threshold
    return a fixed refusal without creating a chat client.
 2. Whole eligible passages become a numbered JSON context within a character
    budget. Document text remains untrusted data, separate from system instructions.
@@ -240,10 +246,10 @@ prompt's grounding/injection instructions and scripted attack tests do not prove
 real-model immunity to prompt injection. Semantic faithfulness, refusal accuracy,
 and adversarial model behavior still require real evaluation and human review.
 
-The strategy-specific evidence defaults are cosine similarity **0.35**, keyword
-rank **0.05**, and RRF **0.02**. These are **provisional, uncalibrated gates**, not
-confidence probabilities. RRF-only gates depend on the fusion settings; changing
-`RRF_CONSTANT` requires reviewing the hybrid gate. The context budget is 24,000
+Evidence defaults are cosine similarity **0.35** and keyword rank **0.05**.
+Hybrid preserves both component scores and accepts a chunk meeting either gate;
+RRF only determines order. The former `ANSWER_MIN_HYBRID_SCORE` setting is retired.
+These remain **provisional, uncalibrated gates**, not confidence probabilities. The context budget is 24,000
 serialized characters; output limits are 12,000 answer characters, 8 proposed
 citations, and 2,000 characters per quote. All limits are typed settings in
 `.env.example`. Context uses whole chunks without silently truncating evidence.
@@ -257,7 +263,9 @@ Settings are typed in `backend/app/settings.py`; `.env.example` documents them.
 | `CHUNK_SIZE_WORDS` | 400 | Maximum words per within-page chunk |
 | `CHUNK_OVERLAP_WORDS` | 80 | Shared words between consecutive windows |
 | `EMBEDDING_BATCH_SIZE` | 16 | Number of passages sent per embedding batch |
-| `SEARCH_STRATEGY` | hybrid | Default search strategy |
+| `GEMINI_CHAT_REQUESTS_PER_MINUTE` | 12 | Process-local chat attempt budget, including retries |
+| `GEMINI_EMBEDDING_INPUTS_PER_MINUTE` | 90 | Process-local rolling input budget, including retries |
+| `SEARCH_STRATEGY` | vector | Default search strategy |
 | `SEARCH_K` | 5 | Default result count |
 | `SEARCH_MAX_K` | 50 | Maximum request result count |
 | `MAX_QUERY_CHARACTERS` | 2000 | Maximum normalized query length |
@@ -276,7 +284,11 @@ See the [configuration review](docs/configuration-review.md) for exact boundarie
 Provider timeouts, bounded exponential-backoff retries, and PDF size/page limits
 are configurable too. Permanent provider errors and invalid responses fail
 without retrying. Persistent quota exhaustion requires waiting before retrying
-the CLI. No API keys or full document text are logged at INFO.
+the CLI. Process-local Gemini pacing spaces actual attempts and enforces a rolling
+minute budget, charging each embedding input conservatively. Waiting counts toward
+API deadlines and measured service latency. It cannot coordinate other processes,
+keys/projects or enforce daily/token quotas; concurrent applications share the
+provider project limits. No API keys or full document text are logged at INFO.
 
 ```mermaid
 flowchart TD
@@ -344,11 +356,11 @@ chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
 See [the M4 validation record](docs/validation-m4.md). These are software checks;
 the live baseline and its limitations are reported below.
 
-Latest benchmark implementation verification: **326 backend/evaluation tests**, including **24 PostgreSQL
-integration tests**, **99.75% backend app coverage**, **38 frontend tests**, and
+Latest quality pass verification: **341 backend/evaluation tests**, including **24 PostgreSQL
+integration tests**, **99.77% backend app coverage**, **38 frontend tests**, and
 **5 browser tests** passed. Full CI also verifies nondefault client limits and
 rendered nginx timeouts through the actual Compose stack. See
-[the benchmark validation record](docs/validation-benchmark.md) for immutable revision,
+[the quality validation record](docs/validation-quality.md) for immutable revisions,
 CI links, coverage denominators, secret-scan scope, and remaining requirements.
 
 ## Evaluation status
@@ -378,6 +390,33 @@ embeds missing configurations. Fake/mixed runs are labeled mechanics only.
 An empty golden file produces an input error, not a benchmark result. No LLM
 faithfulness judge is used, and reference answers are not automatically scored.
 
+**Latest end-to-end run: Gemini 3.5 Flash-Lite + Gemini Embedding 2.** Same
+30-question baseline, corpus, 400/80 chunk settings, k=5, and seed=42.
+
+| Strategy | Recall@5 | MRR@5 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Errors / 30 | p50 / p95 seconds |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Vector | 88.00% | 0.6747 | 24/27 (88.89%) | 5/5 | 19 | 1 | 22.3214 / 133.3919 |
+| Keyword | 6.00% | 0.0800 | N/A (0 proposals) | 5/5 | 0 | 0 | 0.0030 / 0.0042 |
+| Hybrid | 88.00% | 0.7047 | 25/27 (92.59%) | 5/5 | 21 | 0 | 21.2743 / 58.1102 |
+
+[Full Flash-Lite analysis, raw records and checksums](eval/results/20261026_flashlite.md).
+All **45 returned quotes matched their original source chunks** on recheck.
+The comparison workflow exited with failure because vector q13 timed out; that
+row is retained. Hybrid's corrected gate now admits strong single-source evidence,
+using component scores instead of RRF as confidence. Numeric thresholds, prompts,
+and labels were unchanged. Vector remains the explicitly selected default.
+
+Supported counts are application outcomes, **not measured correctness rates**.
+Keyword refused every positive. Hybrid q01 strengthens the source's “should” to
+“must” despite a valid quote: human semantic review remains necessary. q30's
+false-premise policy and independent label/held-out review remain pending. Pacing
+inside a question and retries count toward latency; the question delay was zero.
+No paid/fake fallback or LLM faithfulness judge was used. The separate real
+browser answer/citation/refusal check passed; its records and original captures
+are linked in the analysis.
+
+**Earlier frozen baseline (before the hybrid gate correction and model change):**
+
 Measured on 2026-10-26: two NIST PDFs, 112 pages, 149 chunks; 400-word chunks,
 80-word overlap, k=5, seed=42. Each strategy processed all 30 questions (25
 answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:**
@@ -398,9 +437,10 @@ answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:*
 
 The answer workflow exited with failure because of provider errors. The high
 keyword/hybrid refusal scores came with **zero supported positive answers**;
-they do not demonstrate useful answering. Hybrid's provisional RRF evidence gate
-rejects a chunk appearing in only one ranking. **Vector is the default strategy**;
-no prompt, retrieval algorithm, threshold, or label was tuned after seeing scores.
+they did not demonstrate useful answering. At that revision the provisional RRF
+gate rejected chunks appearing in only one ranking. The later quality pass
+corrects this gate and records its model/pacing changes separately; these older
+results and labels remain unchanged.
 The vector `q30` response is an expected-refusal disagreement involving a cited
 non-prescriptive-framework explanation; its frozen label needs independent review.
 
@@ -418,8 +458,9 @@ the 3.6 Flash experiment was selected explicitly. No paid or fake fallback exist
 
 - M1–M3 return passages and evidence-gated cited answers through the API/UI.
   M4's harness and 30-question golden baseline are implemented and measured.
-  Live provider reliability, independent label review, hybrid-gate calibration,
-  and a fresh held-out answer benchmark remain open quality work.
+  Intermittent provider failures, semantic wording drift, independent label review,
+  and a fresh held-out answer benchmark remain open quality work. The hybrid RRF
+  evidence-gate defect is corrected; component thresholds remain provisional.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column
   layouts, equations, or images. Page boundaries can divide useful context.
 - English full-text search is appropriate for this corpus; other languages need
