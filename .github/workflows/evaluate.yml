@@ -110,6 +110,7 @@ jobs:
               raise SystemExit("Gold document identities do not match the downloaded PDFs. Check the corpus reference before embedding.")
           PY
       - name: Migrate and ingest with explicit real embeddings
+        id: ingestion
         run: |
           uv run alembic -c backend/alembic.ini upgrade head
           uv run python -m app.ingest --path corpus/
@@ -127,18 +128,20 @@ jobs:
           done
           exit "$status"
       - uses: actions/setup-node@v4
-        if: success() && !inputs.retrieval_only && inputs.browser_check
+        id: browser_node
+        if: ${{ !cancelled() && !inputs.retrieval_only && inputs.browser_check && steps.ingestion.outcome == 'success' }}
         with:
           node-version: "24"
       - name: Prepare explicit real browser check
-        if: success() && !inputs.retrieval_only && inputs.browser_check
+        id: browser_ready
+        if: ${{ !cancelled() && steps.browser_node.outcome == 'success' }}
         working-directory: frontend
         run: |
           npm ci --no-audit --no-fund
           npm run build
           npx playwright install --with-deps chromium
       - name: Check real answers in the browser
-        if: success() && !inputs.retrieval_only && inputs.browser_check
+        if: ${{ !cancelled() && steps.browser_ready.outcome == 'success' }}
         shell: bash
         run: |
           uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/citerag-api.log 2>&1 &
