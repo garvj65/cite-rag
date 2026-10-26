@@ -144,7 +144,10 @@ excluded. The comparison script checks the same document IDs across chunk profil
 and uses explicit opt-in for ingestion. Experiments require a quiescent database.
 
 The harness and an assistant-authored 30-question baseline are implemented.
-Independent human label review and real semantic evaluation remain pending.
+Real retrieval and end-to-end attempts are [measured](../eval/results/20261026_gemini_baseline.md),
+with provider failures and refusal gaps retained. Independent human label review
+and held-out validation remain pending. Vector is the default strategy; the
+provisional hybrid RRF answer gate remains conservative and uncalibrated.
 See [the benchmark provenance and evidence](../eval/golden-review.md). A manually
 dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
 See the [browser evaluation handoff](evaluation-handoff.md).

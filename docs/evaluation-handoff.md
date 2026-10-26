@@ -1,10 +1,11 @@
 # Run the real benchmark from your browser
 
-The app, automated checks, and evaluation machinery are implemented. The real
-quality benchmark still needs **reviewed golden labels** and access to the chosen
-Gemini models. A 30-question assistant-authored baseline is encoded at your request;
+The app, automated checks, and evaluation machinery are implemented.
+[The first real runs](../eval/results/20261026_gemini_baseline.md) are preserved,
+including rate-limit failures and refusal gaps. A reliable answer benchmark still
+needs **independently reviewed golden labels** and sufficient model quota. A 30-question assistant-authored baseline is encoded at your request;
 it is ready for your review, not an independent benchmark. The project cannot honestly substitute a fake-provider
-run for those measurements. M5 remains outside this release until M4 is measured.
+run for those measurements. M5 remains outside this release; resolve the measured reliability/refusal gaps first.
 
 1. Review [the 30 questions, answer key, and source checks](../eval/golden-review.md)
    against the two PDFs in the [corpus reference](corpus-reference.md). The encoded
@@ -15,9 +16,9 @@ run for those measurements. M5 remains outside this release until M4 is measured
    repository secret** and add **`GEMINI_API_KEY`**. Keep the value in GitHub's
    secret form, never source code, an issue, or chat. Use your intended account
    tier and review its quota/billing settings; no paid fallback exists.
-3. After this workflow is on the default branch, open **Actions → Explicit Gemini
+3. Open **Actions → Explicit Gemini
    evaluation → Run workflow**. Select the branch containing your dataset, choose
-   `hybrid` initially, and explicitly enable **Allow Gemini API calls**. Leaving
+   `vector` initially, and explicitly enable **Allow Gemini API calls**. Leaving
    the checkbox off skips the job. `all` runs vector, keyword, and hybrid in order
    and consumes more quota. The default 15-second pause helps pace chat calls but
    does not guarantee your account's quotas, especially during embedding batches.
@@ -26,7 +27,7 @@ run for those measurements. M5 remains outside this release until M4 is measured
    are retained for 14 days. Save reviewed results before expiry. A failed run may
    still contain useful partial results, clearly marked with errors.
 5. Commit reviewed Markdown results under `eval/results/` and replace the README's
-   pending cells with those exact measurements and the run link. Raw JSON/JSONL
+   measured cells only with the new exact measurements and run link. Raw JSON/JSONL
    are gitignored because they contain questions, generated answers, and quotes.
 
 The workflow uses a disposable PostgreSQL 16/pgvector database, downloads only

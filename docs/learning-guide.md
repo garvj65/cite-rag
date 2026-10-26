@@ -7,7 +7,8 @@ the tests should do. Browser-hosted compute is an option for later hands-on work
 Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
 evidence gates, verified quote citations, refusals, and the React interface.
 M4's harness and a 30-question assistant-authored golden baseline are implemented;
-independent review and a real quality run are pending.**
+real retrieval and answer attempts are [measured](../eval/results/20261026_gemini_baseline.md),
+including provider failures and refusal gaps. Independent review is pending.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -115,7 +116,8 @@ reported as an error. M3 implements these separate response paths.
 In M4, the evaluation runner compares actual outputs with source-grounded questions
 and gold document/page labels. At your request, an assistant-authored 30-question
 baseline now includes an answer key and evidence notes. Your independent review and
-a real run remain pending; fake-provider performance is never real retrieval quality.
+held-out validation remain pending; the measured baseline is linked above.
+Fake-provider performance is never real retrieval quality.
 
 ## 5. Read the existing code in this order
 

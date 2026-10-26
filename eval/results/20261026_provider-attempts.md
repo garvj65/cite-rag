@@ -81,3 +81,29 @@ Provider failures now log only numeric HTTP status at WARNING, without URL,
 headers, messages, or document text. The explicit benchmark uses existing
 backoff settings at 30/60 seconds (three attempts), capped at 60 seconds, to
 allow more recovery time. Application defaults remain unchanged.
+
+## Successful full corpus ingestion
+
+[Run 40271174202](https://github.com/garvj65/cite-rag/actions/runs/40271174202)
+uses revision `b2ed89955a1f5c6624bbd83fa821fe7855e75ba6` and explicitly
+selected Gemini 3.6 Flash with Gemini Embedding 2. Both preflights passed.
+Ingestion logged two HTTP 429 rate-limit responses and recovered with the
+configured 30/60-second retry delays. Both PDFs indexed successfully: 2 documents,
+112 pages, 149 chunks, 0 skipped files, and 0 failed files. These operational
+counts are distinct from quality metrics. The three-strategy benchmark follows
+in the same disposable database; its completed results must be reported separately.
+
+## Completed benchmark records
+
+Run 40271174202 completed all three 30-question end-to-end passes. It exited with
+failure: vector had 14 generation failures, hybrid had 2, and keyword had none.
+The workflow was not cancelled; it completed while chat/browser controls were
+unavailable. The separate explicitly retrieval-only run
+[40272916763](https://github.com/garvj65/cite-rag/actions/runs/40272916763) completed
+all three strategies with zero errors after the earlier run released the
+concurrency slot. No LLM was called in that second run.
+
+[Full measured results and preserved raw records](20261026_gemini_baseline.md)
+include the failures, refusal behavior, latencies, exact model IDs, dataset digest,
+and immutable revisions. These results supersede earlier pending-quality notes
+without converting any failed request into a successful refusal.

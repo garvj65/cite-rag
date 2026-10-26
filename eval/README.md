@@ -3,8 +3,9 @@
 The harness is implemented. At the user's explicit request on 2026-10-26,
 `golden.jsonl` now contains an **assistant-authored baseline: 25 answerable questions
 and 5 unanswerable questions**. Read [the answer key and evidence review](golden-review.md).
-Source/hash/page/chunk checks passed; independent human review and a real-provider
-run remain pending. No quality scores have been invented. Test/CI questions remain
+Source/hash/page/chunk checks passed. [Real configured-provider results](results/20261026_gemini_baseline.md)
+include a zero-error retrieval comparison and a rate-limited end-to-end attempt.
+Independent human review remains pending. Test/CI questions remain
 separate synthetic fixtures. Empty datasets still fail validation.
 
 For a browser-only run, follow [the evaluation handoff](../docs/evaluation-handoff.md).
