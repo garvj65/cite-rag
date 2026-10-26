@@ -70,6 +70,8 @@ jobs:
           from eval.models import EvaluationOptions
           EvaluationOptions(question_delay_seconds=float(os.environ["EVAL_DELAY_SECONDS"]))
           PY
+      - name: Check provider access with sanitized diagnostics
+        run: uv run python scripts/check_providers.py --allow-real-calls
       - name: Download the approved public corpus and check document identities
         run: |
           uv run python scripts/download_corpus.py
