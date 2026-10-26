@@ -101,6 +101,10 @@ def test_strategy_dispatch_profiles_and_lazy_embedding(settings, strategy, expec
     assert all(call[1] == response.profile for call in repository.calls)
     assert factory.call_count == (0 if strategy == "keyword" else 1)
     if strategy == "hybrid":
+        assert response.results[0].vector_score == 0.8
+        assert response.results[0].keyword_score == 0.2
+        assert response.results[1].vector_score == 0.9
+        assert response.results[1].keyword_score is None
         assert repository.calls[1][2] == config.hybrid_candidate_k
         assert repository.calls[2] == (
             "keyword",
@@ -108,6 +112,10 @@ def test_strategy_dispatch_profiles_and_lazy_embedding(settings, strategy, expec
             config.hybrid_candidate_k,
             "apple",
         )
+    elif strategy == "vector":
+        assert response.results[0].vector_score == 0.9
+    else:
+        assert response.results[0].keyword_score == 0.2
 
 
 def test_request_k_can_exceed_default_candidate_depth(settings):

@@ -84,6 +84,53 @@ def test_weak_retrieval_spends_no_chat_calls(settings, strategy, score):
     factory.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    "components",
+    [
+        {"vector_score": 0.8},
+        {"keyword_score": 0.1},
+        {"vector_score": 0.1, "keyword_score": 0.1},
+    ],
+)
+def test_hybrid_uses_component_strength_even_with_single_source_low_rrf(settings, components):
+    service, fake, _ = make_service(
+        settings, [passage(score=1 / 61, **components)], model_json(), "hybrid"
+    )
+    assert service.ask("question").supported
+    assert len(fake.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "components",
+    [
+        {},
+        {"vector_score": 0.1},
+        {"keyword_score": 0.001},
+        {"vector_score": 0.1, "keyword_score": 0.001},
+    ],
+)
+def test_high_rrf_cannot_promote_weak_or_missing_component_evidence(settings, components):
+    service, _, factory = make_service(
+        settings, [passage(score=2 / 61, **components)], model_json(), "hybrid"
+    )
+    assert service.ask("question").reason == "weak_retrieval"
+    factory.assert_not_called()
+
+
+def test_hybrid_filters_weak_chunks_but_preserves_fused_order(settings):
+    hits = [
+        passage("weak text", chunk_id=3, score=0.04, vector_score=0.1),
+        passage("First eligible.", chunk_id=2, score=0.03, keyword_score=0.1),
+        passage(score=0.01, vector_score=0.8),
+    ]
+    service, fake, _ = make_service(settings, hits, model_json(), "hybrid")
+    assert service.ask("question").supported
+    assert [p["text"] for p in json.loads(fake.calls[0][1])["passages"]] == [
+        "First eligible.",
+        "Keep the original document and record its source.",
+    ]
+
+
 def test_empty_retrieval_spends_no_chat_calls(settings):
     service, fake, factory = make_service(settings, [], model_json())
     answer = service.ask("question")

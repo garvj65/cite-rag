@@ -27,6 +27,17 @@ def reciprocal_rank_fusion(
                 continue
             seen.add(hit.chunk_id)
             passages.setdefault(hit.chunk_id, hit)
+            original = passages[hit.chunk_id]
+            passages[hit.chunk_id] = original.model_copy(
+                update={
+                    "vector_score": hit.vector_score
+                    if hit.vector_score is not None
+                    else original.vector_score,
+                    "keyword_score": hit.keyword_score
+                    if hit.keyword_score is not None
+                    else original.keyword_score,
+                }
+            )
             scores[hit.chunk_id] = scores.get(hit.chunk_id, 0.0) + 1 / (constant + rank)
     fused = [
         hit.model_copy(update={"score": scores[chunk_id]}) for chunk_id, hit in passages.items()
@@ -56,7 +67,10 @@ class VectorRetriever:
             raise ProviderError("invalid_embedding_dimensions")
         vectors = provider.embed([query])
         validate_vectors(vectors, 1, EMBEDDING_DIMENSIONS)
-        return self._repository.vector_search(self._profile, vectors[0], k)
+        return [
+            hit.model_copy(update={"vector_score": hit.score})
+            for hit in self._repository.vector_search(self._profile, vectors[0], k)
+        ]
 
 
 class KeywordRetriever:
@@ -68,7 +82,10 @@ class KeywordRetriever:
 
     def search(self, query: str, k: int) -> list[SearchHit]:
         """Return PostgreSQL keyword matches in rank order."""
-        return self._repository.keyword_search(self._profile, query, k)
+        return [
+            hit.model_copy(update={"keyword_score": hit.score})
+            for hit in self._repository.keyword_search(self._profile, query, k)
+        ]
 
 
 class HybridRetriever:

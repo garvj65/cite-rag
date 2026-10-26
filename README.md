@@ -80,7 +80,7 @@ and identifies its original bytes by SHA-256.
 ## Configure and ingest
 
 The default model configuration is **Gemini Embedding 2** for retrieval and
-**Gemini 3.8 Flash** for M3 answers. The user's free-model preference updates the
+**Gemini 3.5 Flash-Lite** for M3 answers. The user's free-model preference updates the
 original OpenAI-only specification. The original `text-embedding-3-small` option
 remains selectable behind the same interface. No automatic provider fallback
 exists, and no local model/GPU is required.
@@ -90,7 +90,7 @@ chunk receives its own validated 1536-dimensional vector. Gemini chat uses nativ
 `generateContent` with a JSON response schema and separate system instructions.
 OpenAI retains its own API. Adapters stay behind provider interfaces.
 
-Google lists free API tiers for both suggested models as of 2026-10-24, subject
+Google lists free API tiers for both suggested models as of 2026-10-26, subject
 to quotas, account/region eligibility, availability, and terms. Use a free-tier
 project; the application cannot enforce your account's billing configuration.
 See [pricing](https://ai.google.dev/gemini-api/docs/pricing),
@@ -105,14 +105,15 @@ EMBEDDING_PROVIDER=gemini
 ENABLE_REAL_PROVIDERS=true
 GEMINI_API_KEY=your-local-key
 LLM_PROVIDER=gemini
-GEMINI_CHAT_MODEL=gemini-3.6-flash
+GEMINI_CHAT_MODEL=gemini-3.5-flash-lite
 SEARCH_STRATEGY=vector
 ```
 
-The app default remains `gemini-3.8-flash`; the explicit example above uses
-`gemini-3.6-flash`, whose structured chat preflight passed on 2026-10-26 after
-3.8 Flash returned repeated HTTP 503 UNAVAILABLE responses. No automatic model
-switch occurs. See [the live attempts](eval/results/20261026_provider-attempts.md).
+Flash-Lite is an explicit budget configuration based on the account limits shared
+on 2026-10-26 (15 chat requests/minute, 500/day). Gemini 3.8/3.6 Flash remain
+selectable, with lower account limits (5/minute, 20/day). Set chat pacing to 4
+when using either. There is no automatic model switch. Earlier results remain
+frozen in [the live attempts](eval/results/20261026_provider-attempts.md).
 
 For an explicit keyless mechanics demo, instead select:
 
@@ -215,7 +216,7 @@ when sufficient evidence is retrieved.
 
 Generation follows these gates:
 
-1. Empty results or passages below the selected strategy's score threshold
+1. Empty results or passages below the applicable component score threshold
    return a fixed refusal without creating a chat client.
 2. Whole eligible passages become a numbered JSON context within a character
    budget. Document text remains untrusted data, separate from system instructions.
@@ -240,10 +241,10 @@ prompt's grounding/injection instructions and scripted attack tests do not prove
 real-model immunity to prompt injection. Semantic faithfulness, refusal accuracy,
 and adversarial model behavior still require real evaluation and human review.
 
-The strategy-specific evidence defaults are cosine similarity **0.35**, keyword
-rank **0.05**, and RRF **0.02**. These are **provisional, uncalibrated gates**, not
-confidence probabilities. RRF-only gates depend on the fusion settings; changing
-`RRF_CONSTANT` requires reviewing the hybrid gate. The context budget is 24,000
+Evidence defaults are cosine similarity **0.35** and keyword rank **0.05**.
+Hybrid preserves both component scores and accepts a chunk meeting either gate;
+RRF only determines order. The former `ANSWER_MIN_HYBRID_SCORE` setting is retired.
+These remain **provisional, uncalibrated gates**, not confidence probabilities. The context budget is 24,000
 serialized characters; output limits are 12,000 answer characters, 8 proposed
 citations, and 2,000 characters per quote. All limits are typed settings in
 `.env.example`. Context uses whole chunks without silently truncating evidence.
@@ -257,7 +258,9 @@ Settings are typed in `backend/app/settings.py`; `.env.example` documents them.
 | `CHUNK_SIZE_WORDS` | 400 | Maximum words per within-page chunk |
 | `CHUNK_OVERLAP_WORDS` | 80 | Shared words between consecutive windows |
 | `EMBEDDING_BATCH_SIZE` | 16 | Number of passages sent per embedding batch |
-| `SEARCH_STRATEGY` | hybrid | Default search strategy |
+| `GEMINI_CHAT_REQUESTS_PER_MINUTE` | 12 | Process-local chat attempt budget, including retries |
+| `GEMINI_EMBEDDING_INPUTS_PER_MINUTE` | 90 | Process-local rolling input budget, including retries |
+| `SEARCH_STRATEGY` | vector | Default search strategy |
 | `SEARCH_K` | 5 | Default result count |
 | `SEARCH_MAX_K` | 50 | Maximum request result count |
 | `MAX_QUERY_CHARACTERS` | 2000 | Maximum normalized query length |
@@ -276,7 +279,11 @@ See the [configuration review](docs/configuration-review.md) for exact boundarie
 Provider timeouts, bounded exponential-backoff retries, and PDF size/page limits
 are configurable too. Permanent provider errors and invalid responses fail
 without retrying. Persistent quota exhaustion requires waiting before retrying
-the CLI. No API keys or full document text are logged at INFO.
+the CLI. Process-local Gemini pacing spaces actual attempts and enforces a rolling
+minute budget, charging each embedding input conservatively. Waiting counts toward
+API deadlines and measured service latency. It cannot coordinate other processes,
+keys/projects or enforce daily/token quotas; concurrent applications share the
+provider project limits. No API keys or full document text are logged at INFO.
 
 ```mermaid
 flowchart TD

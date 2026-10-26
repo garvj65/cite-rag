@@ -11,7 +11,7 @@ on:
         description: Retrieval strategy (all runs three sequential evaluations)
         type: choice
         options: [hybrid, vector, keyword, all]
-        default: hybrid
+        default: vector
       retrieval_only:
         description: Measure retrieval only (no chat calls; answer metrics N/A)
         type: boolean
@@ -19,12 +19,16 @@ on:
       chat_model:
         description: Explicit chat model for this run (no automatic fallback)
         type: choice
-        options: [gemini-3.8-flash, gemini-3.6-flash]
-        default: gemini-3.8-flash
+        options: [gemini-3.5-flash-lite, gemini-3.8-flash, gemini-3.6-flash]
+        default: gemini-3.5-flash-lite
       delay_seconds:
         description: Pause between questions, excluded from latency (0–300 seconds)
         type: number
-        default: 15
+        default: 0
+      browser_check:
+        description: Check real cited answer and refusal in Chromium after answer evaluation
+        type: boolean
+        default: true
 permissions:
   contents: read
 concurrency:
@@ -55,6 +59,9 @@ jobs:
       LLM_PROVIDER: gemini
       GEMINI_EMBEDDING_MODEL: gemini-embedding-2
       GEMINI_CHAT_MODEL: ${{ inputs.chat_model }}
+      GEMINI_CHAT_REQUESTS_PER_MINUTE: ${{ inputs.chat_model == 'gemini-3.5-flash-lite' && '12' || '4' }}
+      GEMINI_EMBEDDING_INPUTS_PER_MINUTE: "90"
+      SEARCH_STRATEGY: vector
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       EVAL_RETRIEVAL_ONLY: ${{ inputs.retrieval_only }}
       EVAL_STRATEGY: ${{ inputs.strategy }}
@@ -119,6 +126,40 @@ jobs:
             uv run python -m eval.run --strategy "$strategy" --k 5 --seed 42 --delay-seconds "$EVAL_DELAY_SECONDS" "${flags[@]}" || status=1
           done
           exit "$status"
+      - uses: actions/setup-node@v4
+        if: success() && !inputs.retrieval_only && inputs.browser_check
+        with:
+          node-version: "24"
+      - name: Prepare explicit real browser check
+        if: success() && !inputs.retrieval_only && inputs.browser_check
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          npx playwright install --with-deps chromium
+      - name: Check real answers in the browser
+        if: success() && !inputs.retrieval_only && inputs.browser_check
+        shell: bash
+        run: |
+          uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/citerag-api.log 2>&1 &
+          api_pid=$!
+          npm --prefix frontend run dev -- --port 8080 > /tmp/citerag-ui.log 2>&1 &
+          ui_pid=$!
+          trap 'kill "$api_pid" "$ui_pid" 2>/dev/null || true' EXIT
+          uv run python - <<'PY'
+          import time
+          import httpx
+          for attempt in range(30):
+              try:
+                  for url in ("http://127.0.0.1:8000/health", "http://127.0.0.1:8080/api/config"):
+                      httpx.get(url, timeout=1, trust_env=False).raise_for_status()
+                  break
+              except httpx.HTTPError:
+                  if attempt == 29:
+                      raise SystemExit("Browser services did not become ready.") from None
+                  time.sleep(1)
+          PY
+          node frontend/scripts/live-evaluation.ts --allow-real-calls
       - name: Publish measured aggregate table in run summary
         if: always() && steps.dependencies.outcome == 'success'
         run: |
@@ -127,7 +168,7 @@ jobs:
           from pathlib import Path
           from eval.models import EvaluationResult
           from eval.report import results_table
-          results = [EvaluationResult.model_validate_json(p.read_text()) for p in sorted(Path("eval/results").glob("*.json"))]
+          results = [EvaluationResult.model_validate_json(p.read_text()) for p in sorted(Path("eval/results").glob("*.json")) if p.name != "browser-check.json"]
           if results:
               table = results_table(results)
               print(table)
@@ -142,5 +183,6 @@ jobs:
             eval/results/*.md
             eval/results/*.json
             eval/results/*.jsonl
+            eval/results/browser-*.png
           if-no-files-found: ignore
           retention-days: 14

@@ -83,7 +83,8 @@ provider responses, credentials, or SQL statements.
 ## Evidence-gated answers in M3
 
 `POST /ask` reuses search's query/strategy/k validation. It filters retrieved
-passages using independent strategy-specific thresholds. Empty/weak retrieval
+passages using cosine/keyword thresholds. Hybrid retains both component scores
+and admits a chunk if either passes; its RRF score determines order only. Empty/weak retrieval
 returns a fixed refusal before creating a chat provider. Thresholds are provisional
 defaults; they are not calibrated probabilities and need M4 validation.
 
@@ -147,7 +148,7 @@ The harness and an assistant-authored 30-question baseline are implemented.
 Real retrieval and end-to-end attempts are [measured](../eval/results/20261026_gemini_baseline.md),
 with provider failures and refusal gaps retained. Independent human label review
 and held-out validation remain pending. Vector is the default strategy; the
-provisional hybrid RRF answer gate remains conservative and uncalibrated.
+hybrid evidence gate uses the same provisional, uncalibrated component thresholds.
 See [the benchmark provenance and evidence](../eval/golden-review.md). A manually
 dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
 See the [browser evaluation handoff](evaluation-handoff.md).

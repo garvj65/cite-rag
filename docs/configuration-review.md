@@ -23,3 +23,25 @@ CLI ingestion/evaluation retain their explicit provider timeout/retry settings;
 they do not inherit the HTTP response deadline. The evaluation CLI can pace
 questions with `--delay-seconds`, excluding that intentional waiting from latency.
 These fixes do not calibrate answer thresholds or replace a real golden benchmark.
+
+## Gemini budget and hybrid evidence correction
+
+The explicit budget model is `gemini-3.5-flash-lite`, retaining
+`gemini-embedding-2` and vector retrieval by default. Local pacing spaces every
+Gemini HTTP attempt, including retries, and enforces a rolling-minute budget.
+The defaults are 12 chat attempts and 90 embedding inputs/minute, conservatively
+charging each input in a synchronous batch. The manual workflow uses 4 chat
+attempts/minute for explicitly selected 3.6/3.8 Flash. Zero disables local pacing.
+Embedding batch size must fit a nonzero input budget.
+
+Pacing is shared by endpoint within one process, without storing keys. Separate
+processes or different pacing configurations are independent; daily/token quotas,
+other account users, and provider capacity remain external limits. CLI/evaluation
+have no API deadline; API waiting honors the existing deadline. Pacing within a
+question is part of measured latency; optional between-question pauses are not.
+
+Hybrid results now retain vector/keyword component scores. A chunk must pass
+either existing component threshold; RRF never establishes evidence strength.
+High fused rank cannot promote weak scores, and a strong single-source result no
+longer fails solely because its RRF score is below 0.02. Thresholds were not
+calibrated on the frozen golden data. Old reports and labels remain unchanged.

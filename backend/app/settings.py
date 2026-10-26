@@ -26,14 +26,13 @@ class Settings(BaseSettings):
     gemini_embedding_model: str = "gemini-embedding-2"
     openai_embedding_model: str = "text-embedding-3-small"
     llm_provider: Literal["gemini", "openai", "fake"] = "gemini"
-    gemini_chat_model: str = "gemini-3.8-flash"
+    gemini_chat_model: str = "gemini-3.5-flash-lite"
     openai_chat_model: str = ""
     fake_llm_response: str = Field(
         default='{"answer":"","citations":[],"supported":false}', repr=False
     )
     answer_min_vector_score: float = Field(default=0.35, ge=-1, le=1)
     answer_min_keyword_score: float = Field(default=0.05, ge=0)
-    answer_min_hybrid_score: float = Field(default=0.02, ge=0)
     answer_context_characters: int = Field(default=24000, ge=1024, le=100000)
     answer_max_characters: int = Field(default=12000, ge=1, le=50000)
     answer_max_citations: int = Field(default=8, ge=1, le=50)
@@ -47,6 +46,8 @@ class Settings(BaseSettings):
     provider_max_attempts: int = Field(default=3, ge=1, le=5)
     provider_backoff_seconds: float = Field(default=1, ge=0, le=30)
     provider_max_backoff_seconds: float = Field(default=8, ge=0, le=60)
+    gemini_chat_requests_per_minute: int = Field(default=12, ge=0, le=100000)
+    gemini_embedding_inputs_per_minute: int = Field(default=90, ge=0, le=100000)
     request_deadline_seconds: float = Field(default=90, gt=0, le=1800)
     proxy_timeout_seconds: int = Field(default=100, ge=1, le=3600)
     max_pdf_bytes: int = Field(default=20 * 1024 * 1024, ge=1)
@@ -65,6 +66,12 @@ class Settings(BaseSettings):
             raise ValueError("chunk_overlap_words must be smaller than chunk_size_words")
         if self.search_k > self.search_max_k:
             raise ValueError("search_k must not exceed search_max_k")
+        if (
+            self.embedding_provider == "gemini"
+            and self.gemini_embedding_inputs_per_minute
+            and self.embedding_batch_size > self.gemini_embedding_inputs_per_minute
+        ):
+            raise ValueError("embedding_batch_size must fit gemini_embedding_inputs_per_minute")
         if (
             self.request_deadline_seconds + PROXY_RESPONSE_MARGIN_SECONDS
             > self.proxy_timeout_seconds

@@ -44,7 +44,6 @@ PROVENANCE_SETTINGS = {
     "rrf_constant",
     "answer_min_vector_score",
     "answer_min_keyword_score",
-    "answer_min_hybrid_score",
     "answer_context_characters",
     "answer_max_characters",
     "answer_max_citations",
@@ -55,6 +54,8 @@ PROVENANCE_SETTINGS = {
     "provider_max_attempts",
     "provider_backoff_seconds",
     "provider_max_backoff_seconds",
+    "gemini_chat_requests_per_minute",
+    "gemini_embedding_inputs_per_minute",
     "max_query_characters",
 }
 

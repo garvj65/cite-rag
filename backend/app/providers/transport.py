@@ -9,6 +9,7 @@ from pydantic import SecretStr
 
 from app.deadlines import remaining_timeout
 from app.errors import ProviderError, ProviderTimeoutError, RequestDeadlineError
+from app.providers.pacing import RequestPacer
 from app.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -23,10 +24,14 @@ def post_provider_json(
     sleep: Callable[[float], None] = time.sleep,
     *,
     api_key_header: bool = False,
+    pacer: RequestPacer | None = None,
+    request_units: int = 1,
 ) -> httpx.Response:
     """Retry transient HTTP failures with capped exponential backoff, then fail safely."""
     last_error: ProviderError = ProviderError("provider_unavailable")
     for attempt in range(settings.provider_max_attempts):
+        if pacer is not None:
+            pacer.wait(request_units, sleep)
         try:
             response = client.post(
                 url,

@@ -8,6 +8,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.errors import ProviderConfigurationError, ProviderError
+from app.providers.pacing import get_pacer
 from app.providers.transport import post_provider_json
 from app.settings import EMBEDDING_DIMENSIONS, Settings
 
@@ -73,9 +74,10 @@ class HTTPEmbeddingProvider:
         if not texts:
             return []
         if self._settings.embedding_provider == "gemini":
+            endpoint = f"{self._base}/models/{self._model}:batchEmbedContents"
             response = post_provider_json(
                 self._client,
-                f"{self._base}/models/{self._model}:batchEmbedContents",
+                endpoint,
                 self._key,
                 {
                     "requests": [
@@ -90,6 +92,8 @@ class HTTPEmbeddingProvider:
                 self._settings,
                 self._sleep,
                 api_key_header=True,
+                pacer=get_pacer(endpoint, self._settings.gemini_embedding_inputs_per_minute),
+                request_units=len(texts),
             )
             try:
                 parsed = _GeminiEmbeddingResponse.model_validate_json(response.content)
