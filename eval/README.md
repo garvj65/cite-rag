@@ -1,9 +1,12 @@
 # Evaluate CiteRAG
 
-The harness is implemented. **The user writes the golden questions and answers.**
-`golden.jsonl` is intentionally empty; no semantic benchmark has been run and no
-quality scores have been invented. Empty data fails validation. Test/CI questions
-are separate synthetic fixtures, never starter NIST golden questions.
+The harness is implemented. At the user's explicit request on 2026-10-26,
+`golden.jsonl` now contains an **assistant-authored baseline: 25 answerable questions
+and 5 unanswerable questions**. Read [the answer key and evidence review](golden-review.md).
+Source/hash/page/chunk checks passed. [Real configured-provider results](results/20261026_gemini_baseline.md)
+include a zero-error retrieval comparison and a rate-limited end-to-end attempt.
+Independent human review remains pending. Test/CI questions remain
+separate synthetic fixtures. Empty datasets still fail validation.
 
 For a browser-only run, follow [the evaluation handoff](../docs/evaluation-handoff.md).
 The [corpus reference](../docs/corpus-reference.md) gives verified document hashes
@@ -11,8 +14,9 @@ and physical page counts without requiring local ingestion.
 
 ## Author the golden file
 
-Write one JSON object per line in `eval/golden.jsonl`. Aim for the planned
-25 answerable and 5 unanswerable questions; a smaller first dataset is valid.
+Review the baseline, then add one JSON object per line in `eval/golden.jsonl`.
+The current set contains the planned 25 answerable and 5 unanswerable questions.
+Keep the same reviewed dataset across strategy comparisons.
 
 | Field | Required | Meaning |
 |---|---|---|
@@ -20,7 +24,7 @@ Write one JSON object per line in `eval/golden.jsonl`. Aim for the planned
 | `question` | Yes | Your question, within the backend query-length setting |
 | `answerable` | Yes | Boolean determined by reading the corpus |
 | `gold_pages` | Yes | Expected pages as objects with `doc_id` and `page`; empty for negatives |
-| `reference_answer` | No | Your human reference answer for answerable rows; not automatically scored |
+| `reference_answer` | No | Reference answer for answerable rows; record authorship in the review notes; not automatically scored |
 
 `doc_id` is the lowercase SHA-256 of original PDF bytes, shown in ingestion
 summaries. `page` is the one-based **physical PDF page**, including cover and
@@ -28,7 +32,8 @@ contents pages. Use the viewer's page number, not a printed page label.
 The validator rejects extra fields, duplicate JSON keys/IDs/questions/pages,
 wrong types, oversized questions, and inconsistent labels. The contract is
 [golden.schema.json](golden.schema.json); export it with `--schema`.
-No filled example is supplied, to avoid inventing your questions or answers.
+The committed baseline provides filled records, with assistant authorship and source
+evidence documented separately so the strict schema stays unchanged.
 
 ```bash
 uv run python -m eval.validate
@@ -125,3 +130,13 @@ Malformed model output is an error and has no countable citation list. Interpret
 citation validity alongside error counts; a high validity ratio alone cannot
 establish reliable answer generation. Latency measures the RAG service path,
 excluding index preflight, report serialization, and browser-to-API transport.
+
+## Retrieval-only measurement when chat is unavailable
+
+`uv run python -m eval.run --strategy hybrid --k 5 --retrieval-only` measures the
+same page rankings on the same golden data and index, without calling or creating
+a chat provider. Citation validity and refusal accuracy are **N/A**; latency is
+retrieval-only and must not be compared with end-to-end answer latency. Reports
+and tables label the mode explicitly. This is a separate explicit experiment,
+not a fallback or a substitute for measuring real answers. The workflow's
+`retrieval_only` checkbox uses embedding-only preflight and enables this CLI flag.

@@ -83,7 +83,7 @@ def test_empty_index_is_successful_and_uses_no_provider(api):
     repository.has_profile.return_value = False
     response = client.post("/search", json={"query": "hello"})
     assert response.status_code == 200 and response.json()["results"] == []
-    assert response.json()["strategy"] == "hybrid" and response.json()["k"] == 5
+    assert response.json()["strategy"] == "vector" and response.json()["k"] == 5
     factory.assert_not_called()
 
 

@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     proxy_timeout_seconds: int = Field(default=100, ge=1, le=3600)
     max_pdf_bytes: int = Field(default=20 * 1024 * 1024, ge=1)
     max_pdf_pages: int = Field(default=500, ge=1)
-    search_strategy: RetrievalStrategy = "hybrid"
+    search_strategy: RetrievalStrategy = "vector"
     search_k: int = Field(default=5, ge=1)
     search_max_k: int = Field(default=50, ge=1, le=100)
     max_query_characters: int = Field(default=2000, ge=1, le=20000)

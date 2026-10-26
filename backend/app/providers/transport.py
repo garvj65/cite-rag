@@ -1,5 +1,6 @@
 """Shared bounded HTTP retries; neither request nor response bodies are logged."""
 
+import logging
 import time
 from collections.abc import Callable, Mapping
 
@@ -10,6 +11,8 @@ from app.deadlines import remaining_timeout
 from app.errors import ProviderError, ProviderTimeoutError, RequestDeadlineError
 from app.settings import Settings
 
+logger = logging.getLogger(__name__)
+
 
 def post_provider_json(
     client: httpx.Client,
@@ -18,6 +21,8 @@ def post_provider_json(
     payload: Mapping[str, object],
     settings: Settings,
     sleep: Callable[[float], None] = time.sleep,
+    *,
+    api_key_header: bool = False,
 ) -> httpx.Response:
     """Retry transient HTTP failures with capped exponential backoff, then fail safely."""
     last_error: ProviderError = ProviderError("provider_unavailable")
@@ -25,7 +30,9 @@ def post_provider_json(
         try:
             response = client.post(
                 url,
-                headers={"Authorization": f"Bearer {api_key.get_secret_value()}"},
+                headers={"x-goog-api-key": api_key.get_secret_value()}
+                if api_key_header
+                else {"Authorization": f"Bearer {api_key.get_secret_value()}"},
                 json=dict(payload),
                 timeout=remaining_timeout(settings.provider_timeout_seconds),
             )
@@ -36,6 +43,7 @@ def post_provider_json(
         else:
             if response.is_success:
                 return response
+            logger.warning("Provider request failed with HTTP %d", response.status_code)
             if response.status_code not in (408, 429) and response.status_code < 500:
                 raise ProviderError("provider_request_rejected")
             last_error = ProviderError("provider_temporarily_unavailable")

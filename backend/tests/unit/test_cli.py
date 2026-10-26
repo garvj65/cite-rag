@@ -55,12 +55,10 @@ def test_cli_real_provider_contract_uses_mock_transport(
     configure_offline_cli(monkeypatch, enabled, repository)
 
     def handle(request):
-        texts = json.loads(request.content)["input"]
+        texts = json.loads(request.content)["requests"]
         return httpx.Response(
             200,
-            json={
-                "data": [{"index": index, "embedding": [1.0] * 1536} for index in range(len(texts))]
-            },
+            json={"embeddings": [{"values": [1.0] * 1536} for _ in texts]},
         )
 
     client = httpx.Client(transport=httpx.MockTransport(handle))

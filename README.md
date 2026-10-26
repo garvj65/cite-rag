@@ -3,14 +3,17 @@
 A RAG research workspace for answers with verifiable document, page, and quote
 citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
 verified quotes, a responsive React interface, and the M4 evaluation harness are
-implemented. **The user-authored golden dataset and real quality benchmark remain
-pending**; no semantic-quality numbers are fabricated.
+implemented. A source-checked, **assistant-authored 30-question golden baseline** is
+encoded at the user's request. Real Gemini retrieval and answer attempts are
+[measured](eval/results/20261026_gemini_baseline.md), including rate-limit failures
+and refusal gaps. Independent human label review remains pending.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
 [M3 validation](docs/validation-m3.md)
 · [M4 validation](docs/validation-m4.md)
 · [Release validation](docs/validation-release.md)
+· [Benchmark validation](docs/validation-benchmark.md)
 
 [Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
 [Free-tier deployment runbook](docs/deployment.md) ·
@@ -82,12 +85,17 @@ original OpenAI-only specification. The original `text-embedding-3-small` option
 remains selectable behind the same interface. No automatic provider fallback
 exists, and no local model/GPU is required.
 
+Gemini embeddings use the native synchronous `batchEmbedContents` endpoint; each
+chunk receives its own validated 1536-dimensional vector. Gemini chat uses native
+`generateContent` with a JSON response schema and separate system instructions.
+OpenAI retains its own API. Adapters stay behind provider interfaces.
+
 Google lists free API tiers for both suggested models as of 2026-10-24, subject
 to quotas, account/region eligibility, availability, and terms. Use a free-tier
 project; the application cannot enforce your account's billing configuration.
 See [pricing](https://ai.google.dev/gemini-api/docs/pricing),
 [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), and
-[OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai). Free-tier
+[structured outputs](https://ai.google.dev/gemini-api/docs/generate-content/structured-output). Free-tier
 content may be used to improve Google's products; the selected PDFs are public.
 
 For real embeddings and answers, edit the local `.env`:
@@ -97,7 +105,14 @@ EMBEDDING_PROVIDER=gemini
 ENABLE_REAL_PROVIDERS=true
 GEMINI_API_KEY=your-local-key
 LLM_PROVIDER=gemini
+GEMINI_CHAT_MODEL=gemini-3.6-flash
+SEARCH_STRATEGY=vector
 ```
+
+The app default remains `gemini-3.8-flash`; the explicit example above uses
+`gemini-3.6-flash`, whose structured chat preflight passed on 2026-10-26 after
+3.8 Flash returned repeated HTTP 503 UNAVAILABLE responses. No automatic model
+switch occurs. See [the live attempts](eval/results/20261026_provider-attempts.md).
 
 For an explicit keyless mechanics demo, instead select:
 
@@ -110,7 +125,9 @@ ENABLE_REAL_PROVIDERS=false
 Fake embeddings are deterministic lexical hashes. They support repeatable
 mechanics tests and a keyless demo; they do not establish semantic retrieval
 quality. There is no implicit switch into fake mode. Real-provider contracts
-have mocked coverage, but authenticated model calls have not been verified yet.
+have mocked coverage. Authenticated Gemini Embedding 2 and Gemini 3.6 Flash
+preflights have passed; the full 112-page corpus has been indexed with real
+embeddings. Operational evidence is tracked in [provider attempts](eval/results/20261026_provider-attempts.md).
 The scripted LLM defaults to a fixed unsupported response. Tests/CI may supply
 `FAKE_LLM_RESPONSE` with one predetermined JSON response; this is labeled as a
 scripted demo in the UI and does not simulate semantic reasoning.
@@ -221,7 +238,7 @@ computed **before** refusal filtering or citation deduplication.
 **Quote matching proves provenance, not entailment of every answer claim.** The
 prompt's grounding/injection instructions and scripted attack tests do not prove
 real-model immunity to prompt injection. Semantic faithfulness, refusal accuracy,
-and adversarial model behavior still require M4 evaluation on user-authored data.
+and adversarial model behavior still require real evaluation and human review.
 
 The strategy-specific evidence defaults are cosine similarity **0.35**, keyword
 rank **0.05**, and RRF **0.02**. These are **provisional, uncalibrated gates**, not
@@ -325,18 +342,18 @@ coverage also pass separate 85% gates. The same **22 frontend** and **3 browser*
 tests, lint/type checks, Docker builds, full Compose smoke checks, a six-run
 chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
 See [the M4 validation record](docs/validation-m4.md). These are software checks;
-the real user-golden semantic benchmark is still pending.
+the live baseline and its limitations are reported below.
 
-Release verification: **294 backend/evaluation tests**, including **24 PostgreSQL
-integration tests**, **99.74% backend app coverage**, **38 frontend tests**, and
+Latest benchmark implementation verification: **326 backend/evaluation tests**, including **24 PostgreSQL
+integration tests**, **99.75% backend app coverage**, **38 frontend tests**, and
 **5 browser tests** passed. Full CI also verifies nondefault client limits and
 rendered nginx timeouts through the actual Compose stack. See
-[the release validation record](docs/validation-release.md) for immutable revision,
+[the benchmark validation record](docs/validation-benchmark.md) for immutable revision,
 CI links, coverage denominators, secret-scan scope, and remaining requirements.
 
 ## Evaluation status
 
-The M4 harness validates user-authored JSONL, measures each retrieval once, reuses
+The M4 harness validates golden JSONL, measures each retrieval once, reuses
 that evidence for the answer, and saves Markdown/JSON/JSONL results. It includes
 seeded strategy/chunk-size comparisons and hand-computed metric tests. Read
 [the evaluation guide](eval/README.md) for field definitions and exact denominators.
@@ -345,12 +362,14 @@ Use [the browser-only handoff](docs/evaluation-handoff.md) to run this through
 GitHub Actions without a local build. The explicit manual workflow uses the
 `GEMINI_API_KEY` repository secret; normal CI never calls model providers.
 
-`eval/golden.jsonl` is intentionally empty. Populate it with your own questions,
-answerability labels, and gold document/pages before running:
+`eval/golden.jsonl` contains the 30-question assistant-authored baseline (25 answerable,
+5 unanswerable). Read [the questions, answer key, and source checks](eval/golden-review.md)
+before a new real run. Reference answers support human review and are not
+automatically scored. After reviewing the labels and indexing the matching corpus, run:
 
 ```bash
 uv run python -m eval.validate --check-index
-uv run python -m eval.run --strategy hybrid --k 5 --seed 42
+uv run python -m eval.run --strategy vector --k 5 --seed 42
 uv run python scripts/compare_strategies.py --chunk-sizes 200 400 800 --overlap 80 --k 5
 ```
 
@@ -359,22 +378,48 @@ embeds missing configurations. Fake/mixed runs are labeled mechanics only.
 An empty golden file produces an input error, not a benchmark result. No LLM
 faithfulness judge is used, and reference answers are not automatically scored.
 
-| Strategy | Recall@5 | MRR | Citation validity | Refusal accuracy | Latency p50/p95 |
-|---|---|---|---|---|---|
-| Vector | Awaiting golden run | Pending | Pending | Pending | Pending |
-| Keyword | Awaiting golden run | Pending | Pending | Pending | Pending |
-| Hybrid | Awaiting golden run | Pending | Pending | Pending | Pending |
+Measured on 2026-10-26: two NIST PDFs, 112 pages, 149 chunks; 400-word chunks,
+80-word overlap, k=5, seed=42. Each strategy processed all 30 questions (25
+answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:**
 
-No user golden questions, gold answers, or retrieval-quality numbers have been invented.
-The user writes the golden data in M4; model-quality evaluation needs an explicit
-real-provider run. Mechanical ranking tests and code coverage are not semantic
-retrieval or answer-quality measurements.
+| Strategy | Recall@5 | MRR@5 | Retrieval p50 / p95 ms | Errors |
+|---|---:|---:|---:|---:|
+| Vector | 88.00% | 0.6747 | 221.64 / 294.23 | 0 |
+| Keyword | 6.00% | 0.0800 | 4.67 / 5.76 | 0 |
+| Hybrid | 88.00% | 0.7047 | 222.00 / 276.01 | 0 |
+
+**Separate end-to-end attempt with Gemini 3.6 Flash:**
+
+| Strategy | Errors / 30 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Answer p50 / p95 seconds |
+|---|---:|---:|---:|---:|---:|
+| Vector | 14 | 18/19 (94.74%) | 2/5 (40%) | 12 | 76.60 / 95.36 |
+| Keyword | 0 | N/A (0 proposals) | 5/5 (100%) | 0 | 0.0036 / 0.0047 |
+| Hybrid | 2 | N/A (0 proposals) | 5/5 (100%) | 0 | 0.2883 / 50.0794 |
+
+The answer workflow exited with failure because of provider errors. The high
+keyword/hybrid refusal scores came with **zero supported positive answers**;
+they do not demonstrate useful answering. Hybrid's provisional RRF evidence gate
+rejects a chunk appearing in only one ranking. **Vector is the default strategy**;
+no prompt, retrieval algorithm, threshold, or label was tuned after seeing scores.
+The vector `q30` response is an expected-refusal disagreement involving a cited
+non-prescriptive-framework explanation; its frozen label needs independent review.
+
+[Full measured analysis, exact counts, run links, raw records, and checksums](eval/results/20261026_gemini_baseline.md).
+Recall/MRR use the 25 positives; refusal accuracy uses five negatives and errors
+are not correct refusals. Quote validity is provenance, not semantic faithfulness
+or answer accuracy. All 17 returned citations were independently source-checked.
+Pauses are excluded from latency; retries and failed attempts are included.
+The golden questions are assistant-authored and source-checked, with no independent
+human review or held-out validation. Reference answers are not automatically
+scored. No faithfulness judge is used. Gemini 3.8 Flash returned repeated 503s;
+the 3.6 Flash experiment was selected explicitly. No paid or fake fallback exists.
 
 ## Limitations and next milestone
 
 - M1–M3 return passages and evidence-gated cited answers through the API/UI.
-  M4's harness is implemented; user-authored golden data and real quality results
-  remain required before the project's full definition of done can be met.
+  M4's harness and 30-question golden baseline are implemented and measured.
+  Live provider reliability, independent label review, hybrid-gate calibration,
+  and a fresh held-out answer benchmark remain open quality work.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column
   layouts, equations, or images. Page boundaries can divide useful context.
 - English full-text search is appropriate for this corpus; other languages need
@@ -389,5 +434,5 @@ retrieval or answer-quality measurements.
   supports a private demo; no live or public production deployment is claimed.
 - Shared UI limits, API response deadlines, and the requested UI redesign are
   implemented. A deadline does not cancel already-running remote work.
-- M5 conversation memory/tool calling remains conditional on a completed real M4
-  benchmark and is outside this release. No public deployment is claimed.
+- M5 conversation memory/tool calling is outside this release. Resolve the measured
+  reliability/refusal gaps before extending the application. No public deployment is claimed.

@@ -26,7 +26,12 @@ without a tokenizer vocabulary download in tests. They do not provide an exact
 model-token budget. Character offsets refer to canonical whitespace-normalized
 page text; cleaning never rewrites words.
 
-All embeddings are requested at 1536 dimensions. Fake embeddings use a separate
+All embeddings are requested at 1536 dimensions. Gemini uses its native synchronous
+batch embedding endpoint with one content/request per chunk; response order and
+count preserve the input mapping. Gemini chat uses native `generateContent` with
+separate system instructions and a schema-constrained JSON response. Only complete
+text output is accepted; thought parts are excluded and provider blocks are errors.
+OpenAI retains its own endpoint. Fake embeddings use a separate
 model identity and a different profile from semantic embeddings. Future retrieval
 must filter by one profile and use its exact provider/model.
 
@@ -115,7 +120,7 @@ scripted demo; it is never selected as an automatic provider fallback.
 
 ## Evaluation in M4
 
-The user authors JSONL labels; `eval.validate` checks the field schema, unique
+Golden JSONL labels are source-grounded; `eval.validate` checks the field schema, unique
 identities/questions, answerability/page consistency, and query bounds. Optional
 database validation checks that every gold page exists in the active index.
 Empty data cannot produce a benchmark report.
@@ -138,7 +143,11 @@ revision/dirty state, and raw per-question records. Credentials/database URLs ar
 excluded. The comparison script checks the same document IDs across chunk profiles
 and uses explicit opt-in for ingestion. Experiments require a quiescent database.
 
-The harness is implemented; real semantic evaluation remains pending user-authored
-gold data and configured providers. A manually dispatched GitHub workflow supports
-the real run using an Actions secret and disposable database; normal CI uses fakes.
+The harness and an assistant-authored 30-question baseline are implemented.
+Real retrieval and end-to-end attempts are [measured](../eval/results/20261026_gemini_baseline.md),
+with provider failures and refusal gaps retained. Independent human label review
+and held-out validation remain pending. Vector is the default strategy; the
+provisional hybrid RRF answer gate remains conservative and uncalibrated.
+See [the benchmark provenance and evidence](../eval/golden-review.md). A manually
+dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
 See the [browser evaluation handoff](evaluation-handoff.md).

@@ -317,3 +317,43 @@ def test_comparison_validates_overlap_and_retrieval_bounds_before_ingesting(tmp_
             compare_strategies.main(["--golden", str(golden(tmp_path)), "--ingest", *bounds]) == 2
         )
     ingest.assert_not_called()
+
+
+def test_retrieval_only_cli_flag_is_explicit_and_persisted(tmp_path, monkeypatch, settings):
+    captured = []
+
+    def evaluate(config, questions, digest, options):
+        captured.append(options)
+        return sample_result(settings, options)
+
+    monkeypatch.setattr(run, "run_evaluation", evaluate)
+    output = tmp_path / "results"
+    assert (
+        run.main(["--golden", str(golden(tmp_path)), "--retrieval-only", "--output", str(output)])
+        == 0
+    )
+    assert captured[0].retrieval_only is True
+    data = json.loads(next(output.glob("*.json")).read_text())
+    assert data["options"]["retrieval_only"] is True
+    assert data["summary"]["refusal_accuracy"] is None
+
+
+def test_retrieval_only_runtime_does_not_initialize_chat_or_taint_real_ranking_label(
+    settings, monkeypatch
+):
+    engine, repository = Mock(), Mock()
+    repository.has_profile.return_value = False
+    monkeypatch.setattr(runtime, "create_db_engine", lambda _: engine)
+    monkeypatch.setattr(runtime, "PostgresSearchRepository", lambda _: repository)
+    monkeypatch.setattr(runtime, "inspect_index", lambda *_: [{"doc_id": "a" * 64}])
+    forbidden = Mock(side_effect=AssertionError("chat must remain lazy"))
+    monkeypatch.setattr(runtime, "create_llm_provider", forbidden)
+    config = settings.model_copy(update={"embedding_provider": "gemini", "llm_provider": "fake"})
+    question = GoldenQuestion(id="offline", question="Synthetic", answerable=False, gold_pages=[])
+    result = runtime.run_evaluation(
+        config, [question], "hash", EvaluationOptions(retrieval_only=True)
+    )
+    forbidden.assert_not_called()
+    assert result.metadata["mechanics_only"] is False
+    assert result.summary.refusal_accuracy is None
+    engine.dispose.assert_called_once()

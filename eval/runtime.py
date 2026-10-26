@@ -184,7 +184,7 @@ def run_evaluation(
                     "index_profile": search.profile,
                     "embedding_model": configured_model_id(settings),
                     "mechanics_only": settings.embedding_provider == "fake"
-                    or settings.llm_provider == "fake",
+                    or (not options.retrieval_only and settings.llm_provider == "fake"),
                     "settings": settings.model_dump(mode="json", include=PROVENANCE_SETTINGS),
                     "corpus": corpus,
                     "faithfulness": "not measured; no LLM judge",

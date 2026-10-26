@@ -22,6 +22,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--k", type=int, default=EvaluationOptions().k)
     parser.add_argument("--seed", type=int, default=EvaluationOptions().seed)
     parser.add_argument(
+        "--retrieval-only", action="store_true", help="Measure ranking only; never call the LLM"
+    )
+    parser.add_argument(
         "--delay-seconds",
         type=float,
         default=0,
@@ -49,6 +52,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             k=args.k,
             seed=args.seed,
             question_delay_seconds=args.delay_seconds,
+            retrieval_only=args.retrieval_only,
         )
         result = run_evaluation(settings, questions, digest, options)
         path = write_report(result, args.output)
