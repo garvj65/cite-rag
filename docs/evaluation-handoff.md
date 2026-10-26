@@ -1,14 +1,16 @@
 # Run the real benchmark from your browser
 
 The app, automated checks, and evaluation machinery are implemented. The real
-quality benchmark still needs **your own golden questions/pages** and access to
-the chosen Gemini models. The project cannot honestly substitute a fake-provider
+quality benchmark still needs **reviewed golden labels** and access to the chosen
+Gemini models. A five-question assistant-authored pilot is encoded at your request;
+it is ready for your review, not an independent benchmark. The project cannot honestly substitute a fake-provider
 run for those measurements. M5 remains outside this release until M4 is measured.
 
-1. Read the two PDFs in the [corpus reference](corpus-reference.md). Write your
-   questions and labels in `eval/golden.jsonl` using [the schema](../eval/README.md).
-   GitHub's editor is sufficient; no local build is needed. You may instead send
-   your questions, short document names, and physical pages in chat for formatting.
+1. Review [the five pilot questions, answer key, and source checks](../eval/golden-review.md)
+   against the two PDFs in the [corpus reference](corpus-reference.md). The encoded
+   file is `eval/golden.jsonl`; independent human review is pending. Use the branch
+   containing the pilot for the first run, then expand toward 25 answerable and
+   5 unanswerable questions. GitHub's editor is sufficient; no local build is needed.
 2. In the repository, open **Settings → Secrets and variables → Actions → New
    repository secret** and add **`GEMINI_API_KEY`**. Keep the value in GitHub's
    secret form, never source code, an issue, or chat. Use your intended account

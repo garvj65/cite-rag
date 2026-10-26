@@ -6,7 +6,8 @@ the tests should do. Browser-hosted compute is an option for later hands-on work
 
 Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
 evidence gates, verified quote citations, refusals, and the React interface.
-M4's evaluation harness is implemented; your golden data and real quality run are pending.**
+M4's harness and a five-question assistant-authored golden pilot are implemented;
+independent review and a real quality run are pending.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -96,7 +97,7 @@ authenticated provider calls or model-quality evaluation have been performed.
 | M1, implemented | Prepare a searchable collection with preserved sources | Ingestion and provenance |
 | M2, implemented | Return relevant passages for a question | Keyword search, vector similarity, hybrid ranking |
 | M3, implemented | Write an answer and verify its quoted sources | Structured output, citation validation, refusal |
-| M4, harness implemented | Measure behavior once you supply golden labels | Retrieval metrics, citation provenance, refusal accuracy, latency |
+| M4, harness implemented | Measure behavior against reviewed golden labels | Retrieval metrics, citation provenance, refusal accuracy, latency |
 
 In M2, keyword search uses PostgreSQL's text-search processing. Vector search
 compares a question's embedding with stored passage embeddings. Hybrid search
@@ -111,9 +112,10 @@ Refusal means the system cannot support an answer from the selected documents.
 It is different from an API outage or an invalid model response, which must be
 reported as an error. M3 implements these separate response paths.
 
-In M4, the user writes the questions and gold document/page labels. The evaluation
-runner compares actual outputs with that reference data. We will not invent gold
-answers or claim fake-provider performance as real retrieval quality.
+In M4, the evaluation runner compares actual outputs with source-grounded questions
+and gold document/page labels. At your request, an assistant-authored five-question
+pilot now includes an answer key and evidence notes. Your independent review and
+a real run remain pending; fake-provider performance is never real retrieval quality.
 
 ## 5. Read the existing code in this order
 
@@ -256,8 +258,9 @@ This distinction will matter when M4 measures citation validity before filtering
 
 Start with [the evaluation guide](../eval/README.md), then read
 [the hand-computed metric tests](../backend/tests/unit/test_eval_metrics_schema.py)
-and [the evaluation engine](../eval/engine.py). Golden data is an answer key you
-write by reading the PDFs; the application does not write its own answer key.
+and [the evaluation engine](../eval/engine.py). Golden data is an answer key
+established from the PDFs before evaluating system outputs. The assistant drafted the current pilot at your request; it remains
+separate from application-generated answers and awaits your independent review.
 
 If a question has two gold pages and search finds one, recall is `1/2`. If the
 first gold page appears at chunk rank three, reciprocal rank is `1/3`. Averaging

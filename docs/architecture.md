@@ -115,7 +115,7 @@ scripted demo; it is never selected as an automatic provider fallback.
 
 ## Evaluation in M4
 
-The user authors JSONL labels; `eval.validate` checks the field schema, unique
+Golden JSONL labels are source-grounded; `eval.validate` checks the field schema, unique
 identities/questions, answerability/page consistency, and query bounds. Optional
 database validation checks that every gold page exists in the active index.
 Empty data cannot produce a benchmark report.
@@ -138,7 +138,8 @@ revision/dirty state, and raw per-question records. Credentials/database URLs ar
 excluded. The comparison script checks the same document IDs across chunk profiles
 and uses explicit opt-in for ingestion. Experiments require a quiescent database.
 
-The harness is implemented; real semantic evaluation remains pending user-authored
-gold data and configured providers. A manually dispatched GitHub workflow supports
-the real run using an Actions secret and disposable database; normal CI uses fakes.
+The harness and an assistant-authored five-question pilot are implemented.
+Independent human label review and real semantic evaluation remain pending.
+See [the pilot provenance and evidence](../eval/golden-review.md). A manually
+dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
 See the [browser evaluation handoff](evaluation-handoff.md).

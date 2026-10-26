@@ -21,7 +21,9 @@ and provide your own questions, whether each is answerable, and the short name
 plus physical page(s) supporting it. A human reference answer is optional; it is
 not automatically scored. Deliberately unanswerable questions have no gold pages.
 The planned dataset is 25 answerable and 5 unanswerable questions; you can start
-with fewer. No questions or reference answers have been supplied by the app.
+with fewer. A five-question assistant-authored pilot is now available at the user's
+explicit request: [questions, answer key, and evidence](../eval/golden-review.md).
+It has source checks but still awaits independent human review and a real run.
 
 When translating your labels into `eval/golden.jsonl`, replace the short name with
 its full hash above in each `gold_pages` entry. The schema and validator are in

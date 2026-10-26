@@ -1,9 +1,11 @@
 # Evaluate CiteRAG
 
-The harness is implemented. **The user writes the golden questions and answers.**
-`golden.jsonl` is intentionally empty; no semantic benchmark has been run and no
-quality scores have been invented. Empty data fails validation. Test/CI questions
-are separate synthetic fixtures, never starter NIST golden questions.
+The harness is implemented. At the user's explicit request on 2026-10-26,
+`golden.jsonl` now contains an **assistant-authored pilot: four answerable questions
+and one unanswerable question**. Read [the answer key and evidence review](golden-review.md).
+Source/hash/page/chunk checks passed; independent human review and a real-provider
+run remain pending. No quality scores have been invented. Test/CI questions remain
+separate synthetic fixtures. Empty datasets still fail validation.
 
 For a browser-only run, follow [the evaluation handoff](../docs/evaluation-handoff.md).
 The [corpus reference](../docs/corpus-reference.md) gives verified document hashes
@@ -11,8 +13,8 @@ and physical page counts without requiring local ingestion.
 
 ## Author the golden file
 
-Write one JSON object per line in `eval/golden.jsonl`. Aim for the planned
-25 answerable and 5 unanswerable questions; a smaller first dataset is valid.
+Review the pilot, then add one JSON object per line in `eval/golden.jsonl`.
+Aim for the planned 25 answerable and 5 unanswerable questions; a smaller first dataset is valid.
 
 | Field | Required | Meaning |
 |---|---|---|
@@ -20,7 +22,7 @@ Write one JSON object per line in `eval/golden.jsonl`. Aim for the planned
 | `question` | Yes | Your question, within the backend query-length setting |
 | `answerable` | Yes | Boolean determined by reading the corpus |
 | `gold_pages` | Yes | Expected pages as objects with `doc_id` and `page`; empty for negatives |
-| `reference_answer` | No | Your human reference answer for answerable rows; not automatically scored |
+| `reference_answer` | No | Reference answer for answerable rows; record authorship in the review notes; not automatically scored |
 
 `doc_id` is the lowercase SHA-256 of original PDF bytes, shown in ingestion
 summaries. `page` is the one-based **physical PDF page**, including cover and
@@ -28,7 +30,8 @@ contents pages. Use the viewer's page number, not a printed page label.
 The validator rejects extra fields, duplicate JSON keys/IDs/questions/pages,
 wrong types, oversized questions, and inconsistent labels. The contract is
 [golden.schema.json](golden.schema.json); export it with `--schema`.
-No filled example is supplied, to avoid inventing your questions or answers.
+The committed pilot provides filled records, with assistant authorship and source
+evidence documented separately so the strict schema stays unchanged.
 
 ```bash
 uv run python -m eval.validate

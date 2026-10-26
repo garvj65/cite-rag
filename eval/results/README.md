@@ -1,6 +1,7 @@
 # Evaluation results
 
-No user-authored golden evaluation has run yet. Fill `eval/golden.jsonl`, configure
-the provider, and ingest its matching profile before running the harness.
+No real golden evaluation has run yet. The assistant-authored five-question pilot
+is encoded in `eval/golden.jsonl`; review [its answer key and provenance](../golden-review.md),
+configure the provider, and ingest its matching profile before running the harness.
 Measured run tables appear here. Fake/mixed-provider tables are labeled mechanics
 only. No quality numbers have been fabricated.

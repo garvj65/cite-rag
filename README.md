@@ -3,8 +3,10 @@
 A RAG research workspace for answers with verifiable document, page, and quote
 citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
 verified quotes, a responsive React interface, and the M4 evaluation harness are
-implemented. **The user-authored golden dataset and real quality benchmark remain
-pending**; no semantic-quality numbers are fabricated.
+implemented. A source-checked, **assistant-authored five-question golden pilot** is
+encoded at the user's request. Independent human review, the expanded benchmark,
+and real quality measurements remain pending; no semantic-quality numbers are
+fabricated.
 
 [Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
 [M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
@@ -221,7 +223,7 @@ computed **before** refusal filtering or citation deduplication.
 **Quote matching proves provenance, not entailment of every answer claim.** The
 prompt's grounding/injection instructions and scripted attack tests do not prove
 real-model immunity to prompt injection. Semantic faithfulness, refusal accuracy,
-and adversarial model behavior still require M4 evaluation on user-authored data.
+and adversarial model behavior still require real evaluation and human review.
 
 The strategy-specific evidence defaults are cosine similarity **0.35**, keyword
 rank **0.05**, and RRF **0.02**. These are **provisional, uncalibrated gates**, not
@@ -336,7 +338,7 @@ CI links, coverage denominators, secret-scan scope, and remaining requirements.
 
 ## Evaluation status
 
-The M4 harness validates user-authored JSONL, measures each retrieval once, reuses
+The M4 harness validates golden JSONL, measures each retrieval once, reuses
 that evidence for the answer, and saves Markdown/JSON/JSONL results. It includes
 seeded strategy/chunk-size comparisons and hand-computed metric tests. Read
 [the evaluation guide](eval/README.md) for field definitions and exact denominators.
@@ -345,8 +347,10 @@ Use [the browser-only handoff](docs/evaluation-handoff.md) to run this through
 GitHub Actions without a local build. The explicit manual workflow uses the
 `GEMINI_API_KEY` repository secret; normal CI never calls model providers.
 
-`eval/golden.jsonl` is intentionally empty. Populate it with your own questions,
-answerability labels, and gold document/pages before running:
+`eval/golden.jsonl` contains the five-question assistant-authored pilot (4 answerable,
+1 unanswerable). Read [the questions, answer key, and source checks](eval/golden-review.md)
+before the first real run. Reference answers support human review and are not
+automatically scored. After reviewing the labels and indexing the matching corpus, run:
 
 ```bash
 uv run python -m eval.validate --check-index
@@ -365,16 +369,18 @@ faithfulness judge is used, and reference answers are not automatically scored.
 | Keyword | Awaiting golden run | Pending | Pending | Pending | Pending |
 | Hybrid | Awaiting golden run | Pending | Pending | Pending | Pending |
 
-No user golden questions, gold answers, or retrieval-quality numbers have been invented.
-The user writes the golden data in M4; model-quality evaluation needs an explicit
-real-provider run. Mechanical ranking tests and code coverage are not semantic
-retrieval or answer-quality measurements.
+Pilot questions and reference answers were drafted by the assistant on 2026-10-26
+at the user's explicit request and checked against the PDFs. They have not yet had
+independent human review. The planned 25-answerable/5-unanswerable set and real
+quality measurements remain pending. Mechanical tests, source checks, and code
+coverage are not semantic retrieval or answer-quality measurements.
 
 ## Limitations and next milestone
 
 - M1–M3 return passages and evidence-gated cited answers through the API/UI.
-  M4's harness is implemented; user-authored golden data and real quality results
-  remain required before the project's full definition of done can be met.
+  M4's harness and a five-question golden pilot are implemented; reviewed benchmark
+  data and real quality results remain required before the project's full definition
+  of done can be met.
 - Extraction cannot OCR scans or reliably reconstruct tables, multi-column
   layouts, equations, or images. Page boundaries can divide useful context.
 - English full-text search is appropriate for this corpus; other languages need
