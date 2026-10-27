@@ -6,12 +6,63 @@ and 5 unanswerable questions**. Read [the answer key and evidence review](golden
 Source/hash/page/chunk checks passed. [The Flash-Lite quality pass](results/20261026_flashlite.md)
 retains a zero-error hybrid answer run and one vector timeout, alongside the
 [earlier frozen baseline](results/20261026_gemini_baseline.md).
-Independent human review remains pending. Test/CI questions remain
+The user confirmed reviewing the answer key on 2026-10-27 and kept q30 as an
+ambiguous expected-refusal edge case. The golden file remains unchanged. Test/CI questions remain
 separate synthetic fixtures. Empty datasets still fail validation.
 
-For a browser-only run, follow [the evaluation handoff](../docs/evaluation-handoff.md).
+For a browser-only run, use [GitHub Actions](#run-from-github-actions) below.
 The [corpus reference](../docs/corpus-reference.md) gives verified document hashes
 and physical page counts without requiring local ingestion.
+
+## Run from GitHub Actions
+
+No local installation is needed. The repository's `GEMINI_API_KEY` secret already
+works; replace it only through **Settings → Secrets and variables → Actions**.
+Never put its value in code, issues, logs, or chat.
+
+1. Open **Actions → Explicit Gemini evaluation → Run workflow** and select the
+   intended branch. Enable **Allow Gemini API calls** explicitly; otherwise no
+   evaluation job runs. Ordinary CI always uses fakes.
+2. Choose the model and strategy. `all` evaluates vector, keyword, then hybrid
+   against **one index**, not three ingestions. Select `full` for all 30 questions
+   or `wording-check` for q01/q02/q05/q08/q13/q20/q25/q30 only. The latter is a
+   targeted regression check, not a replacement for the published benchmark.
+3. Keep **Measure retrieval only** off for answer measurements. Enabling it
+   makes no chat calls and marks answer metrics N/A. Browser checks default off;
+   enable them only when UI wiring needs verification. They reuse this job's
+   index and submit two additional real questions (q01/q05), saving original
+   responses/screenshots. They do not contribute to benchmark metrics.
+4. Review the run summary and download the **measured-evaluation** artifact within
+   14 days. Keep errors, denominators, model/prompt revisions, original responses,
+   and checksums when publishing reviewed results. Failed runs can contain useful
+   measurements; never relabel errors as refusals or rerun only failures to replace rows.
+
+A tiny provider preflight runs first; failure stops expensive indexing. After
+verified corpus download, the workflow restores an exact-key cached PostgreSQL
+snapshot or embeds/indexes once on a miss. The key includes PDF bytes, manifest,
+indexing/model settings and code, migrations, and dependency lock. Prompt changes and chat-model input selections
+reuse embeddings. There are no prefix/fallback cache matches; every restore
+must pass index/gold-page validation before evaluation. A bad restore fails without
+silently re-embedding. Cache eviction/branch scope can require a fresh ingestion;
+this is an optimization, not durable storage. To force a rebuild after a cache
+problem, delete its **public-index** cache entry in Actions; do not edit golden labels.
+
+Only the approved public corpus text, metadata, and vectors are cached, never a
+connection string, API key, or chat response. Repository caches are not private
+secret storage. The snapshot is restored only into the disposable evaluation DB.
+Chromium binaries are cached by frontend lockfile; a fresh runner still installs
+OS libraries when the optional browser check is requested. One workflow handles
+measurements and browser checks; avoid launching a separate benchmark just for a
+screenshot. Only this run's output directory is uploaded, not old committed reports.
+
+Attempts/retries use process-local 12 chat attempts/minute and 90 embedding
+inputs/minute for Flash-Lite; explicitly selected 3.6/3.8 use four chat attempts/minute.
+Every embedding input is charged conservatively. Each cache miss indexes 149
+chunks with current settings, plus preflight/query calls. Optional between-question
+pauses are excluded from latency; in-request pacing/retries are included. Separate
+processes/account users, token/daily quotas, and capacity are not controlled.
+The shared quota screenshot described 28-day peak usage, not today's remaining balance.
+The workflow never changes account billing or silently switches models.
 
 ## Author the golden file
 
@@ -54,7 +105,16 @@ uv run python -m eval.run --strategy hybrid --k 5 --seed 42
 ```
 
 `python -m eval.run ...` also works in an activated project environment.
-`--golden PATH` and `--output DIRECTORY` override the paths.
+`--golden PATH` and `--output DIRECTORY` override the paths. For a focused check:
+
+```bash
+uv run python -m eval.run --strategy vector --question-ids q01,q02,q05,q08,q13,q20,q25,q30
+```
+
+IDs must be unique and exist in the unchanged golden file; invalid selections fail
+before database/provider setup. Reports explicitly label focused checks, record
+selected IDs, and retain the full golden-file digest. New reports also record the
+system-prompt SHA-256. Subset aggregates must not replace full-benchmark figures.
 `--delay-seconds 15` optionally pauses between questions to pace calls. The
 default is zero; this between-question waiting is excluded from latency. Actual
 provider attempts are separately paced by typed Gemini settings, including every

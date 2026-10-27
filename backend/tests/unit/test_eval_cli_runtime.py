@@ -1,3 +1,4 @@
+import hashlib
 import json
 import subprocess
 from unittest.mock import Mock
@@ -106,6 +107,46 @@ def test_run_cli_persists_partial_results_and_marks_fake_mode(
     assert captured[0].embedding_provider == captured[0].llm_provider == "fake"
     assert not captured[0].enable_real_providers
     assert len(list(output.glob("*.jsonl"))) == 1
+
+
+def test_focused_run_keeps_full_golden_digest_and_excludes_unselected_rows(
+    tmp_path, monkeypatch, settings
+):
+    path = golden(tmp_path)
+    with path.open("a") as stream:
+        stream.write(
+            json.dumps(
+                {
+                    "id": "other",
+                    "question": "Another fixture",
+                    "answerable": False,
+                    "gold_pages": [],
+                }
+            )
+            + "\n"
+        )
+    evaluate = Mock(return_value=sample_result(settings))
+    monkeypatch.setattr(run, "run_evaluation", evaluate)
+    output = tmp_path / "results"
+    assert (
+        run.main(["--golden", str(path), "--question-ids", "offline", "--output", str(output)]) == 0
+    )
+    _, questions, digest, _ = evaluate.call_args.args
+    assert [question.id for question in questions] == ["offline"]
+    assert digest == hashlib.sha256(path.read_bytes()).hexdigest()
+    result = json.loads(next(output.glob("*.json")).read_text())
+    assert result["metadata"]["selected_question_ids"] == ["offline"]
+    assert "FOCUSED CHECK" in next(output.glob("*.md")).read_text()
+
+
+@pytest.mark.parametrize("selection", ["", "unknown", "offline,offline", "offline,"])
+def test_bad_focused_selection_fails_before_provider_or_database_setup(
+    tmp_path, monkeypatch, selection
+):
+    evaluate = Mock(side_effect=AssertionError("must not start any evaluation"))
+    monkeypatch.setattr(run, "run_evaluation", evaluate)
+    assert run.main(["--golden", str(golden(tmp_path)), "--question-ids", selection]) == 2
+    evaluate.assert_not_called()
 
 
 @pytest.mark.parametrize(

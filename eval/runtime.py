@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
 
+from app.answering.prompt import system_prompt
 from app.answering.service import AnswerService
 from app.db.models import Chunk, Document
 from app.db.repository import create_db_engine
@@ -182,6 +183,7 @@ def run_evaluation(
                     if settings.llm_provider == "fake"
                     else None,
                     "golden_sha256": golden_sha256,
+                    "system_prompt_sha256": hashlib.sha256(system_prompt().encode()).hexdigest(),
                     "index_profile": search.profile,
                     "embedding_model": configured_model_id(settings),
                     "mechanics_only": settings.embedding_provider == "fake"

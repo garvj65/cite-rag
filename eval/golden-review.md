@@ -2,8 +2,9 @@
 
 Version: 2026-10-26. Assistant-authored at the user's explicit request: 30 questions, 25
 answerable and 5 unanswerable. q01–q05 preserve the original pilot. Labels and reference answers
-were established from the fixed PDFs, independently of CiteRAG outputs. Independent human review
-is pending. This is a small, non-random baseline over two publications, not a representative
+were established from the fixed PDFs, independently of CiteRAG outputs. The user confirmed reviewing the answer key on 2026-10-27 and retained q30 as an
+ambiguous false-premise edge case with its expected-refusal label. Golden bytes
+and references remain unchanged. This is a small, non-random baseline over two publications, not a representative
 production-quality estimate.
 
 Only two answerable entries require multiple pages: q16 spans two RMF pages; q26 compares the
@@ -112,6 +113,6 @@ it, document the change, and rerun all strategies on the same digest. This set h
 during development and is not an independent held-out test set. Add separately
 authored/independently reviewed questions before stronger generalization claims.
 
-Use the [browser evaluation handoff](../docs/evaluation-handoff.md) for an explicit real run.
+Use the [browser evaluation handoff](README.md#run-from-github-actions) for an explicit real run.
 The repository secret stays in Actions. Reference answers are not passed to the answering model,
 and no fake-provider result is a semantic benchmark.

@@ -1,34 +1,24 @@
 # CiteRAG
 
-A RAG research workspace for answers with verifiable document, page, and quote
-citations. PDF ingestion, three retrieval strategies, evidence-gated answers,
-verified quotes, a responsive React interface, and the M4 evaluation harness are
-implemented. A source-checked, **assistant-authored 30-question golden baseline** is
-encoded at the user's request. Real Gemini retrieval and answer attempts are
-[measured](eval/results/20261026_flashlite.md): hybrid returned 21/25 supported
-positive answers, refused all five negatives, and had zero errors in the Flash-Lite
-run. Vector retained one timeout. Quote validity does not prove semantic faithfulness. Independent human label review remains pending.
+Ask questions over two public NIST AI risk-management PDFs and receive answers
+with a document, physical PDF page, and verified quoted passage. Weak evidence,
+unsupported model responses, or invalid citations produce a refusal. Provider
+failures produce clear errors. M1–M4 are implemented, tested, and measured.
 
-[Learning guide](docs/learning-guide.md) · [Architecture](docs/architecture.md) ·
-[M1 validation](docs/validation-m1.md) · [M2 validation](docs/validation-m2.md) ·
-[M3 validation](docs/validation-m3.md)
-· [M4 validation](docs/validation-m4.md)
-· [Release validation](docs/validation-release.md)
-· [Benchmark validation](docs/validation-benchmark.md)
-· [Quality pass validation](docs/validation-quality.md)
-
-[Evaluation guide](eval/README.md) · [Configuration review](docs/configuration-review.md) ·
-[Free-tier deployment runbook](docs/deployment.md) ·
-[Browser evaluation handoff](docs/evaluation-handoff.md) · [Corpus reference](docs/corpus-reference.md)
+[Architecture](docs/architecture.md) · [Operate and deploy](docs/operations.md) ·
+[Evaluation](eval/README.md) · [Answer key](eval/golden-review.md) ·
+[Learn RAG](docs/learning-guide.md) · [Change history](CHANGELOG.md)
 
 ![CiteRAG research workspace, real Flash-Lite response](docs/screenshots/citerag.png)
 
-[Live browser check and original captures](eval/results/20261026_flashlite/browser-validation/README.md).
-This is an actual model response; its “should”/“must” wording flag is retained for review.
+This original model capture is retained with its observed wording issue:
+“should” became “must.” The current prompt asks for source obligation/uncertainty clauses to be copied;
+the [focused check](eval/results/20261027_wording-check.md) preserved q01
+wording in vector and hybrid. A prompt rule is not a semantic guarantee.
 
-## Start locally
+## Run locally
 
-Prerequisites: Git and Docker Compose v2. From a fresh checkout:
+Prerequisites: Git and Docker Compose v2.
 
 ```bash
 git clone https://github.com/garvj65/cite-rag.git
@@ -37,361 +27,97 @@ cp .env.example .env
 docker compose up --build --wait frontend
 ```
 
-While a milestone PR is under review, use its implementation branch. After
-integration, `main` contains that milestone. Compose starts PostgreSQL 16 with
-pgvector, applies Alembic migrations, and starts the UI at
-<http://localhost:8080> and API at <http://localhost:8000>. Open the API’s `/docs`
-for interactive `/search` and `/ask` requests.
+Open <http://localhost:8080>; the API and interactive `/docs` are at
+<http://localhost:8000>. These four commands start the UI, API, and PostgreSQL 16
+with pgvector and apply migrations. The index starts empty; real providers are
+disabled until explicitly enabled.
 
-The four commands start the UI, API, and database. Downloading and indexing the corpus
-are explicit steps below. `/health` reports process liveness; Compose also
-requires a healthy database and completed migrations. Real providers are disabled
-by default. An empty matching index returns an empty results list.
-
-## Download the starter corpus
-
-Two related public NIST PDFs keep the corpus small. Their overlapping terminology
-and different levels of detail provide material for retrieval comparisons. These
-are fixed starter publications, not a claim to contain all current AI guidance.
-
-| Document | PDF pages | Source |
-|---|---:|---|
-| AI Risk Management Framework 1.0 | 48 | [NIST AI 100-1, January 2023](https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf) |
-| Generative AI Risk Management Profile | 64 | [NIST AI 600-1, July 2024](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf) |
-
-After starting Compose, download using the existing image:
+Download the [two approved PDFs](docs/corpus-reference.md) (112 physical pages):
 
 ```bash
 docker compose run --rm --user root --volume ./corpus:/app/corpus backend python scripts/download_corpus.py
 ```
 
-The one-off downloader gets a writable bind mount. The API keeps its normal
-non-root user and read-only corpus mount. Files downloaded this way can be owned
-by root on Linux, but remain readable for ingestion. PDFs are gitignored.
-
-Alternatively, with Python 3.12 and `uv` installed:
-
-```bash
-uv sync --frozen
-uv run python scripts/download_corpus.py
-```
-
-The downloader validates YAML, bounds file size, checks the PDF signature, and
-replaces files atomically. Cached files with a PDF header are reused. This does
-not establish whether the remote resource changed or a cached PDF is complete;
-delete a file explicitly to fetch it again. Ingestion parses the complete PDF
-and identifies its original bytes by SHA-256.
-
-## Configure and ingest
-
-The default model configuration is **Gemini Embedding 2** for retrieval and
-**Gemini 3.5 Flash-Lite** for M3 answers. The user's free-model preference updates the
-original OpenAI-only specification. The original `text-embedding-3-small` option
-remains selectable behind the same interface. No automatic provider fallback
-exists, and no local model/GPU is required.
-
-Gemini embeddings use the native synchronous `batchEmbedContents` endpoint; each
-chunk receives its own validated 1536-dimensional vector. Gemini chat uses native
-`generateContent` with a JSON response schema and separate system instructions.
-OpenAI retains its own API. Adapters stay behind provider interfaces.
-
-Google lists free API tiers for both suggested models as of 2026-10-26, subject
-to quotas, account/region eligibility, availability, and terms. Use a free-tier
-project; the application cannot enforce your account's billing configuration.
-See [pricing](https://ai.google.dev/gemini-api/docs/pricing),
-[rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), and
-[structured outputs](https://ai.google.dev/gemini-api/docs/generate-content/structured-output). Free-tier
-content may be used to improve Google's products; the selected PDFs are public.
-
-For real embeddings and answers, edit the local `.env`:
+Edit the untracked `.env` locally, keeping the key out of Git and chat:
 
 ```dotenv
-EMBEDDING_PROVIDER=gemini
 ENABLE_REAL_PROVIDERS=true
-GEMINI_API_KEY=your-local-key
+EMBEDDING_PROVIDER=gemini
 LLM_PROVIDER=gemini
+GEMINI_API_KEY=your-local-key
 GEMINI_CHAT_MODEL=gemini-3.5-flash-lite
+GEMINI_EMBEDDING_MODEL=gemini-embedding-2
 SEARCH_STRATEGY=vector
 ```
 
-Flash-Lite is an explicit budget configuration based on the account limits shared
-on 2026-10-26 (15 chat requests/minute, 500/day). Gemini 3.8/3.6 Flash remain
-selectable, with lower account limits (5/minute, 20/day). Set chat pacing to 4
-when using either. There is no automatic model switch. Earlier results remain
-frozen in [the live attempts](eval/results/20261026_provider-attempts.md).
-
-For an explicit keyless mechanics demo, instead select:
-
-```dotenv
-EMBEDDING_PROVIDER=fake
-LLM_PROVIDER=fake
-ENABLE_REAL_PROVIDERS=false
-```
-
-Fake embeddings are deterministic lexical hashes. They support repeatable
-mechanics tests and a keyless demo; they do not establish semantic retrieval
-quality. There is no implicit switch into fake mode. Real-provider contracts
-have mocked coverage. Authenticated Gemini Embedding 2 and Gemini 3.6 Flash
-preflights have passed; the full 112-page corpus has been indexed with real
-embeddings. Operational evidence is tracked in [provider attempts](eval/results/20261026_provider-attempts.md).
-The scripted LLM defaults to a fixed unsupported response. Tests/CI may supply
-`FAKE_LLM_RESPONSE` with one predetermined JSON response; this is labeled as a
-scripted demo in the UI and does not simulate semantic reasoning.
-
-After editing `.env`, recreate the backend and ingest:
+Then index once:
 
 ```bash
 docker compose up --wait backend
 docker compose exec backend python -m app.ingest --path corpus/
 ```
 
-`--fake` remains available as a CLI-only override. To search its resulting index,
-set the API's `EMBEDDING_PROVIDER=fake` too. Ingestion and the API must use the
-same provider/model, chunk size, and overlap: the resulting profile hash keeps
-incompatible embedding spaces and chunk experiments separate. Unchanged bytes
-with unchanged settings are skipped, including renamed files.
+Ingestion reports progress and JSON counts/reasons. Identical PDF bytes and index
+settings are skipped, including renamed files. PDFs and secrets are gitignored.
+For a keyless mechanics demo explicitly choose `EMBEDDING_PROVIDER=fake`,
+`LLM_PROVIDER=fake`, and `ENABLE_REAL_PROVIDERS=false`, then ingest that profile.
+The fake LLM refuses by default; fake scores are not semantic-quality evidence.
+OpenAI remains an explicit alternative behind the same provider interfaces.
+No paid, fake, or alternate-model fallback occurs automatically.
 
-Progress goes to stderr. Stdout contains JSON counts for newly indexed documents,
-pages, chunks, skipped files, failures, and reason codes. Exit codes: 0 for a
-completed scan including skips, 1 for processing/database failures, and 2 for
-invalid input/configuration. Empty, corrupt, encrypted, scanned/no-text,
-oversized, and excessive-page PDFs have explicit skip reasons. Empty pages inside
-an otherwise extractable document retain their physical PDF page numbering.
-
-## Search
-
-Use `/docs` in a browser or send:
-
-```bash
-curl http://localhost:8000/search \
-  -H 'Content-Type: application/json' \
-  -d '{"query":"risk management","strategy":"hybrid","k":5}'
-```
-
-`query` is required. `strategy` and `k` default to environment settings.
-
-| Strategy | Behavior | Response score type |
-|---|---|---|
-| `vector` | Exact cosine search in pgvector; one question embedding call | `cosine_similarity` |
-| `keyword` | PostgreSQL English FTS via `websearch_to_tsquery` and `ts_rank_cd`; no embedding call | `fts_rank` |
-| `hybrid` | Fuse vector and keyword candidate rankings using RRF | `rrf` |
-
-The response includes `strategy`, requested `k`, `profile`, `score_type`, and
-`results`. Each result contains `chunk_id`, `doc_id`, `document_title`, `source`,
-`source_url`, one-based physical PDF `page`, zero-based per-page `chunk_index`,
-exact stored `text`, and `score`. A page label printed in a document may differ
-from the physical PDF page number. The `/search` endpoint returns passages directly; use `/ask` or the UI for
-verified cited answers.
-
-Scores order passages within their strategy. Their scales differ and are not
-confidence probabilities. Vector retrieval can return weakly related passages;
-M3 applies separate answer-support and citation gates. All strategies isolate the same
-index profile and use deterministic tie-breaking.
-
-An empty index returns HTTP 200 with `results: []`, without creating a provider
-client. Keyword requests also make no provider call, including when real-provider
-credentials are disabled after a corpus has already been indexed.
-
-| HTTP status | Meaning |
-|---|---|
-| 422 | Invalid fields, empty/oversized query, unsupported strategy, or k outside configured limits |
-| 502 | A model provider failed, returned invalid vectors, or returned malformed/truncated answer JSON |
-| 503 | Database unavailable or a required model provider unconfigured |
-| 504 | Provider timeout or API response deadline exceeded |
-
-Errors use `{"error":{"code":"...","message":"..."}}` without raw provider
-bodies, rejected payloads, credentials, SQL, or stack traces. Vector/hybrid
-requests do not silently fall back to keyword search on provider failure.
-
-## Cited answers and the interface
-
-Open <http://localhost:8080> to ask a question, read an answer, and expand citation
-cards containing the document, physical PDF page, and exact verified quote.
-Choose Hybrid, Vector, or Keyword retrieval and the number of passages to return.
-The dark research workspace adapts to mobile screens, with keyboard focus states
-and reduced-motion support. It displays actual returned source counts only.
-Loading, API failure, and evidence-refusal states are separate. Editing the
-question or retrieval options clears the previous answer. Quotes/answers render as text, and source
-links allow only HTTP(S). Provider credentials stay on the server.
-
-The UI calls `POST /ask` through the same-origin `/api` proxy. Direct API requests
-accept the same `query`, optional `strategy`, and optional `k` as `/search`.
-An `/ask` keyword request makes no embedding call, but still needs a chat provider
-when sufficient evidence is retrieved.
-
-Generation follows these gates:
-
-1. Empty results or passages below the applicable component score threshold
-   return a fixed refusal without creating a chat client.
-2. Whole eligible passages become a numbered JSON context within a character
-   budget. Document text remains untrusted data, separate from system instructions.
-3. The model must return strict JSON containing only `answer`, `citations`
-   (`doc_id`, `page`, `quote`), and `supported`. Wrong types, unknown/duplicate keys,
-   excessive output, and incomplete provider responses fail with HTTP 502.
-4. Every quote must appear within **one of the exact supplied chunks** on the
-   stated document/page, after whitespace normalization. Matching stays sensitive
-   to case and punctuation; quotes cannot combine fragments from different chunks.
-5. If any citation fails, or citations are missing, the entire answer is withheld.
-   `supported=false` also returns a refusal. Document titles, source URLs, and chunk
-   metadata always come from stored records, not model-generated metadata.
-
-Evidence refusals return HTTP 200, `supported=false`, a fixed explanatory answer,
-and no citations. They differ from model/database outages and malformed output,
-which return error statuses. Successful `/ask` responses also include `reason`,
-`mode` (`model`, `scripted`, or `no_model`), and `verification.proposed/valid` counts
-computed **before** refusal filtering or citation deduplication.
-
-**Quote matching proves provenance, not entailment of every answer claim.** The
-prompt's grounding/injection instructions and scripted attack tests do not prove
-real-model immunity to prompt injection. Semantic faithfulness, refusal accuracy,
-and adversarial model behavior still require real evaluation and human review.
-
-Evidence defaults are cosine similarity **0.35** and keyword rank **0.05**.
-Hybrid preserves both component scores and accepts a chunk meeting either gate;
-RRF only determines order. The former `ANSWER_MIN_HYBRID_SCORE` setting is retired.
-These remain **provisional, uncalibrated gates**, not confidence probabilities. The context budget is 24,000
-serialized characters; output limits are 12,000 answer characters, 8 proposed
-citations, and 2,000 characters per quote. All limits are typed settings in
-`.env.example`. Context uses whole chunks without silently truncating evidence.
-
-## Configuration and design
-
-Settings are typed in `backend/app/settings.py`; `.env.example` documents them.
-
-| Setting | Default | Meaning |
-|---|---:|---|
-| `CHUNK_SIZE_WORDS` | 400 | Maximum words per within-page chunk |
-| `CHUNK_OVERLAP_WORDS` | 80 | Shared words between consecutive windows |
-| `EMBEDDING_BATCH_SIZE` | 16 | Number of passages sent per embedding batch |
-| `GEMINI_CHAT_REQUESTS_PER_MINUTE` | 12 | Process-local chat attempt budget, including retries |
-| `GEMINI_EMBEDDING_INPUTS_PER_MINUTE` | 90 | Process-local rolling input budget, including retries |
-| `SEARCH_STRATEGY` | vector | Default search strategy |
-| `SEARCH_K` | 5 | Default result count |
-| `SEARCH_MAX_K` | 50 | Maximum request result count |
-| `MAX_QUERY_CHARACTERS` | 2000 | Maximum normalized query length |
-| `REQUEST_DEADLINE_SECONDS` | 90 | Maximum API service response wait |
-| `PROXY_TIMEOUT_SECONDS` | 100 | Rendered nginx timeout; at least API deadline + 5 |
-| `HYBRID_CANDIDATE_K` | 20 | Candidate depth per source, increased to k when necessary |
-| `RRF_CONSTANT` | 60 | Denominator offset for one-based fusion ranks |
-
-`GET /config` exposes only public query/retrieval limits and defaults. The UI
-loads them before enabling submission, including nondefault Unicode query bounds.
-The API enforces its own limits. Deadline/proxy settings fail validation when
-incompatible; recreate the frontend after proxy changes. In-flight synchronous
-work may finish after a timed-out response; its worker retains cleanup ownership.
-See the [configuration review](docs/configuration-review.md) for exact boundaries.
-
-Provider timeouts, bounded exponential-backoff retries, and PDF size/page limits
-are configurable too. Permanent provider errors and invalid responses fail
-without retrying. Persistent quota exhaustion requires waiting before retrying
-the CLI. Process-local Gemini pacing spaces actual attempts and enforces a rolling
-minute budget, charging each embedding input conservatively. Waiting counts toward
-API deadlines and measured service latency. It cannot coordinate other processes,
-keys/projects or enforce daily/token quotas; concurrent applications share the
-provider project limits. No API keys or full document text are logged at INFO.
+## How it works
 
 ```mermaid
 flowchart TD
-    P["PDFs and manifest"] --> I["Extract pages and chunk"]
-    I --> E["Embed passages"]
-    E --> D["PostgreSQL: text, metadata, vectors, FTS"]
-    Q["Question"] --> S["Selected retrieval strategy"]
-    D --> S
-    S --> R["Ranked passages and source metadata"]
-    R --> G["Evidence gate and numbered context"]
-    G --> L["Schema-constrained model response"]
-    L --> V["Verify quotes against supplied chunks"]
+    P["PDFs: extract pages and chunk"] --> E["Embed and store in PostgreSQL"]
+    Q["Question and retrieval strategy"] --> R["Retrieve ranked passages"]
+    E --> R
+    R --> G["Evidence gate and bounded context"]
+    G --> L["Model returns strict answer JSON"]
+    L --> V["Verify every quote against supplied chunks"]
     V --> A["Cited answer or refusal"]
 ```
 
-- Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, PostgreSQL 16, and
-  pgvector. `uv.lock` pins dependencies.
-- Page-limited word windows preserve exact offsets into canonical normalized
-  text. Word counts are not model-token budgets.
-- SHA-256 identities and database constraints handle duplicates. A document's
-  pages and chunks commit atomically after embedding succeeds.
-- FTS migration 0002 populates existing M1 chunks automatically. Vector search
-  remains exact for a clear correctness baseline.
-- Hybrid RRF sums `1 / (constant + rank)` rather than adding incompatible raw
-  scores. Each chunk contributes at most once per source ranking.
-- No orchestration framework, queue, OCR, or extra storage service is introduced.
+- Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, PostgreSQL 16/pgvector;
+  React, TypeScript, and Vite. Dependencies are locked with uv and npm.
+- Page-bound 400-word windows overlap by 80 words, preserving document hash,
+  physical page, chunk index, and text offsets. Each index profile isolates its
+  model, dimensions, and chunk settings. Writes are atomic and idempotent.
+- Vector uses exact cosine search; keyword uses PostgreSQL English full-text
+  search; hybrid uses Reciprocal Rank Fusion. RRF orders passages; original
+  cosine/FTS component scores determine answer eligibility.
+- Numbered passages are untrusted JSON data. The model must return
+  `{answer, citations:[{doc_id,page,quote}], supported}`. Strict validation and
+  whitespace-normalized quote checks reject malformed or fabricated citations.
+  Any invalid citation withholds the entire answer.
+- No orchestration framework, OCR, queue, extra database, uploads, memory, or
+  model tool loop. [Architecture](docs/architecture.md) explains the trade-offs.
 
-## Verification
+## API and interface
 
-```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run mypy
-uv run pytest
+The UI offers question, strategy, and top-k controls, loading/errors/refusals,
+and expandable quote cards with source PDF page links. Backend-owned limits load
+through `GET /config`. Keys stay on the server.
+
+`POST /search` returns scored chunks and citation metadata; `POST /ask` returns
+an answer or refusal. Both accept:
+
+```json
+{"query":"What should accompany accuracy measurements?","strategy":"vector","k":5}
 ```
 
-Tests block external Python sockets and mock provider HTTP. Integration tests
-require `TEST_DATABASE_URL` pointing to a local PostgreSQL 16/pgvector database
-whose name ends in `_test`. They truncate application tables and test migration
-changes; never point them at useful data. Without that variable the database
-tests are explicitly skipped. CI always supplies the database service.
+Strategy/k are optional and default to settings. `/ask` includes `supported`,
+`reason`, `mode`, citations, and raw verification counts. Errors use
+`{"error":{"code":"...","message":"..."}}`: 422 invalid input, 502 provider or
+malformed output, 503 unavailable database/configuration, 504 timeout/deadline.
+`/health` is process liveness. See `/docs` for complete response schemas.
 
-CI enforces at least 85% backend application coverage and runs lint, formatting,
-strict application/script typing, and tests against PostgreSQL. Frontend checks
-include ESLint, strict TypeScript, Vitest/React Testing Library, a production
-build, and Playwright browser tests. CI builds both Docker images and starts the
-actual Compose stack: it ingests an offline PDF twice, exercises all three search
-strategies, and checks verified answers/refusals through the frontend API proxy.
-These checks use explicit fake providers and make no authenticated model calls.
+## Measured evaluation
 
-M3 verification: **207 backend tests passed, including all 19 PostgreSQL integration
-tests, with 99.71% backend application coverage**. All **22 frontend tests** and
-**3 browser tests** passed, along with lint, formatting, typing, production builds,
-and the complete Compose ingestion/search/answer smoke check.
-See [the M3 validation record](docs/validation-m3.md) for the exact commit, CI run,
-behaviors checked, and measurement boundaries. Frontend checks can also run with
-`npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` from
-`frontend/`; its README documents the browser-test setup.
-
-M4 verification: **284 backend/evaluation tests passed, including all 24 PostgreSQL
-integration tests, with 99.53% combined app/evaluation coverage**. App and evaluation
-coverage also pass separate 85% gates. The same **22 frontend** and **3 browser**
-tests, lint/type checks, Docker builds, full Compose smoke checks, a six-run
-chunk/strategy fixture comparison, and packaged evaluation CLI all passed.
-See [the M4 validation record](docs/validation-m4.md). These are software checks;
-the live baseline and its limitations are reported below.
-
-Latest quality pass verification: **341 backend/evaluation tests**, including **24 PostgreSQL
-integration tests**, **99.77% backend app coverage**, **38 frontend tests**, and
-**5 browser tests** passed. Full CI also verifies nondefault client limits and
-rendered nginx timeouts through the actual Compose stack. See
-[the quality validation record](docs/validation-quality.md) for immutable revisions,
-CI links, coverage denominators, secret-scan scope, and remaining requirements.
-
-## Evaluation status
-
-The M4 harness validates golden JSONL, measures each retrieval once, reuses
-that evidence for the answer, and saves Markdown/JSON/JSONL results. It includes
-seeded strategy/chunk-size comparisons and hand-computed metric tests. Read
-[the evaluation guide](eval/README.md) for field definitions and exact denominators.
-
-Use [the browser-only handoff](docs/evaluation-handoff.md) to run this through
-GitHub Actions without a local build. The explicit manual workflow uses the
-`GEMINI_API_KEY` repository secret; normal CI never calls model providers.
-
-`eval/golden.jsonl` contains the 30-question assistant-authored baseline (25 answerable,
-5 unanswerable). Read [the questions, answer key, and source checks](eval/golden-review.md)
-before a new real run. Reference answers support human review and are not
-automatically scored. After reviewing the labels and indexing the matching corpus, run:
-
-```bash
-uv run python -m eval.validate --check-index
-uv run python -m eval.run --strategy vector --k 5 --seed 42
-uv run python scripts/compare_strategies.py --chunk-sizes 200 400 800 --overlap 80 --k 5
-```
-
-Comparison profiles must already be indexed; explicit `--ingest --corpus corpus/`
-embeds missing configurations. Fake/mixed runs are labeled mechanics only.
-An empty golden file produces an input error, not a benchmark result. No LLM
-faithfulness judge is used, and reference answers are not automatically scored.
-
-**Latest end-to-end run: Gemini 3.5 Flash-Lite + Gemini Embedding 2.** Same
-30-question baseline, corpus, 400/80 chunk settings, k=5, and seed=42.
+Gemini 3.5 Flash-Lite + Gemini Embedding 2, 400/80 words, k=5, seed=42.
+The same frozen development set has 25 answerable and five unanswerable questions.
+This comparison predates the final wording correction; the newer
+[eight-question check](eval/results/20261027_wording-check.md) is reported separately.
 
 | Strategy | Recall@5 | MRR@5 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Errors / 30 | p50 / p95 seconds |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -399,81 +125,39 @@ faithfulness judge is used, and reference answers are not automatically scored.
 | Keyword | 6.00% | 0.0800 | N/A (0 proposals) | 5/5 | 0 | 0 | 0.0030 / 0.0042 |
 | Hybrid | 88.00% | 0.7047 | 25/27 (92.59%) | 5/5 | 21 | 0 | 21.2743 / 58.1102 |
 
-[Full Flash-Lite analysis, raw records and checksums](eval/results/20261026_flashlite.md).
-All **45 returned quotes matched their original source chunks** on recheck.
-The comparison workflow exited with failure because vector q13 timed out; that
-row is retained. Hybrid's corrected gate now admits strong single-source evidence,
-using component scores instead of RRF as confidence. Numeric thresholds, prompts,
-and labels were unchanged. Vector remains the explicitly selected default.
+[Full results, original records, checksums, and run links](eval/results/20261026_flashlite.md).
+All 45 returned benchmark quotes matched their source chunks. Supported counts
+are application outcomes, **not correctness scores**. Vector's q13 timeout is
+retained; keyword refused every positive. The original q01 wording drift remains
+visible. Earlier model attempts and failures are preserved in
+[the results index](eval/results/README.md).
 
-Supported counts are application outcomes, **not measured correctness rates**.
-Keyword refused every positive. Hybrid q01 strengthens the source's “should” to
-“must” despite a valid quote: human semantic review remains necessary. q30's
-false-premise policy and independent label/held-out review remain pending. Pacing
-inside a question and retries count toward latency; the question delay was zero.
-No paid/fake fallback or LLM faithfulness judge was used. The separate real
-browser answer/citation/refusal check passed; its records and original captures
-are linked in the analysis.
+The user reviewed the assistant-authored answer key on 2026-10-27 and retained
+q30 as an ambiguous false-premise edge case with its expected-refusal label.
+The golden bytes and old results are unchanged. This is development data, not a
+held-out test. [The evaluation guide](eval/README.md) covers browser-only runs,
+focused checks, metric definitions, and quota use. No LLM faithfulness judge is used.
 
-**Earlier frozen baseline (before the hybrid gate correction and model change):**
+## Checks and limits
 
-Measured on 2026-10-26: two NIST PDFs, 112 pages, 149 chunks; 400-word chunks,
-80-word overlap, k=5, seed=42. Each strategy processed all 30 questions (25
-answerable/5 unanswerable). **Gemini Embedding 2, retrieval-only, no LLM calls:**
+Normal CI uses deterministic fakes and blocked external provider calls. It runs
+lint/type checks, backend/database tests with >=85% app coverage, frontend and
+Chromium tests, builds, and actual Compose ingestion/idempotency/search/answer
+checks. [Operations](docs/operations.md) contains commands and current evidence;
+[the changelog](CHANGELOG.md) retains the milestone/CI history.
 
-| Strategy | Recall@5 | MRR@5 | Retrieval p50 / p95 ms | Errors |
-|---|---:|---:|---:|---:|
-| Vector | 88.00% | 0.6747 | 221.64 / 294.23 | 0 |
-| Keyword | 6.00% | 0.0800 | 4.67 / 5.76 | 0 |
-| Hybrid | 88.00% | 0.7047 | 222.00 / 276.01 | 0 |
+Quote matching establishes provenance, not the truth or entailment of every
+answer claim. Prompt-injection fixtures do not prove model immunity. Evidence
+thresholds (cosine 0.35, FTS 0.05) are provisional. Real models can fail, refuse
+valid questions, or change wording despite a valid citation. Free-tier quotas,
+capacity, and billing remain provider/account concerns; local pacing is not a
+daily or distributed quota manager.
 
-**Separate end-to-end attempt with Gemini 3.6 Flash:**
+Extraction has no OCR and may lose tables or multi-column structure. Word windows
+are not token budgets; page boundaries can split context. Exact vector search
+favors simplicity over large-scale throughput. Concurrent ingestions can still
+consume duplicate embedding quota before database deduplication.
 
-| Strategy | Errors / 30 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Answer p50 / p95 seconds |
-|---|---:|---:|---:|---:|---:|
-| Vector | 14 | 18/19 (94.74%) | 2/5 (40%) | 12 | 76.60 / 95.36 |
-| Keyword | 0 | N/A (0 proposals) | 5/5 (100%) | 0 | 0.0036 / 0.0047 |
-| Hybrid | 2 | N/A (0 proposals) | 5/5 (100%) | 0 | 0.2883 / 50.0794 |
-
-The answer workflow exited with failure because of provider errors. The high
-keyword/hybrid refusal scores came with **zero supported positive answers**;
-they did not demonstrate useful answering. At that revision the provisional RRF
-gate rejected chunks appearing in only one ranking. The later quality pass
-corrects this gate and records its model/pacing changes separately; these older
-results and labels remain unchanged.
-The vector `q30` response is an expected-refusal disagreement involving a cited
-non-prescriptive-framework explanation; its frozen label needs independent review.
-
-[Full measured analysis, exact counts, run links, raw records, and checksums](eval/results/20261026_gemini_baseline.md).
-Recall/MRR use the 25 positives; refusal accuracy uses five negatives and errors
-are not correct refusals. Quote validity is provenance, not semantic faithfulness
-or answer accuracy. All 17 returned citations were independently source-checked.
-Pauses are excluded from latency; retries and failed attempts are included.
-The golden questions are assistant-authored and source-checked, with no independent
-human review or held-out validation. Reference answers are not automatically
-scored. No faithfulness judge is used. Gemini 3.8 Flash returned repeated 503s;
-the 3.6 Flash experiment was selected explicitly. No paid or fake fallback exists.
-
-## Limitations and next milestone
-
-- M1–M3 return passages and evidence-gated cited answers through the API/UI.
-  M4's harness and 30-question golden baseline are implemented and measured.
-  Intermittent provider failures, semantic wording drift, independent label review,
-  and a fresh held-out answer benchmark remain open quality work. The hybrid RRF
-  evidence-gate defect is corrected; component thresholds remain provisional.
-- Extraction cannot OCR scans or reliably reconstruct tables, multi-column
-  layouts, equations, or images. Page boundaries can divide useful context.
-- English full-text search is appropriate for this corpus; other languages need
-  a deliberate search configuration change.
-- Very long chunks can exceed a provider's token limit. They fail without silently
-  truncating evidence. Exact vector search trades scalability for a simple baseline.
-- Identical PDF bytes retain first-ingestion source metadata. Changes to extraction
-  semantics need a deliberate migration/reindex procedure.
-- Concurrent ingestions can consume duplicate embedding quota while database rows
-  remain deduplicated. In-flight embeddings are not cached.
-- The Compose password is a labeled development example. A [free-tier VM runbook](docs/deployment.md)
-  supports a private demo; no live or public production deployment is claimed.
-- Shared UI limits, API response deadlines, and the requested UI redesign are
-  implemented. A deadline does not cancel already-running remote work.
-- M5 conversation memory/tool calling is outside this release. Resolve the measured
-  reliability/refusal gaps before extending the application. No public deployment is claimed.
+The delivered hosting path is a private VM demo through SSH; no public service
+has been deployed. M5 conversation memory and bounded tool use are optional and
+outside this release. New features and a larger held-out benchmark are future work.

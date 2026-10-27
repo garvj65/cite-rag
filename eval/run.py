@@ -31,6 +31,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Pause between questions; excluded from latency",
     )
     parser.add_argument("--golden", type=Path, default=Path("eval/golden.jsonl"))
+    parser.add_argument(
+        "--question-ids", help="Comma-separated existing IDs for a labeled focused check"
+    )
     parser.add_argument("--output", type=Path, default=Path("eval/results"))
     parser.add_argument(
         "--fake", action="store_true", help="Explicit mechanics-only fake providers"
@@ -47,6 +50,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                 }
             )
         questions, digest = load_golden(args.golden, settings.max_query_characters)
+        if args.question_ids is not None:
+            selected = [value.strip() for value in args.question_ids.split(",")]
+            if (
+                not all(selected)
+                or len(set(selected)) != len(selected)
+                or not set(selected).issubset(question.id for question in questions)
+            ):
+                raise GoldenDataError("Question IDs must be unique existing golden IDs.")
+            questions = [question for question in questions if question.id in selected]
         options = EvaluationOptions(
             strategy=args.strategy,
             k=args.k,
@@ -55,10 +67,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             retrieval_only=args.retrieval_only,
         )
         result = run_evaluation(settings, questions, digest, options)
+        if args.question_ids is not None:
+            result.metadata["selected_question_ids"] = [question.id for question in questions]
         path = write_report(result, args.output)
     except (GoldenDataError, ValidationError):
         print(
-            "Invalid golden data/settings, k, or index. Run python -m eval.validate first.",
+            "Invalid golden data/settings, question IDs, k, or index. "
+            "Run python -m eval.validate first.",
             file=sys.stderr,
         )
         return 2
