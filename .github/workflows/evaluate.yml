@@ -121,7 +121,7 @@ jobs:
         with:
           path: /tmp/citerag-index
           key: >-
-            public-index-pg16-pgv081-v1-${{ runner.os }}-${{ hashFiles('corpus/*.pdf', 'corpus/manifest.yaml', 'backend/app/ingestion/**', 'backend/app/db/**', 'backend/app/ingest.py', 'backend/app/settings.py', 'backend/app/providers/http.py', 'backend/app/providers/interfaces.py', 'backend/app/providers/factory.py', 'backend/migrations/**', 'uv.lock') }}
+            public-index-pg16-pgv081-v1-${{ runner.os }}-${{ hashFiles('corpus/*.pdf', 'corpus/manifest.yaml', 'backend/app/ingestion/**/*.py', 'backend/app/db/**/*.py', 'backend/app/ingest.py', 'backend/app/settings.py', 'backend/app/providers/http.py', 'backend/app/providers/interfaces.py', 'backend/app/providers/factory.py', 'backend/migrations/**/*.py', 'uv.lock') }}
       - name: Restore or build the index once for all strategies and browser checks
         id: ingestion
         env:

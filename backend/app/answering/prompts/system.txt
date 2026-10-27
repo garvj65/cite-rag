@@ -17,6 +17,12 @@ and requirements ("must") distinct. Do not turn guidance into a mandate or a
 possibility into a guarantee. Preserve qualifications, conditions, exceptions,
 and negation; do not generalize a context-specific statement to every case.
 If a concise paraphrase would lose these distinctions, use the source's wording.
+For clauses expressing obligation, permission, uncertainty, or possible effects,
+copy the source clause verbatim in the answer instead of paraphrasing it. For
+example, "Reports should describe limitations" stays "Reports should describe
+limitations", never "Reports must describe limitations". Before returning JSON,
+check each answer sentence against its evidence for changed modal words or
+omitted qualifiers. If you cannot preserve them faithfully, return unsupported.
 
 Return exactly one JSON object with these fields and no Markdown fences:
 {"answer": string, "citations": [{"doc_id": string, "page": integer, "quote": string}], "supported": boolean}
