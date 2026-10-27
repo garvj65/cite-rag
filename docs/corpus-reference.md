@@ -20,16 +20,13 @@ To author golden data without running the project, read these PDFs in a browser
 and provide your own questions, whether each is answerable, and the short name
 plus physical page(s) supporting it. A human reference answer is optional; it is
 not automatically scored. Deliberately unanswerable questions have no gold pages.
-The planned dataset is 25 answerable and 5 unanswerable questions; you can start
-with fewer. A 30-question assistant-authored baseline is now available at the user's
-explicit request: [questions, answer key, and evidence](../eval/golden-review.md).
-It has source checks but still awaits independent human review and a real run.
+The committed dataset contains 25 answerable and five unanswerable questions:
+[questions, answer key, and source evidence](../eval/golden-review.md). It was
+assistant-authored, source-checked, reviewed by the user on 2026-10-27, and
+[measured with real providers](../eval/results/README.md). It is development data.
 
-When translating your labels into `eval/golden.jsonl`, replace the short name with
-its full hash above in each `gold_pages` entry. The schema and validator are in
-[the evaluation guide](../eval/README.md). You can also send your own questions
-and labels in chat for formatting into JSONL; do not include credentials.
-
-If NIST replaces a PDF, its identity can change even at the same URL. Verify the
-downloaded version before labeling it. The manual workflow checks document
-identities before embedding and checks indexed gold pages before evaluation.
+When encoding `eval/golden.jsonl`, use the full document hash above. See
+[the evaluation guide](../eval/README.md) for schema, validation, and real runs.
+If NIST replaces a PDF its identity can change even at the same URL. Verify the
+version before labeling. The manual workflow verifies downloaded identities and
+indexed gold pages before evaluation.

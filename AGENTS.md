@@ -1,23 +1,45 @@
 # CiteRAG engineering rules
 
-- Priorities: correctness, tests, clarity, then features. M1–M4 implementation is integrated. On 2026-10-25 the user asked to finish the remaining project: implement the previously requested UI/UX redesign, fix shared query limits and request/proxy deadlines, and finish delivery/evaluation handoff. M5 remains conditional on completed real M4 evaluation and is outside this release scope.
-- Release implementation `5b6bb78` passed full CI: 294 backend/evaluation tests including 24 PostgreSQL tests, 99.74% app coverage, 38 frontend tests, and 5 browser tests. See `docs/validation-release.md`. PR #5 was merged and cleaned up on 2026-10-25. The merge-approval rule still applies to subsequent PRs.
-- On 2026-10-26 the user explicitly asked for help authoring both the golden questions and answer key and encoding entries. This supersedes the earlier user-only authorship restriction. The user then explicitly authorized expanding to 25 answerable plus 5 unanswerable questions, running real model measurements using the repository secret, fixing integration failures, publishing results, and merging/cleaning up the completed work after checks pass. This provides merge authorization for this benchmark work; do not ask again. Current scope: ground every label/reference in the approved PDFs, document assistant authorship and evidence, publish only actual measured results with errors and denominators, and leave independent human review pending. Never fabricate source evidence, credentials, or results. Never ask for API keys in chat; use the GEMINI_API_KEY repository secret for an explicit real run.
-- Redesign the UI as a polished research workspace while preserving supported/refused/error states and exact citation verification. Expose existing strategy and top-k controls; do not add conversation memory, uploads, invented corpus counts, or simulated answer content.
-- After each milestone, run lint, type-checking, and all tests; fix failures; summarize changes and what the user should review. Run frontend checks once frontend code exists.
-- Never make external network calls in tests. Use `EmbeddingProvider` and `LLMProvider` interfaces with deterministic hash embeddings and scripted LLM responses. Real providers belong only in CLI/application entry points and explicit evaluations. PostgreSQL integration tests may connect to the local test database; all provider HTTP must be mocked.
-- Never hardcode secrets. Use environment variables and `.env.example`. Never log API keys or full document text at INFO. Do not commit PDFs, `.env`, credentials, or evaluation secrets.
-- Every public function has type hints and a short docstring. No dead code or unexplained magic numbers. Put chunk size, overlap, batch size, retrieval limits, timeouts, and retry settings in typed `Settings`.
-- Backend application coverage must be at least 85%. Test empty PDFs, scanned/no-text PDFs, duplicate ingestion, oversized queries (M2), empty retrieval (M2), provider failures/timeouts, and malformed LLM output (M3), plus chunk boundaries, overlap, and page tracking.
-- Provider calls use bounded exponential backoff for transient failures only. API errors must be clear and must not contain stack traces, credentials, or provider response bodies.
-- Keep README design decisions, trade-offs, measured results, and limitations honest. Keep assistant-authored golden drafts source-grounded and clearly labeled; never invent unsupported answers or measured scores. Never present fake-provider results as semantic retrieval measurements.
-- The user's budget preference updates the original OpenAI-only requirement: support a free-tier Gemini configuration behind provider interfaces and retain the original OpenAI option. Never silently fall back to a paid provider.
-- Use one branch/PR per milestone. Do not merge without approval. An empty repository may receive a minimal bootstrap commit on `main` to establish the PR base.
-- Keep this small: no orchestration framework, job queue, OCR, authentication, conversation memory, or model tool loop in M1–M4.
-- Finish the project first. The user is new to RAG and cannot currently run the full project on their laptop, but on 2026-10-25 asked to prioritize implementation and suggest learning resources after completing the work. Keep build updates brief. Maintain `docs/learning-guide.md` with plain-language explanations tied to actual code; provide one small browser-friendly exercise and relevant resources after the working milestone. Distinguish implemented, mocked, planned, and measured behavior. Do not create metered cloud environments without user authorization.
-
-- The 2026-10-26 real baseline is preserved in `eval/results/20261026_gemini_baseline.md` and its dated raw-record directory. Retrieval-only comparison completed with zero errors; the separate end-to-end attempt retains 14 vector and 2 hybrid generation failures, conservative hybrid/keyword refusals, and a q30 expected-refusal disagreement. Vector is now the default; do not claim these figures establish faithfulness or production answer reliability. Keep the frozen labels/results unchanged when improving the app; use reviewed held-out data for new calibration.
-
-- On 2026-10-26 the user approved the final quality pass: explicit Gemini 3.5 Flash-Lite, Gemini Embedding 2, process-local attempt/input pacing, correction of the hybrid RRF evidence gate, fresh real benchmark and browser checks, and publication/CI/merge/cleanup within the previously authorized benchmark scope. Keep the prior baseline/labels frozen and independent human gold review pending. Do not claim daily/token quota enforcement or semantic faithfulness from quote matching.
-
-- The Flash-Lite quality pass is frozen in `eval/results/20261026_flashlite.md` and its raw-record directory: hybrid 21/25 supported positives, 5/5 negative refusals, zero errors; vector 19/25 and one q13 provider timeout; keyword refused all 30. All 45 returned benchmark quotes were source-checked. The separate real browser flow passed with original responses/screenshots archived. q01 modal strengthening (source “should” vs generated “must”) remains an observed semantic-review flag, and q30 label policy/human review remain pending. Supported counts are not correctness scores. Preserve both baselines and do not hide failures or silently change prompts/labels/default strategy to improve reported scores.
+- Priorities: correctness, tests, clarity, then features. Keep M1–M4 small; no
+  orchestration framework, job queue, OCR, authentication, uploads, conversation
+  memory, or model tool loop. M5 is optional and outside this release.
+- After each milestone run lint, type checks, and all tests; fix failures, then
+  summarize what changed and what to review. Frontend checks apply too.
+- No external network calls in tests. Use `EmbeddingProvider` and `LLMProvider`
+  interfaces with hash embeddings and scripted responses. Only local disposable
+  PostgreSQL integration tests may use database sockets. Real providers are for
+  explicit CLI/app use or manually authorized evaluation, never ordinary CI.
+- Never hardcode secrets or ask for keys in chat. Use env vars, `.env.example`,
+  and the existing `GEMINI_API_KEY` Actions secret. Never read/copy its value.
+  Never log keys, provider bodies, or full document text at INFO. Do not commit
+  PDFs, `.env`, credentials, database dumps, or secrets.
+- Every public function needs type hints and a short docstring. No dead code or
+  unexplained magic numbers; typed Settings own chunk/overlap/batch/retrieval/
+  timeout/retry limits. App mypy is strict; backend app coverage must be >=85%.
+- Cover empty/scanned/corrupt PDFs, duplicates, chunk boundaries/page tracking,
+  oversized queries, empty retrieval, provider failures/timeouts, malformed LLM
+  output, invalid citations, and injected document instructions.
+- Provider calls use bounded exponential backoff only for transient failures.
+  Errors must be clear and sanitized, with no client stack traces or secrets.
+  API deadlines bound response waiting, not already-running remote work.
+- Gemini is the explicit budget preference; retain OpenAI behind interfaces.
+  Never silently switch to a paid, fake, or different model/provider.
+- User authorization includes the 30-question assistant-authored golden set,
+  real runs through the existing Actions secret, integration/correctness fixes,
+  honest result publication, and merge/cleanup after checks pass. Do not request
+  the same permission again. Use a branch/PR for changes; new unrelated scope
+  still needs agreement. Do not create metered cloud resources without approval.
+- On 2026-10-27 the user confirmed reviewing the answer key and retained q30's
+  expected-refusal label as an ambiguous false-premise edge case. Preserve the
+  golden bytes and all published benchmark artifacts. New prompt checks must be
+  labeled separately; this development set is not a held-out evaluation.
+- Quote matching proves provenance, not semantic entailment. Preserve source
+  obligation/uncertainty. Supported counts are not correctness scores; retain
+  provider failures and semantic flags. Never fabricate measurements or evidence.
+- Finish the project before adding features. Keep updates brief and explanations
+  plain. Maintain useful learning resources tied to actual code. Consolidate
+  operating instructions and history instead of adding per-pass validation docs.
+- README is the entry point; `docs/architecture.md` explains design/trade-offs,
+  `docs/operations.md` covers checks/configuration/deployment, `eval/README.md`
+  covers evaluation, and `CHANGELOG.md` retains release history. Frozen measured
+  reports/raw records belong under `eval/results/`.

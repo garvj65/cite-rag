@@ -1,4 +1,4 @@
-# M1–M4 architecture
+# Architecture
 
 The CLI coordinates manifest metadata, page extraction, word-window chunking,
 an embedding provider, and a PostgreSQL repository.
@@ -46,7 +46,7 @@ a new document. Chunk-size experiments create new profiles while sharing the
 same canonical pages. Changing extraction/cleaning semantics needs a deliberate
 migration/reindex procedure; it is not silently handled in M1.
 
-## Retrieval in M2
+## Retrieval
 
 `POST /search` validates a query, strategy, and result count, then selects a
 retriever through the shared `Retriever.search(query, k)` contract:
@@ -80,7 +80,7 @@ timed-out caller receives 504. Remaining provider timeouts/backoff respect the
 API budget; CLI/evaluation calls keep their configured retry budgets. Errors do not include request bodies,
 provider responses, credentials, or SQL statements.
 
-## Evidence-gated answers in M3
+## Cited answers
 
 `POST /ask` reuses search's query/strategy/k validation. It filters retrieved
 passages using cosine/keyword thresholds. Hybrid retains both component scores
@@ -119,7 +119,7 @@ HTML interpretation, validates source-link protocols, and distinguishes evidence
 refusals from request/provider errors. Explicit fake generation is labeled as a
 scripted demo; it is never selected as an automatic provider fallback.
 
-## Evaluation in M4
+## Evaluation
 
 Golden JSONL labels are source-grounded; `eval.validate` checks the field schema, unique
 identities/questions, answerability/page consistency, and query bounds. Optional
@@ -146,9 +146,9 @@ and uses explicit opt-in for ingestion. Experiments require a quiescent database
 
 The harness and an assistant-authored 30-question baseline are implemented.
 Real retrieval and end-to-end attempts are [measured](../eval/results/20261026_flashlite.md),
-with provider failures, refusal gaps, and semantic wording flags retained. Independent human label review
-and held-out validation remain pending. Vector is the default strategy; the
+with provider failures, refusal gaps, and semantic wording flags retained. The user reviewed the answer key on 2026-10-27, retaining q30 as an ambiguous
+expected-refusal edge case. Held-out validation remains future work. Vector is the default strategy; the
 hybrid evidence gate uses the same provisional, uncalibrated component thresholds.
 See [the benchmark provenance and evidence](../eval/golden-review.md). A manually
 dispatched GitHub workflow supports the real run using an Actions secret and disposable database; normal CI uses fakes.
-See the [browser evaluation handoff](evaluation-handoff.md).
+See the [browser evaluation handoff](../eval/README.md#run-from-github-actions).

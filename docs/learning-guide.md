@@ -8,7 +8,8 @@ Current state: **M1 ingestion and M2 retrieval are integrated. M3 adds `/ask`,
 evidence gates, verified quote citations, refusals, and the React interface.
 M4's harness and a 30-question assistant-authored golden baseline are implemented;
 real retrieval and answer attempts are [measured](../eval/results/20261026_gemini_baseline.md),
-including provider failures and refusal gaps. Independent review is pending.**
+including provider failures and refusal gaps. You reviewed the answer key on
+2026-10-27, retaining q30 as an ambiguous refusal edge case.**
 The user has accepted the NIST AI risk corpus and Gemini provider configuration.
 
 ## 1. What RAG means
@@ -115,8 +116,8 @@ reported as an error. M3 implements these separate response paths.
 
 In M4, the evaluation runner compares actual outputs with source-grounded questions
 and gold document/page labels. At your request, an assistant-authored 30-question
-baseline now includes an answer key and evidence notes. Your independent review and
-held-out validation remain pending; the measured baseline is linked above.
+baseline now includes an answer key and evidence notes. You have reviewed the answer key;
+held-out validation remains future work. The measured baseline is linked above.
 Fake-provider performance is never real retrieval quality.
 
 ## 5. Read the existing code in this order
@@ -296,6 +297,6 @@ a retry. This is a small example of keeping one source of truth.
 
 For your first real RAG experiment, write a few questions/pages using
 [the corpus reference](corpus-reference.md), then follow
-[the browser evaluation handoff](evaluation-handoff.md). Inspect one retrieved
+[the browser evaluation handoff](../eval/README.md#run-from-github-actions). Inspect one retrieved
 page and its exact quote before looking at the aggregate score. Ask whether the
 quote actually supports the answer, as well as whether it exists in the source.

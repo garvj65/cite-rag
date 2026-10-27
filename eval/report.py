@@ -54,6 +54,8 @@ def render_report(result: EvaluationResult) -> str:
     )
     if result.options.retrieval_only:
         label += " — RETRIEVAL ONLY; no LLM calls or answer metrics"
+    if result.metadata.get("selected_question_ids"):
+        label += " — FOCUSED CHECK; selected questions only, not the full benchmark"
     return (
         f"# CiteRAG evaluation\n\n**{label}**\n\n"
         + results_table([result])

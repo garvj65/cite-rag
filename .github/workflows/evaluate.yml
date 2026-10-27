@@ -12,6 +12,11 @@ on:
         type: choice
         options: [hybrid, vector, keyword, all]
         default: vector
+      question_set:
+        description: Full benchmark or focused wording/refusal regression (8 existing questions)
+        type: choice
+        options: [full, wording-check]
+        default: full
       retrieval_only:
         description: Measure retrieval only (no chat calls; answer metrics N/A)
         type: boolean
@@ -28,7 +33,7 @@ on:
       browser_check:
         description: Check real cited answer and refusal in Chromium after answer evaluation
         type: boolean
-        default: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -66,6 +71,7 @@ jobs:
       EVAL_RETRIEVAL_ONLY: ${{ inputs.retrieval_only }}
       EVAL_STRATEGY: ${{ inputs.strategy }}
       EVAL_DELAY_SECONDS: ${{ inputs.delay_seconds }}
+      EVAL_QUESTION_IDS: ${{ inputs.question_set == 'wording-check' && 'q01,q02,q05,q08,q13,q20,q25,q30' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -109,12 +115,35 @@ jobs:
           if not expected.issubset(downloaded):
               raise SystemExit("Gold document identities do not match the downloaded PDFs. Check the corpus reference before embedding.")
           PY
-      - name: Migrate and ingest with explicit real embeddings
+      - name: Restore compatible corpus index
+        uses: actions/cache/restore@v4
+        id: index_cache
+        with:
+          path: /tmp/citerag-index
+          key: >-
+            public-index-pg16-pgv081-v1-${{ runner.os }}-${{ hashFiles('corpus/*.pdf', 'corpus/manifest.yaml', 'backend/app/ingestion/**', 'backend/app/db/**', 'backend/app/ingest.py', 'backend/app/settings.py', 'backend/app/providers/http.py', 'backend/app/providers/interfaces.py', 'backend/app/providers/factory.py', 'backend/migrations/**', 'uv.lock') }}
+      - name: Restore or build the index once for all strategies and browser checks
         id: ingestion
+        env:
+          INDEX_CACHE_HIT: ${{ steps.index_cache.outputs.cache-hit }}
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
         run: |
-          uv run alembic -c backend/alembic.ini upgrade head
-          uv run python -m app.ingest --path corpus/
+          if [ "$INDEX_CACHE_HIT" = true ]; then
+            docker exec -i "$POSTGRES_CONTAINER" pg_restore -U citerag -d citerag_eval --no-owner --no-privileges --exit-on-error < /tmp/citerag-index/index.dump
+            echo 'Restored compatible public-corpus index; no document embedding calls.'
+          else
+            uv run alembic -c backend/alembic.ini upgrade head
+            uv run python -m app.ingest --path corpus/
+            mkdir -p /tmp/citerag-index
+            docker exec "$POSTGRES_CONTAINER" pg_dump -U citerag -d citerag_eval --format=custom --no-owner --no-privileges > /tmp/citerag-index/index.dump
+          fi
           uv run python -m eval.validate --check-index
+      - name: Save successful public-corpus index
+        if: steps.index_cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/citerag-index
+          key: ${{ steps.index_cache.outputs.cache-primary-key }}
       - name: Measure selected strategies
         shell: bash
         run: |
@@ -122,9 +151,10 @@ jobs:
           if [ "$EVAL_STRATEGY" = all ]; then strategies=(vector keyword hybrid); fi
           flags=()
           if [ "$EVAL_RETRIEVAL_ONLY" = true ]; then flags+=(--retrieval-only); fi
+          if [ -n "$EVAL_QUESTION_IDS" ]; then flags+=(--question-ids "$EVAL_QUESTION_IDS"); fi
           status=0
           for strategy in "${strategies[@]}"; do
-            uv run python -m eval.run --strategy "$strategy" --k 5 --seed 42 --delay-seconds "$EVAL_DELAY_SECONDS" "${flags[@]}" || status=1
+            uv run python -m eval.run --strategy "$strategy" --k 5 --seed 42 --delay-seconds "$EVAL_DELAY_SECONDS" --output eval/results/current "${flags[@]}" || status=1
           done
           exit "$status"
       - uses: actions/setup-node@v4
@@ -132,6 +162,11 @@ jobs:
         if: ${{ !cancelled() && !inputs.retrieval_only && inputs.browser_check && steps.ingestion.outcome == 'success' }}
         with:
           node-version: "24"
+      - uses: actions/cache@v4
+        if: ${{ !cancelled() && steps.browser_node.outcome == 'success' }}
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
       - name: Prepare explicit real browser check
         id: browser_ready
         if: ${{ !cancelled() && steps.browser_node.outcome == 'success' }}
@@ -171,21 +206,21 @@ jobs:
           from pathlib import Path
           from eval.models import EvaluationResult
           from eval.report import results_table
-          results = [EvaluationResult.model_validate_json(p.read_text()) for p in sorted(Path("eval/results").glob("*.json")) if p.name != "browser-check.json"]
+          results = [EvaluationResult.model_validate_json(p.read_text()) for p in sorted(Path("eval/results/current").glob("*.json"))]
           if results:
               table = results_table(results)
               print(table)
               with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
-                  stream.write("## Measured evaluation\n\n" + table + "\n\nDownload the artifact for raw records, errors, and reproduction metadata. Review the actual question/class counts and errors before reporting these numbers. No faithfulness judge is used.\n")
+                  scope = "Focused regression check (selected questions only)" if os.environ["EVAL_QUESTION_IDS"] else "Measured evaluation"
+                  stream.write("## " + scope + "\n\n" + table + "\n\nDownload the artifact for raw records, errors, and reproduction metadata. Review the actual question/class counts and errors before reporting these numbers. No faithfulness judge is used.\n")
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: measured-evaluation-${{ github.run_id }}
           path: |
-            eval/results/*.md
-            eval/results/*.json
-            eval/results/*.jsonl
+            eval/results/current/
+            eval/results/browser-check.json
             eval/results/browser-*.png
           if-no-files-found: ignore
           retention-days: 14
