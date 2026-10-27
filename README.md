@@ -12,8 +12,9 @@ failures produce clear errors. M1–M4 are implemented, tested, and measured.
 ![CiteRAG research workspace, real Flash-Lite response](docs/screenshots/citerag.png)
 
 This original model capture is retained with its observed wording issue:
-“should” became “must.” The current prompt explicitly preserves source obligation
-and uncertainty; a prompt rule is not a semantic guarantee.
+“should” became “must.” The current prompt asks for source obligation/uncertainty clauses to be copied;
+the [focused check](eval/results/20261027_wording-check.md) preserved q01
+wording in vector and hybrid. A prompt rule is not a semantic guarantee.
 
 ## Run locally
 
@@ -115,6 +116,8 @@ malformed output, 503 unavailable database/configuration, 504 timeout/deadline.
 
 Gemini 3.5 Flash-Lite + Gemini Embedding 2, 400/80 words, k=5, seed=42.
 The same frozen development set has 25 answerable and five unanswerable questions.
+This comparison predates the final wording correction; the newer
+[eight-question check](eval/results/20261027_wording-check.md) is reported separately.
 
 | Strategy | Recall@5 | MRR@5 | Raw quote validity | Correct negative refusals | Supported positives / 25 | Errors / 30 | p50 / p95 seconds |
 |---|---:|---:|---:|---:|---:|---:|---:|

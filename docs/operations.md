@@ -86,12 +86,13 @@ migrations. Without it, 24 database tests are explicitly skipped. CI supplies it
 The browser configuration check needs the Compose service (`E2E_LIVE_CONFIG=1`);
 see [the frontend guide](../frontend/README.md). Offline CI also checks real nginx
 wiring, nondefault query bounds/deadlines, Docker builds, and idempotent ingestion.
-These fixtures do not measure model quality.
+These fixtures do not measure model quality. CI runs on pull requests and pushes
+to main, avoiding duplicate push/PR suites for feature branches.
 
-At merged revision `14ffcca`, [full CI](https://github.com/garvj65/cite-rag/actions/runs/40365696888)
-passed 341 backend/evaluation tests (24 PostgreSQL), 99.77% app branch coverage,
-38 component tests, and five browser checks. Historical evidence lives in
-[the changelog](../CHANGELOG.md); new cleanup verification is recorded there once complete.
+At implementation revision `177943e`, [full CI](https://github.com/garvj65/cite-rag/actions/runs/40451983530)
+passed 346 backend/evaluation tests (24 PostgreSQL), 99.77% app branch coverage,
+38 component tests, and five browser checks. Historical evidence and the final cleanup results live in
+[the changelog](../CHANGELOG.md).
 The 2026-10-26 real benchmark and browser evidence remain immutable under
 `eval/results/`. Follow [the evaluation guide](../eval/README.md) for real calls.
 

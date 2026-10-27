@@ -1,5 +1,10 @@
 # Evaluation results
 
+[The focused wording check](20261027_wording-check.md) preserves two prompt attempts
+on eight existing questions, including the first failed correction, later q01
+wording preservation, refusals, q30 disagreement, and verified cache reuse.
+It does not replace the full comparisons below.
+
 [The Flash-Lite quality pass](20261026_flashlite.md) measures all three strategies
 on the same frozen 30-question development baseline. Hybrid returned 21/25
 supported positives, refused all five negatives, and had zero errors. Vector

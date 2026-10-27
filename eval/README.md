@@ -40,8 +40,8 @@ Never put its value in code, issues, logs, or chat.
 A tiny provider preflight runs first; failure stops expensive indexing. After
 verified corpus download, the workflow restores an exact-key cached PostgreSQL
 snapshot or embeds/indexes once on a miss. The key includes PDF bytes, manifest,
-indexing/model settings and code, migrations, and dependency lock. Prompt/chat-only
-changes reuse embeddings. There are no prefix/fallback cache matches; every restore
+indexing/model settings and code, migrations, and dependency lock. Prompt changes and chat-model input selections
+reuse embeddings. There are no prefix/fallback cache matches; every restore
 must pass index/gold-page validation before evaluation. A bad restore fails without
 silently re-embedding. Cache eviction/branch scope can require a fresh ingestion;
 this is an optimization, not durable storage. To force a rebuild after a cache

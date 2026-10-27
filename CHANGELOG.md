@@ -11,6 +11,8 @@ and are never rewritten to reflect a later fix. No Git history is rewritten.
   verification remains unchanged and does not establish semantic faithfulness.
 - Add focused selection of existing golden IDs, visibly label subset reports,
   and record the system-prompt digest. Keep full golden-file identity unchanged.
+- Run ordinary CI for pull requests and pushes to main, avoiding duplicate full
+  push/PR suites for each feature-branch commit.
 - Reuse compatible public-corpus database snapshots in manual evaluations. Run
   every selected strategy and optional browser check against one index. Cache
   Chromium downloads; browser checks are opt-in. Upload only this run's outputs.
@@ -19,7 +21,19 @@ and are never rewritten to reflect a later fix. No Git history is rewritten.
   evaluation guide, and this history. Keep source artifacts and learning material.
 - Record the user's completed answer-key review and deliberate retention of q30
   as an ambiguous expected-refusal edge case. No question, answer, or label changed.
-- Focused real-provider and final CI results: pending execution for this revision.
+- [Focused real-provider evidence](eval/results/20261027_wording-check.md) preserves
+  both attempts: the first retained q01 drift; the second preserved q01 “should”
+  in vector/hybrid while retaining other refusals. All 48 attempts had zero errors;
+  30 released quotes were source-checked. This is development evidence, not judged
+  accuracy or held-out validation. A later job verified exact-key index restoration
+  without ingestion or browser setup. The initial cache miss and its fix are recorded.
+- [Implementation CI](https://github.com/garvj65/cite-rag/actions/runs/40451983530)
+  passed 346 backend/eval tests, 99.77% app coverage, 38 component/five browser tests,
+  lint/type checks, builds, and actual Compose checks. Local tests passed 322 with
+  24 PostgreSQL tests reserved for CI; local app coverage was 96.83%. Actionlint,
+  relative documentation links, frozen artifact checks, and Gitleaks passed.
+- [PR #8](https://github.com/garvj65/cite-rag/pull/8) contains the final cleanup;
+  final-head CI is required before merge. No new features or public deployment.
 
 ## Budget model and hybrid correction — 2026-10-26
 
